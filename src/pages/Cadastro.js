@@ -1,4 +1,5 @@
-// No arquivo: src/pages/Cadastro.js
+// No ficheiro: src/pages/Cadastro.js
+// VERSÃO 3 - Com máscara de data
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,21 +7,40 @@ import { Link, useNavigate } from 'react-router-dom';
 function Cadastro() {
   const navigate = useNavigate();
 
+  // 1. Estados do formulário (agora com dataNascimento unificada)
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [dia, setDia] = useState('');
-  const [mes, setMes] = useState('');
-  const [ano, setAno] = useState('');
+  const [dataNascimento, setDataNascimento] = useState(''); // Estado único para a data
 
+  // 2. NOVA FUNÇÃO: Lida com a formatação da data
+  const handleDataChange = (e) => {
+    // Remove todos os caracteres que não são números
+    let valor = e.target.value.replace(/\D/g, ''); 
+
+    // Limita a 8 dígitos (DDMMAAAA)
+    if (valor.length > 8) {
+      valor = valor.slice(0, 8);
+    }
+
+    // Adiciona as barras de formatação
+    if (valor.length > 4) {
+      // Formato DD/MM/AAAA
+      valor = valor.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+    } else if (valor.length > 2) {
+      // Formato DD/MM
+      valor = valor.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+    }
+
+    setDataNascimento(valor); // Atualiza o estado
+  };
+
+  // 3. Função de envio (agora usa o 'dataNascimento' direto)
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Verificação de data (o formato DD/MM/YYYY já está correto)
-    const dataNascimento = `${dia}/${mes}/${ano}`;
-
-    if (!nome || !email || !senha || !dia || !mes || !ano) {
-      alert('Por favor, preencha todos os campos.');
+    if (!nome || !email || !senha || dataNascimento.length < 10) {
+      alert('Por favor, preencha todos os campos corretamente. A data deve estar no formato DD/MM/AAAA.');
       return;
     }
 
@@ -34,7 +54,7 @@ function Cadastro() {
           nome,
           email,
           senha,
-          dataNascimento 
+          dataNascimento // Envia a data formatada
         }),
       });
 
@@ -42,7 +62,7 @@ function Cadastro() {
 
       if (response.ok) {
         alert(data.message); // Ex: "Usuário cadastrado com sucesso!"
-        navigate('/login'); // Envia o usuário para o login
+        navigate('/login'); 
       } else {
         alert(data.message); // Ex: "E-mail já cadastrado."
       }
@@ -52,14 +72,7 @@ function Cadastro() {
     }
   };
 
-  // === CORREÇÃO AQUI ===
-  // Popula os dias já com o zero à esquerda
-  const diasDoMes = [];
-  for (let i = 1; i <= 31; i++) {
-    // Converte o número para string e preenche com '0' à esquerda
-    const diaFormatado = String(i).padStart(2, '0');
-    diasDoMes.push(diaFormatado);
-  }
+  // 4. O array 'diasDoMes' foi removido (não é mais necessário)
 
   return (
     <div className="login-page-body">
@@ -93,44 +106,16 @@ function Cadastro() {
                 />
               </div>
 
-              <label>Data de Nascimento.</label>
-              <div className="dob-group">
-                <select 
-                  id="dob-day" 
-                  value={dia} 
-                  onChange={(e) => setDia(e.target.value)}
-                >
-                  <option value="">Dia</option>
-                  {/* Agora o 'value' será "01", "02", ..., "31" */}
-                  {diasDoMes.map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-                <select 
-                  id="dob-month" 
-                  value={mes}
-                  onChange={(e) => setMes(e.target.value)}
-                >
-                  {/* Os meses já estavam corretos com dois dígitos */}
-                  <option value="">Mês</option>
-                  <option value="01">Janeiro</option>
-                  <option value="02">Fevereiro</option>
-                  <option value="03">Março</option>
-                  <option value="04">Abril</option>
-                  <option value="05">Maio</option>
-                  <option value="06">Junho</option>
-                  <option value="07">Julho</option>
-                  <option value="08">Agosto</option>
-                  <option value="09">Setembro</option>
-                  <option value="10">Outubro</option>
-                  <option value="11">Novembro</option>
-                  <option value="12">Dezembro</option>
-                </select>
+              {/* 5. GRUPO DE DATA SUBSTITUÍDO */}
+              <div className="input-group">
+                <label htmlFor="dataNascimento">Data de Nascimento</label>
                 <input 
-                  type="text" 
-                  id="dob-year" 
-                  placeholder="Ano" 
-                  maxLength="4"
-                  value={ano}
-                  onChange={(e) => setAno(e.target.value)}
+                  type="text" // Usamos 'text' para controlar a formatação
+                  id="dataNascimento" 
+                  placeholder="DD/MM/AAAA" 
+                  value={dataNascimento}
+                  onChange={handleDataChange} // Usa a nova função de formatação
+                  maxLength="10" // Limita o tamanho final
                 />
               </div>
 

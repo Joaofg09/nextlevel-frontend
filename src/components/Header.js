@@ -1,5 +1,4 @@
 // No arquivo: src/components/Header.js
-// VERSÃO 5 - Mostra ambos os menus para o Admin
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -20,7 +19,6 @@ function Header() {
 
   const handleTriggerClick = (menuType, e) => {
     e.stopPropagation(); 
-    
     if (menuType === 'admin') {
       setAdminMenuOpen(!adminMenuOpen); 
       setUserMenuOpen(false); 
@@ -46,10 +44,8 @@ function Header() {
     <header>
       <div className="top-bar">
         <Link to="/" className="logo">Next<span>Level</span></Link>
-        
         <div className="user-actions" id="user-section">
           {!user ? (
-            // --- SE ESTIVER DESLOGADO ---
             <> 
               <Link to="/login">Iniciar Sessão</Link>
               <Link to="/carrinho" className="icon">🛒</Link>
@@ -57,9 +53,7 @@ function Header() {
               <i className="icon theme-toggle" id="theme-toggle">☼</i>
             </>
           ) : (
-            // --- SE ESTIVER LOGADO ---
             <>
-              {/* 1. Painel Admin (Aparece SOMENTE se for admin) */}
               {isAdmin && (
                 <div 
                   className="menu-trigger" 
@@ -74,19 +68,20 @@ function Header() {
                     <ul>
                       <li><Link to="/admin/jogos">Gerenciamento de Jogos</Link></li>
                       <li><Link to="/admin/empresas">Gerenciamento de Empresas</Link></li>
-                      <li><Link to="/admin/avaliacoes">Moderação de Avaliações</Link></li>
+                      {/* 1. ATUALIZE ESTE LINK */}
+                      <li><Link to="/admin/usuarios">Gerenciamento de Usuários</Link></li>
+                      <li><Link to="/admin/relatorios">Relatório de Vendas</Link></li>
+                      <li><a href="/" onClick={handleLogout}>Sair</a></li>
                     </ul>
                   </div>
                 </div>
               )}
 
-              {/* 2. Menu de Usuário (Aparece SEMPRE que estiver logado) */}
               <div 
                 className="menu-trigger" 
                 id="user-menu-trigger"
                 onClick={(e) => handleTriggerClick('user', e)}
               >
-                {/* Mostra o nome só se NÃO for admin (para não repetir) */}
                 <i className="icon">👤 {!isAdmin ? `(${user.nome})` : ''}</i>
                 <div 
                   className={`profile-dropdown ${userMenuOpen ? 'show' : ''}`} 
@@ -102,7 +97,6 @@ function Header() {
                 </div>
               </div>
 
-              {/* 3. Ícones (Aparecem SEMPRE que estiver logado) */}
               <Link to="/carrinho" className="icon">🛒</Link>
               <Link to="/lista-desejos" className="icon">❤</Link>
               <i className="icon theme-toggle" id="theme-toggle">☼</i>
@@ -111,7 +105,6 @@ function Header() {
         </div>
       </div>
       <nav className="menu">
-        {/* ... (o resto da <nav> continua igual) ... */}
         <ul>
           <li><Link to="/">Início</Link></li>
           <li className="dropdown-menu-item">

@@ -13,9 +13,13 @@ import HistoricoCompras from './pages/HistoricoCompras';
 import MeusDados from './pages/MeusDados';
 import CarrinhoPage from './pages/CarrinhoPage';
 import JogoDetalhesPage from './pages/JogoDetalhesPage';
+import ListaDesejosPage from './pages/ListaDesejosPage';
+import BibliotecaPage from './pages/BibliotecaPage';
+import RevisarPedidoPage from './pages/RevisarPedidoPage';
+import RelatoriosPage from './pages/RelatoriosPage';
 
 // 1. Importe a nova página
-import ListaDesejosPage from './pages/ListaDesejosPage';
+import AdminUsuariosPage from './pages/AdminUsuariosPage';
 
 import './index.css';
 
@@ -29,14 +33,19 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/admin/jogos" element={<AdminJogos />} />
           <Route path="/admin/empresas" element={<AdminEmpresas />} />
+          <Route path="/admin/relatorios" element={<RelatoriosPage />} />
+
+          {/* 2. Adicione a nova rota de usuários */}
+          <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
+
           <Route path="/historico" element={<HistoricoCompras />} />
           <Route path="/meus-dados" element={<MeusDados />} />
           <Route path="/carrinho" element={<CarrinhoPage />} />
           <Route path="/jogo/:id" element={<JogoDetalhesPage />} />
-
-          {/* 2. Adicione a nova rota da lista de desejos */}
           <Route path="/lista-desejos" element={<ListaDesejosPage />} />
-          
+          <Route path="/biblioteca" element={<BibliotecaPage />} />
+          <Route path="/revisar-pedido" element={<RevisarPedidoPage />} />
+
         </Route>
 
         {/* Rotas que NÃO usam o Layout (tela cheia) */}
