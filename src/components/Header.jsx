@@ -1,19 +1,23 @@
 // No arquivo: src/components/Header.js
+// VERSÃO FINAL - Classes padrão (Corrige o Dropdown)
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import styles from './Header.module.css';
-import categorias from "../data/Categorias.json";
+import categoriasData from "../data/Categorias.json"; // Importa o JSON
 
 function Header() {
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const user = auth.user;
+  const isAdmin = user && user.perfil === 'Administrador';
 
-  const [categoriasList, setCategoriasList] = useState(categorias.categorias);
-
-  const [isDarkMode, setIsDarkMode] = useState(true); // Começa como Dark
-
+  // --- Lógica do Tema (Dark/Light) ---
   useEffect(() => {
-    // Aplica a classe inicial ao body (para manter o estado ao recarregar)
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
       setIsDarkMode(false);
@@ -23,8 +27,6 @@ function Header() {
   const toggleTheme = () => {
     const novoEstado = !isDarkMode;
     setIsDarkMode(novoEstado);
-
-    // Adiciona/Remove a classe 'light-mode' no BODY
     if (novoEstado) {
       document.body.classList.remove('light-mode');
       localStorage.setItem('theme', 'dark');
@@ -34,12 +36,7 @@ function Header() {
     }
   };
 
-  const auth = useAuth();
-  const navigate = useNavigate();
-
-  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-
+  // --- Lógica dos Menus de Usuário ---
   const handleLogout = (event) => {
     event.preventDefault();
     auth.logout();
@@ -66,40 +63,43 @@ function Header() {
     return () => window.removeEventListener('click', closeMenus);
   }, []);
 
-  const user = auth.user;
-  const isAdmin = user && user.perfil === 'Administrador';
-
   return (
-    <header className={styles.header}>
-      <div className={styles['top-bar']}>
-        <Link to="/" className={styles.logo}>Next<span>Level</span></Link>
-        <div className={styles['user-actions']} id="user-section">
+    // Usamos 'header' normal em vez de styles.header para pegar o CSS global
+    <header>
+      <div className="top-bar">
+        <Link to="/" className="logo">Next<span>Level</span></Link>
+        
+        <div className="user-actions" id="user-section">
           {!user ? (
             <>
               <Link to="/login">Iniciar Sessão</Link>
-              <Link to="/carrinho" className={styles.icon}>🛒</Link>
-              <Link to="/lista-desejos" className={styles.icon}>❤</Link>
-              <i className={`icon theme-toggle fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}
-                onClick={toggleTheme} id="theme-toggle">
+              <Link to="/carrinho" className="icon">🛒</Link>
+              <Link to="/lista-desejos" className="icon">❤</Link>
+              <i 
+                className={`icon theme-toggle fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}
+                onClick={toggleTheme} 
+                id="theme-toggle"
+                style={{fontStyle: 'normal', cursor: 'pointer'}}
+              >
+                {isDarkMode ? '☼' : '☾'}
               </i>
             </>
           ) : (
             <>
               {isAdmin && (
-                <div
-                  className={styles['menu-trigger']}
+                <div 
+                  className="menu-trigger" 
                   id="admin-menu-trigger"
                   onClick={(e) => handleTriggerClick('admin', e)}
                 >
                   <span>Painel Admin ({user.nome})</span>
-                  <div
-                    className={`${styles['profile-dropdown']} ${adminMenuOpen ? styles.show : ''}`}
+                  <div 
+                    className={`profile-dropdown ${adminMenuOpen ? 'show' : ''}`} 
                     id="admin-menu-dropdown"
                   >
                     <ul>
                       <li><Link to="/admin/jogos">Gerenciamento de Jogos</Link></li>
                       <li><Link to="/admin/empresas">Gerenciamento de Empresas</Link></li>
-
                       <li><Link to="/admin/usuarios">Gerenciamento de Usuários</Link></li>
                       <li><Link to="/admin/relatorios">Relatório de Vendas</Link></li>
                       <li><a href="/" onClick={handleLogout}>Sair</a></li>
@@ -108,14 +108,14 @@ function Header() {
                 </div>
               )}
 
-              <div
-                className={styles['menu-trigger']}
+              <div 
+                className="menu-trigger" 
                 id="user-menu-trigger"
                 onClick={(e) => handleTriggerClick('user', e)}
               >
-                <i className={styles.icon}>👤 {!isAdmin ? `(${user.nome})` : ''}</i>
-                <div
-                  className={`${styles['profile-dropdown']} ${userMenuOpen ? styles.show : ''}`}
+                <i className="icon">👤 {!isAdmin ? `(${user.nome})` : ''}</i>
+                <div 
+                  className={`profile-dropdown ${userMenuOpen ? 'show' : ''}`} 
                   id="user-menu-dropdown"
                 >
                   <ul>
@@ -128,31 +128,42 @@ function Header() {
                 </div>
               </div>
 
-              <Link to="/carrinho" className={styles.icon}>🛒</Link>
-              <Link to="/lista-desejos" className={styles.icon}>❤</Link>
-              <i className={`icon theme-toggle fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}
-                onClick={toggleTheme} id="theme-toggle">
+              <Link to="/carrinho" className="icon">🛒</Link>
+              <Link to="/lista-desejos" className="icon">❤</Link>
+              <i 
+                className={`icon theme-toggle fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}
+                onClick={toggleTheme} 
+                id="theme-toggle"
+                style={{fontStyle: 'normal', cursor: 'pointer'}}
+              >
+                {isDarkMode ? '☼' : '☾'}
               </i>
             </>
           )}
         </div>
       </div>
-      <nav className={styles.menu}>
+
+      <nav className="menu">
         <ul>
           <li><Link to="/">Início</Link></li>
-          <li className={styles['dropdown-menu-item']}>
-            <Link to="/" className={styles['dropdown-trigger']}>Categorias</Link>
-            <ul className={styles.submenu}>
-              {categoriasList.map((cat, index) => (
+          
+          {/* --- DROPDOWN DE CATEGORIAS --- */}
+          {/* Aqui usamos as classes padrão para o CSS do index.css funcionar */}
+          <li className="dropdown-menu-item">
+            <Link to="/" className="dropdown-trigger">Categorias</Link>
+            <ul className="submenu">
+              {categoriasData.categorias.map((cat, index) => (
                 <li key={index}>
-                  <Link to={`/categoria/${cat}`}>{cat}</Link>
+                  {/* Nota: Ainda não temos rota para /categoria/:nome, então vai para home */}
+                  <Link to={`/`}>{cat}</Link>
                 </li>
               ))}
             </ul>
           </li>
+          
           <li><Link to="/">Mais vendidos</Link></li>
         </ul>
-        <div className={styles['search-bar']}>
+        <div className="search-bar">
           <input type="text" placeholder="Procurar na loja" />
         </div>
       </nav>

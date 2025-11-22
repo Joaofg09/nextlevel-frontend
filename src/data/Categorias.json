@@ -1,15 +1,6 @@
 {
   "categorias": [
-    "RPG",
-    "Ação",
-    "Aventura",
-    "Sandbox",
-    "Simulação",
-    "Puzzle",
-    "VR",
-    "Social",
-    "Plataforma",
-    "Tiro",
-    "Horror"
+    "RPG", "Ação", "Aventura", "Estratégia", "Simulação", "Esportes", 
+    "Corrida", "Puzzle", "Luta", "Tiro", "Plataforma", "Horror", "Indie"
   ]
 }
