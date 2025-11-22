@@ -256,6 +256,64 @@ body.light-mode {
     color: #333;
 }
 
+body.light-mode .profile-dropdown,
+body.light-mode .submenu {
+    /* Mudar o fundo do dropdown de cinza escuro para branco */
+    background-color: #ffffff !important; 
+    border: 1px solid #ccc !important;
+}
+
+/* Regra CRÍTICA: Mudar a cor do TEXTO dentro do dropdown */
+body.light-mode .profile-dropdown ul li a,
+body.light-mode .submenu ul li a {
+    color: #333 !important; /* Força o texto para preto/cinza escuro */
+}
+
+/* Corrigir o HOVER (Para que não use o vermelho no modo claro) */
+body.light-mode .profile-dropdown ul li a:hover,
+body.light-mode .submenu ul li a:hover,
+body.light-mode .submenu a:hover {
+    background-color: #b4b3b3 !important; /* Fundo mais suave no hover */
+    color: #000 !important; /* Texto preto no hover */
+}
+
+/* Os contêineres cinza-escuros que precisam ser brancos */
+body.light-mode .listagem-box,
+body.light-mode .filter-bar,
+body.light-mode .admin-container {
+    background-color: #fafafa !important; /* Fundo totalmente branco */
+    border: 1px solid #ddd;
+}
+
+
+/* Reverte o fundo escuro do cabeçalho da tabela */
+body.light-mode .tabela-jogos thead th,
+body.light-mode .tabela-empresas thead th {
+    background-color: #e0e0e0 !important; /* Fundo cinza claro */
+    color: #333 !important; /* Texto preto */
+    border-bottom: 2px solid #ccc !important;
+}
+
+/* Reverte o fundo dos inputs de busca e dropdowns */
+body.light-mode .search-input-group,
+body.light-mode .select-filter,
+body.light-mode .search-input-group input,
+body.light-mode .tabela-jogos tbody td {
+    background-color: #ffffff !important;
+    color: #333 !important; /* Texto da célula em preto */
+    border-color: #ccc !important;
+}
+
+/* Texto que era Neon Green no Dark Mode, volta a ser preto */
+body.light-mode .preco-tabela {
+    color: #000000 !important;
+    font-weight: bold;
+}
+/* Altera o visual do input de busca no modo claro */
+body.light-mode .search-input-group i {
+    color: #555; /* Ícone de lupa fica cinza escuro */
+}
+
 body.light-mode header {
     background-color: #fff;
     border-bottom: 2px solid #ddd;
