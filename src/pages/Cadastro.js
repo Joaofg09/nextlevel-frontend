@@ -1,5 +1,5 @@
 // No arquivo: src/pages/Cadastro.js
-// VERSÃO 4 - Com campo de Confirmar Senha
+// VERSÃO FINAL - Com Toasts
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,14 +7,18 @@ import { Link, useNavigate } from 'react-router-dom';
 function Cadastro() {
   const navigate = useNavigate();
 
-  // 1. Estados do formulário
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [confirmarSenha, setConfirmarSenha] = useState(''); // NOVO ESTADO
+  const [confirmarSenha, setConfirmarSenha] = useState(''); 
   const [dataNascimento, setDataNascimento] = useState('');
+  const [notification, setNotification] = useState(null); // Estado do Toast
 
-  // Função de máscara de data (sem mudança)
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => { setNotification(null); }, 3000);
+  };
+
   const handleDataChange = (e) => {
     let valor = e.target.value.replace(/\D/g, ''); 
     if (valor.length > 8) valor = valor.slice(0, 8);
@@ -26,14 +30,13 @@ function Cadastro() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // 2. NOVA VALIDAÇÃO: Senhas Iguais
     if (senha !== confirmarSenha) {
-      alert('As senhas não coincidem!');
-      return; // Para tudo por aqui
+      showToast('As senhas não coincidem!', 'error');
+      return;
     }
 
     if (!nome || !email || !senha || dataNascimento.length < 10) {
-      alert('Por favor, preencha todos os campos corretamente.');
+      showToast('Por favor, preencha todos os campos corretamente.', 'error');
       return;
     }
 
@@ -47,14 +50,17 @@ function Cadastro() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message); 
-        navigate('/login'); 
+        showToast('Cadastro realizado com sucesso!', 'success');
+        // Espera 2 segundos para o usuário ler antes de ir pro login
+        setTimeout(() => {
+            navigate('/login');
+        }, 2000);
       } else {
-        alert(data.message); 
+        showToast(data.message, 'error');
       }
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
-      alert('Não foi possível conectar ao servidor.');
+      showToast('Não foi possível conectar ao servidor.', 'error');
     }
   };
 
@@ -71,68 +77,46 @@ function Cadastro() {
             <form className="cadastro-form" onSubmit={handleSubmit}>
               <div className="input-group">
                 <label htmlFor="email">Informe seu E-mail</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  placeholder="Digite aqui." 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <input type="email" id="email" placeholder="Digite aqui." value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="input-group">
-                <label htmlFor="fullname">Nome Completo</label>
-                <input 
-                  type="text" 
-                  id="fullname" 
-                  placeholder="Digite aqui."
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                />
+                <label htmlFor="fullname">Nome Completo.</label>
+                <input type="text" id="fullname" placeholder="Digite aqui." value={nome} onChange={(e) => setNome(e.target.value)} />
               </div>
-
               <div className="input-group">
                 <label htmlFor="dataNascimento">Data de Nascimento</label>
-                <input 
-                  type="text"
-                  id="dataNascimento" 
-                  placeholder="DD/MM/AAAA" 
-                  value={dataNascimento}
-                  onChange={handleDataChange}
-                  maxLength="10"
-                />
+                <input type="text" id="dataNascimento" placeholder="DD/MM/AAAA" value={dataNascimento} onChange={handleDataChange} maxLength="10" />
               </div>
-
               <div className="input-group">
                 <label htmlFor="password">Senha</label>
-                <input 
-                  type="password" 
-                  id="password" 
-                  placeholder="Digite aqui."
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                />
+                <input type="password" id="password" placeholder="Digite aqui." value={senha} onChange={(e) => setSenha(e.target.value)} />
               </div>
-
-              {/* 3. NOVO CAMPO VISUAL */}
               <div className="input-group">
                 <label htmlFor="confirmPassword">Confirmar Senha</label>
                 <input 
-                  type="password" 
-                  id="confirmPassword" 
-                  placeholder="Digite a senha novamente."
-                  value={confirmarSenha}
-                  onChange={(e) => setConfirmarSenha(e.target.value)}
-                  // Adiciona uma borda vermelha visual se as senhas forem diferentes (opcional, mas bonito)
+                  type="password" id="confirmPassword" placeholder="Digite a senha novamente." value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)}
                   style={confirmarSenha && senha !== confirmarSenha ? {borderColor: '#e53935'} : {}}
                 />
                 <p className="password-hint">Sua senha precisa ter um mínimo de 8 dígitos...</p>
               </div>
-
               <button type="submit" className="login-button">Cadastrar</button>
             </form>
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            {notification.type === 'error' ? <i className="fas fa-exclamation-circle"></i> : <i className="fas fa-check-circle"></i>}
+          </div>
+          <div className="toast-content">
+            <h4>{notification.type === 'error' ? 'Erro' : 'Sucesso'}</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,35 +1,44 @@
-// No ficheiro: src/pages/AdminUsuariosPage.js
-// VERSÃO 4 - Corrige a máscara de data na edição
+// No arquivo: src/pages/AdminUsuariosPage.js
+// VERSÃO FINAL - Com Toasts
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminUsuariosPage() {
-  // === ESTADOS ===
   const [usuarios, setUsuarios] = useState([]);
   const [perfis, setPerfis] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [novoPerfilNome, setNovoPerfilNome] = useState('');
 
-  // Estados para o formulário de "Editar Utilizador"
   const [editingUser, setEditingUser] = useState(null); 
   const [formNome, setFormNome] = useState('');
   const [formDataNasc, setFormDataNasc] = useState('');
   const [formFkPerfil, setFormFkPerfil] = useState('');
+  
+  // Estado do Toast
+  const [notification, setNotification] = useState(null);
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Função para buscar dados
-  const fetchData = () => {
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => { setNotification(null); }, 3000);
+  };
+
+  const fetchData = useCallback(() => {
     setLoading(true);
     const token = localStorage.getItem('token');
     
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
-          if (res.status === 401) { logout(); navigate('/login'); throw new Error('Sessão expirada'); }
+          if (res.status === 401) { 
+              alert('Sessão expirada.'); // Mantém alert aqui pois é crítico
+              logout(); navigate('/login'); 
+              throw new Error('Sessão expirada'); 
+          }
           if (res.status === 204) return [];
           return res.json();
         });
@@ -48,17 +57,13 @@ function AdminUsuariosPage() {
       console.error("Erro ao buscar dados:", err.message);
       setLoading(false);
     });
-  };
+  }, [logout, navigate]);
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
+    if (!user) { navigate('/login'); return; }
     fetchData();
-  }, [user, navigate, logout]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, navigate, fetchData]);
 
-  // Mapa para traduzir IDs
   const perfilMap = useMemo(() => {
     return perfis.reduce((acc, perfil) => {
       acc[perfil.id] = perfil.nome;
@@ -66,11 +71,11 @@ function AdminUsuariosPage() {
     }, {});
   }, [perfis]);
 
-  // Função para criar novo perfil
+  // Criar Perfil com Toast
   const handleCriarPerfil = async (event) => {
     event.preventDefault();
     if (!novoPerfilNome) {
-      alert('O nome do perfil não pode estar vazio.');
+      showToast('O nome do perfil não pode estar vazio.', 'error');
       return;
     }
     const token = localStorage.getItem('token');
@@ -82,35 +87,31 @@ function AdminUsuariosPage() {
         body: JSON.stringify({ nome: novoPerfilNome })
       });
       const data = await response.json();
-      alert(data.message);
+      
       if (response.ok) {
+        showToast(data.message, 'success');
         setNovoPerfilNome(''); 
         fetchData(); 
+      } else {
+        showToast(data.message, 'error');
       }
     } catch (error) {
       console.error("Erro ao criar perfil:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
-  // --- Funções de Edição ---
-
-  // 1. NOVA FUNÇÃO: Lida com a formatação da data
   const handleDataChange = (e) => {
     let valor = e.target.value.replace(/\D/g, ''); 
     if (valor.length > 8) valor = valor.slice(0, 8);
-
-    if (valor.length > 4) {
-      valor = valor.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
-    } else if (valor.length > 2) {
-      valor = valor.replace(/(\d{2})(\d{1,2})/, '$1/$2');
-    }
-    setFormDataNasc(valor); // Atualiza o estado da data do formulário
+    if (valor.length > 4) valor = valor.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+    else if (valor.length > 2) valor = valor.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+    setFormDataNasc(valor); 
   };
 
   const handleEditClick = (usuario) => {
     setEditingUser(usuario);
     setFormNome(usuario.nome);
-    // A API retorna a data já formatada (DD/MM/AAAA)
     setFormDataNasc(usuario.dataNascimento || '');
     setFormFkPerfil(usuario.fkPerfil);
     window.scrollTo(0, 0); 
@@ -123,12 +124,13 @@ function AdminUsuariosPage() {
     setFormFkPerfil('');
   };
 
+  // Atualizar Usuário com Toast
   const handleUpdateUserSubmit = async (event) => {
     event.preventDefault();
     const token = localStorage.getItem('token');
 
     if (formDataNasc && formDataNasc.length > 0 && formDataNasc.length < 10) {
-        alert('A data de nascimento deve estar no formato DD/MM/AAAA.');
+        showToast('Data incompleta (DD/MM/AAAA).', 'error');
         return;
     }
 
@@ -143,13 +145,17 @@ function AdminUsuariosPage() {
         })
       });
       const data = await response.json();
-      alert(data.message); 
+      
       if (response.ok) {
+        showToast(data.message, 'success');
         handleCancelEdit(); 
         fetchData(); 
+      } else {
+        showToast(data.message, 'error');
       }
     } catch (error) {
       console.error("Erro ao atualizar utilizador:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
@@ -162,56 +168,33 @@ function AdminUsuariosPage() {
     );
   }
 
-  // --- Renderização ---
   return (
     <div className="main-content-area">
       <div className="admin-container">
 
-        {/* Formulário de Edição */}
         {editingUser && (
           <>
             <h1 className="admin-section-title">Editando Utilizador: {editingUser.nome} (ID: {editingUser.id})</h1>
-            <div className="cadastro-box" style={{border: '2px solid var(--cor-acao-sucesso)', marginBottom: '30px'}}>
+            <div className="cadastro-box" style={{border: '2px solid #39FF14', marginBottom: '30px'}}>
               <form onSubmit={handleUpdateUserSubmit} className="form-grid">
                 <div className="input-group">
                   <label htmlFor="editNome">Nome:</label>
-                  <input 
-                    type="text" 
-                    id="editNome"
-                    value={formNome}
-                    onChange={(e) => setFormNome(e.target.value)}
-                    required
-                  />
+                  <input type="text" id="editNome" value={formNome} onChange={(e) => setFormNome(e.target.value)} required />
                 </div>
-                
-                {/* 2. CAMPO DE DATA ATUALIZADO */}
                 <div className="input-group">
                   <label htmlFor="editDataNasc">Data de Nascimento (DD/MM/AAAA)</label>
-                  <input 
-                    type="text" // Tipo 'text'
-                    id="editDataNasc"
-                    value={formDataNasc}
-                    onChange={handleDataChange} // Usa a função de formatação
-                    placeholder="DD/MM/AAAA"
-                    maxLength="10"
-                  />
+                  <input type="text" id="editDataNasc" value={formDataNasc} onChange={handleDataChange} placeholder="DD/MM/AAAA" maxLength="10" />
                 </div>
-                
                 <div className="input-group full-width">
                   <label htmlFor="editPerfil">Perfil:</label>
-                  <select 
-                    id="editPerfil" 
-                    value={formFkPerfil} 
-                    onChange={(e) => setFormFkPerfil(e.target.value)}
-                    required
-                  >
+                  <select id="editPerfil" value={formFkPerfil} onChange={(e) => setFormFkPerfil(e.target.value)} required>
                     <option value="">Selecione um perfil</option>
                     {perfis.map(p => (
                       <option key={p.id} value={p.id}>{p.nome}</option>
                     ))}
                   </select>
                 </div>
-                <div className="form-actions" style={{gridColumn: '1 / -1'}}>
+                <div className="form-actions">
                   <button type="submit" className="btn-cadastrar">Atualizar Utilizador</button>
                   <button type="button" className="btn-cancelar" onClick={handleCancelEdit}>Cancelar</button>
                 </div>
@@ -220,7 +203,6 @@ function AdminUsuariosPage() {
           </>
         )}
 
-        {/* Tabela de Utilizadores */}
         <h1 className="admin-section-title">Lista de Utilizadores</h1>
         <div className="listagem-box">
           <div className="tabela-jogos-container">
@@ -259,21 +241,13 @@ function AdminUsuariosPage() {
           </div>
         </div>
 
-        {/* Gerenciamento de Perfis */}
         <h1 className="admin-section-title list-title">Gerenciamento de Perfis</h1>
         <div className="listagem-box">
           <form onSubmit={handleCriarPerfil} className="cadastro-box" style={{ padding: '20px', marginBottom: '20px' }}>
             <div className="form-grid">
               <div className="input-group">
                 <label htmlFor="nomePerfil">Nome do Novo Perfil:</label>
-                <input 
-                  type="text" 
-                  id="nomePerfil"
-                  value={novoPerfilNome}
-                  onChange={(e) => setNovoPerfilNome(e.target.value)}
-                  placeholder="Ex: Moderador"
-                  required
-                />
+                <input type="text" id="nomePerfil" value={novoPerfilNome} onChange={(e) => setNovoPerfilNome(e.target.value)} placeholder="Ex: Moderador" required />
               </div>
               <div className="form-actions" style={{ marginTop: '20px' }}>
                 <button type="submit" className="btn-cadastrar">Criar Perfil</button>
@@ -301,6 +275,19 @@ function AdminUsuariosPage() {
         </div>
 
       </div>
+
+      {/* Componente Toast */}
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            {notification.type === 'error' ? <i className="fas fa-exclamation-circle"></i> : <i className="fas fa-check-circle"></i>}
+          </div>
+          <div className="toast-content">
+            <h4>{notification.type === 'error' ? 'Erro' : 'Sucesso'}</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

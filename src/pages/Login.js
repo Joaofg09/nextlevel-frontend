@@ -1,5 +1,5 @@
 // No arquivo: src/pages/Login.js
-// VERSÃO SEM BOTÃO VOLTAR
+// VERSÃO FINAL - Com Toasts de Erro
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,8 +8,15 @@ import { useAuth } from '../context/AuthContext';
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [notification, setNotification] = useState(null); // Estado do Toast
+
   const navigate = useNavigate();
   const auth = useAuth();
+
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => { setNotification(null); }, 3000);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault(); 
@@ -17,9 +24,7 @@ function Login() {
     try {
       const response = await fetch('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }), 
       });
 
@@ -29,11 +34,12 @@ function Login() {
         auth.login(data.token); 
         navigate('/'); 
       } else {
-        alert(data.message); 
+        // Erro de login (ex: senha errada)
+        showToast(data.message, 'error');
       }
     } catch (error) {
       console.error('Erro ao conectar:', error);
-      alert('Não foi possível conectar ao servidor. Verifique se a API está rodando.');
+      showToast('Não foi possível conectar ao servidor.', 'error');
     }
   };
 
@@ -42,7 +48,6 @@ function Login() {
       <div className="login-container">
         <div className="login-wrapper">
           
-          {/* CABEÇALHO LIMPO: Apenas o Título */}
           <div className="header">
             <h2>Iniciar Sessão</h2>
           </div>
@@ -85,6 +90,19 @@ function Login() {
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            <i className="fas fa-exclamation-circle"></i>
+          </div>
+          <div className="toast-content">
+            <h4>Erro</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
