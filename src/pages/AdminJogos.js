@@ -1,38 +1,47 @@
 // No arquivo: src/pages/AdminJogos.js
-// VERSÃO FINAL - Corrigida (useCallback)
+// VERSÃO FINAL - Com Modal de Exclusão e Toasts
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminJogos() {
+  // === ESTADOS ===
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   const [sortCriteria, setSortCriteria] = useState('id-asc');
+  
   const [showForm, setShowForm] = useState(false);
   const [formState, setFormState] = useState({
     nome: '', preco: '', fkCategoria: '', ano: '', descricao: '', fkEmpresa: ''
   });
   const [editingId, setEditingId] = useState(null); 
 
+  // 1. NOVOS ESTADOS para Modal e Toast
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [gameToDelete, setGameToDelete] = useState(null);
+  const [notification, setNotification] = useState(null);
+
   const navigate = useNavigate();
   const { logout } = useAuth();
   
+  // Função auxiliar de Notificação
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => { setNotification(null); }, 3000);
+  };
+
+  // === Mapas ===
   const categoriaMap = useMemo(() => {
-    return categorias.reduce((acc, cat) => {
-      acc[cat.id] = cat.nome;
-      return acc;
-    }, {});
+    return categorias.reduce((acc, cat) => { acc[cat.id] = cat.nome; return acc; }, {});
   }, [categorias]);
 
   const empresaMap = useMemo(() => {
-    return empresas.reduce((acc, emp) => {
-      acc[emp.id] = emp.nome;
-      return acc;
-    }, {});
+    return empresas.reduce((acc, emp) => { acc[emp.id] = emp.nome; return acc; }, {});
   }, [empresas]);
 
   const categoriasParaDropdown = useMemo(() => {
@@ -49,13 +58,14 @@ function AdminJogos() {
     return listaLimpa;
   }, [categorias]);
 
-  // 1. Envolvemos fetchData em useCallback
+  // === Fetch Data ===
   const fetchData = useCallback(() => {
     const token = localStorage.getItem('token');
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
           if (res.status === 401) {
+            // Aqui mantemos o alert pois é um erro de sessão crítica
             alert('Sessão expirada.');
             logout(); 
             navigate('/login');
@@ -77,26 +87,19 @@ function AdminJogos() {
       if (Array.isArray(empresasData)) setEmpresas(empresasData);
     })
     .catch(err => console.error("Erro ao buscar dados:", err.message));
-  }, [logout, navigate]); // Dependências do useCallback
+  }, [logout, navigate]);
 
-  // 2. Adicionamos fetchData nas dependências
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  // === Lógica do Formulário ===
   const toggleForm = () => {
-    if (showForm) {
-      clearForm();
-      setShowForm(false);
-    } else {
-      setShowForm(true);
-    }
+    if (showForm) { clearForm(); setShowForm(false); } else { setShowForm(true); }
   };
 
   const clearForm = () => {
-    setFormState({
-      nome: '', preco: '', fkCategoria: '', ano: '', descricao: '', fkEmpresa: ''
-    });
+    setFormState({ nome: '', preco: '', fkCategoria: '', ano: '', descricao: '', fkEmpresa: '' });
     setEditingId(null);
   };
 
@@ -119,7 +122,7 @@ function AdminJogos() {
     const anoInt = parseInt(formState.ano);
     const anoAtual = new Date().getFullYear();
     if (anoInt > anoAtual) {
-      alert(`O ano de lançamento não pode ser futuro.`);
+      showToast(`O ano de lançamento não pode ser futuro.`, 'error');
       return; 
     }
 
@@ -146,39 +149,51 @@ function AdminJogos() {
       });
 
       if (response.ok) {
-        alert(`Jogo ${isUpdating ? 'atualizado' : 'cadastrado'} com sucesso!`);
+        showToast(`Jogo ${isUpdating ? 'atualizado' : 'cadastrado'} com sucesso!`, 'success');
         clearForm();
         setShowForm(false);
         fetchData(); 
       } else {
         const data = await response.json();
-        alert(`Erro: ${data.message || 'Erro desconhecido'}`);
+        showToast(`Erro: ${data.message || 'Erro desconhecido'}`, 'error');
       }
     } catch (error) {
       console.error("Erro ao submeter formulário:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
-  const handleDeleteClick = async (jogo) => {
-    if (!window.confirm(`Tem certeza que deseja excluir "${jogo.nome}"?`)) return;
+  // 2. Função que ABRE o Modal de Exclusão
+  const handleDeleteClick = (jogo) => {
+    setGameToDelete(jogo);
+    setShowDeleteModal(true);
+  };
+
+  // 3. Função que CONFIRMA a Exclusão
+  const confirmDelete = async () => {
+    setShowDeleteModal(false);
+    if (!gameToDelete) return;
+
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/jogos/${jogo.id}`, {
+      const response = await fetch(`http://localhost:3000/api/v1/jogos/${gameToDelete.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        alert('Jogo excluído com sucesso!');
-        setJogos(jogosAtuais => jogosAtuais.filter(j => j.id !== jogo.id));
+        showToast('Jogo excluído com sucesso!', 'success');
+        setJogos(jogosAtuais => jogosAtuais.filter(j => j.id !== gameToDelete.id));
       } else {
         const data = await response.json();
-        alert(`Erro: ${data.message}`);
+        showToast(`Erro: ${data.message}`, 'error');
       }
     } catch (error) {
       console.error("Erro ao excluir jogo:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
+  // === Filtros ===
   const jogosFiltrados = useMemo(() => {
     let lista = [...jogos];
     if (searchTerm) {
@@ -208,11 +223,7 @@ function AdminJogos() {
             className={`btn-novo-jogo ${showForm ? 'cancelar' : ''}`} 
             onClick={toggleForm}
           >
-            {showForm ? (
-              <><i className="fas fa-times"></i> Fechar</>
-            ) : (
-              <><i className="fas fa-plus"></i> Novo Jogo</>
-            )}
+            {showForm ? <><i className="fas fa-times"></i> Fechar</> : <><i className="fas fa-plus"></i> Novo Jogo</>}
           </button>
         </div>
 
@@ -352,6 +363,38 @@ function AdminJogos() {
           </div>
         </div>
       </div>
+
+      {/* 4. MODAL DE EXCLUSÃO */}
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Excluir Jogo?</h3>
+            <p>
+              Tem certeza que deseja excluir <strong>"{gameToDelete?.nome}"</strong>?
+              <br />
+              <span style={{color: '#e53935', fontSize: '0.9em'}}>Esta ação é permanente.</span>
+            </p>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
+              <button className="btn-confirm" onClick={confirmDelete} style={{backgroundColor: '#e53935', color: '#fff'}}>Excluir</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. NOTIFICAÇÃO TOAST */}
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            {notification.type === 'error' ? <i className="fas fa-exclamation-circle"></i> : <i className="fas fa-check-circle"></i>}
+          </div>
+          <div className="toast-content">
+            <h4>{notification.type === 'error' ? 'Ops!' : 'Sucesso!'}</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

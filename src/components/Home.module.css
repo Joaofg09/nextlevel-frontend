@@ -1,0 +1,67 @@
+/* ---------- SEÇÕES ---------- */
+.section-h1{
+    margin-left: 70px;  
+    font-size: 28px;
+    color: #fff;
+    font-weight: 700;
+}
+
+.section {
+    padding: 30px 60px;
+}
+
+.section h2 {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.card-link {
+    text-decoration: none; 
+    color: inherit; 
+}
+
+.card {
+    /* Estilos dos blocos vermelhos que sumiram */
+    background: linear-gradient(180deg, #b22222, #600000); 
+    height: 200px; /* Altura do bloco */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white; /* Cor do texto */
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3)
+}
+
+.categoryGrid .card { 
+    min-width: 250px; 
+    height: 150px;
+    /* Garante que o texto fique centralizado */
+    align-items: center; 
+    justify-content: center;
+    display: flex;
+    /* Outras customizações visuais, se necessário */
+}
+
+.categoryGrid .card:hover {
+    transform: scale(1.05);
+}
+
+.categoryGrid .card-link {
+    /* Mínimo que o card pode ter é 250px. O flex: 0 0 auto garante que ele não encolha. */
+    flex: 0 0 auto;
+    min-width: 200px; /* Ajuste este valor até que apenas 4 caibam na sua tela */
+    height: 120px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}

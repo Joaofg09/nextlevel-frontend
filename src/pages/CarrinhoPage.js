@@ -1,20 +1,32 @@
 // No arquivo: src/pages/CarrinhoPage.js
-// VERSÃO FINAL - Corrigida (useCallback)
+// VERSÃO 6 - Modal Moderno e Toasts
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Imagem genérica local
 const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [jogosMap, setJogosMap] = useState(new Map());
+  
+  // 1. Novos Estados para o Modal e Notificação
+  const [showModal, setShowModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [notification, setNotification] = useState(null);
+
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const [jogosMap, setJogosMap] = useState(new Map());
+  // Função auxiliar de Notificação (Toast)
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
 
   const fetchData = useCallback(() => {
     setLoading(true);
@@ -60,20 +72,37 @@ function CarrinhoPage() {
     fetchData();
   }, [fetchData]); 
 
-  const handleRemoveItem = (gameId) => {
-    if (!window.confirm("Tem certeza que deseja remover este item do carrinho?")) return;
+  // 2. Função chamada ao clicar em "Remover" (Abre o Modal)
+  const handleRemoveClick = (gameId) => {
+    setItemToDelete(gameId);
+    setShowModal(true);
+  };
+
+  // 3. Função chamada ao confirmar no Modal (Faz a exclusão)
+  const confirmRemove = async () => {
+    setShowModal(false); // Fecha o modal
     const token = localStorage.getItem('token');
     
-    fetch(`http://localhost:3000/api/v1/carrinho/${gameId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      fetchData(); 
-    })
-    .catch(err => console.error("Erro ao remover item:", err));
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/carrinho/${itemToDelete}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast("Item removido do carrinho!", 'success');
+        fetchData(); // Atualiza a lista
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      console.error("Erro ao remover item:", error);
+      showToast("Erro de conexão.", 'error');
+    } finally {
+      setItemToDelete(null);
+    }
   };
   
   if (loading) {
@@ -132,7 +161,8 @@ function CarrinhoPage() {
                 <div className="item-actions">
                   <button 
                     className="remove-btn"
-                    onClick={() => handleRemoveItem(item.fkJogo)}
+                    // Chama a função que abre o modal
+                    onClick={() => handleRemoveClick(item.fkJogo)}
                   >
                     Remover
                   </button>
@@ -153,6 +183,38 @@ function CarrinhoPage() {
           </div>
         </div>
       </div>
+
+      {/* 4. MODAL DE CONFIRMAÇÃO */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Remover Item?</h3>
+            <p>
+              Tem certeza que deseja remover este jogo do seu carrinho?
+              <br />
+              <span style={{color: '#e53935', fontSize: '0.9em'}}>Esta ação não pode ser desfeita.</span>
+            </p>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancelar</button>
+              <button className="btn-confirm" onClick={confirmRemove}>Sim, Remover</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. NOTIFICAÇÃO TOAST */}
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            {notification.type === 'error' ? <i className="fas fa-exclamation-circle"></i> : <i className="fas fa-check-circle"></i>}
+          </div>
+          <div className="toast-content">
+            <h4>{notification.type === 'error' ? 'Ops!' : 'Sucesso!'}</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

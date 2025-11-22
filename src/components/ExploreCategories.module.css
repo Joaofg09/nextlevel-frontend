@@ -1,0 +1,88 @@
+/* src/components/ExploreCategories.module.css */
+
+.exploreSection {
+    padding: 40px 20px;
+    font-weight: bold;
+    background-color: #0c0c0c; /* Mantenha o fundo da seção escuro */
+    color: #ffffff;
+}
+
+.exploreSection h2 {
+    margin-left: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: left;
+    margin-top: 0; 
+    padding-left: 30px;
+}
+
+.categoryGrid {
+    display: flex;
+    gap: 15px; /* Espaço entre os cards */
+    overflow-x: auto; /* Permite rolagem lateral */
+    padding-bottom: 10px;
+    flex-wrap: nowrap; 
+    padding-bottom: 10px;
+    padding-right: 200px; 
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+}
+.categoryGrid::-webkit-scrollbar {
+    display: none;
+}
+
+.categoryGrid a {
+    min-width: 350px; 
+    flex: 0 0 auto; 
+    height: 200px; 
+    
+}
+
+/* Garante que o conteúdo (texto) dentro do card esteja centralizado */
+.categoryGrid .card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.carouselContainer {
+    position: relative; /* ISTO É CRÍTICO PARA POSICIONAR AS SETAS */
+    padding: 0 40px; /* Adiciona espaço nas laterais para as setas */
+    /* Você pode ajustar o padding se quiser as setas mais próximas/distantes */
+}
+
+/* --- Estilo das Setas --- */
+.arrow {
+    position: absolute;
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%);
+    z-index: 15; /* Garante que fique acima dos cards */
+    
+    /* Adapte o estilo para combinar com o seu tema */
+    background: rgba(0, 0, 0, 0.5); /* Fundo escuro sutil */
+    color: #ffffff; /* Seta branca */
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    padding: 10px;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    line-height: 25px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.arrow.left {
+    left: 0; /* Posiciona no canto esquerdo */
+}
+
+.arrow.right {
+    right: 0; /* Posiciona no canto direito */
+}

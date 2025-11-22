@@ -1,5 +1,5 @@
 // No arquivo: src/pages/JogoDetalhesPage.js
-// VERSÃO FINAL - SEM IMAGEM (Apenas Gradiente)
+// VERSÃO 7 - Verifica se já possui o jogo
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -11,12 +11,21 @@ function JogoDetalhesPage() {
   const [avaliacoes, setAvaliacoes] = useState(null);
   const [isFavorited, setIsFavorited] = useState(false);
   
+  // 1. NOVO ESTADO: Verifica se o usuário já comprou o jogo
+  const [hasGame, setHasGame] = useState(false);
+
   const [nota, setNota] = useState(0);
   const [hoverNota, setHoverNota] = useState(0);
   const [comentario, setComentario] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => { setNotification(null); }, 3000);
+  };
 
   const fetchData = useCallback(() => {
     const token = localStorage.getItem('token');
@@ -38,15 +47,28 @@ function JogoDetalhesPage() {
       .catch(err => console.error("Erro ao buscar avaliações:", err.message));
 
     if (user) {
+      // Verifica Wishlist
       secureFetch('http://localhost:3000/api/v1/lista-desejo')
         .then(data => {
           if (Array.isArray(data)) {
             const gameIdNum = parseInt(id);
-            const found = data.some(item => item.id === gameIdNum);
-            setIsFavorited(found); 
+            setIsFavorited(data.some(item => item.id === gameIdNum)); 
           }
         })
         .catch(err => console.error("Erro ao buscar wishlist:", err.message));
+
+      // 2. NOVA VERIFICAÇÃO: Verifica Biblioteca
+      secureFetch('http://localhost:3000/api/v1/usuarios/my/games')
+        .then(data => {
+          if (Array.isArray(data)) {
+            const gameIdNum = parseInt(id);
+            // A estrutura da biblioteca é { jogo: { id: ... }, chaveAtivacao: ... }
+            //
+            const userHasIt = data.some(item => item.jogo.id === gameIdNum);
+            setHasGame(userHasIt);
+          }
+        })
+        .catch(err => console.error("Erro ao buscar biblioteca:", err.message));
     }
   }, [id, user, logout, navigate]);
 
@@ -56,6 +78,11 @@ function JogoDetalhesPage() {
 
   const handleAddToCart = async () => {
     if (!user) return navigate('/login');
+    if (hasGame) {
+        showToast("Você já possui este jogo!", 'error');
+        return;
+    }
+
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:3000/api/v1/carrinho/add', {
@@ -64,9 +91,15 @@ function JogoDetalhesPage() {
         body: JSON.stringify({ jogoId: jogo.id })
       });
       const data = await response.json();
-      alert(data.message);
+      
+      if (response.ok) {
+        showToast(data.message, 'success');
+      } else {
+        showToast(data.message, 'error');
+      }
     } catch (error) {
-      console.error("Erro ao adicionar ao carrinho:", error);
+      console.error("Erro ao adicionar:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
@@ -83,10 +116,10 @@ function JogoDetalhesPage() {
         });
         const data = await response.json();
         if (response.ok) {
-          alert(data.message);
+          showToast("Removido da lista de desejos!", 'success');
           setIsFavorited(false); 
         } else {
-          alert(data.error);
+          showToast(data.error, 'error');
         }
       } catch (error) {
         console.error("Erro ao remover da lista:", error);
@@ -100,10 +133,10 @@ function JogoDetalhesPage() {
         });
         const data = await response.json();
         if (response.ok) {
-          alert("Jogo adicionado à lista de desejos!");
+          showToast("Adicionado à lista de desejos!", 'success');
           setIsFavorited(true); 
         } else {
-          alert(data.error);
+          showToast(data.error, 'error');
         }
       } catch (error) {
         console.error("Erro ao adicionar à lista:", error);
@@ -115,7 +148,7 @@ function JogoDetalhesPage() {
     event.preventDefault();
     if (!user) return navigate('/login');
     if (nota === 0) {
-        alert("Por favor, selecione uma nota clicando nas estrelas.");
+        showToast("Selecione uma nota!", 'error');
         return;
     }
 
@@ -127,11 +160,14 @@ function JogoDetalhesPage() {
         body: JSON.stringify({ jogoId: jogo.id, nota, comentario })
       });
       const data = await response.json();
-      alert(data.message);
+      
       if (response.ok) {
+        showToast(data.message, 'success');
         setComentario(""); 
         setNota(0);
         fetchData(); 
+      } else {
+        showToast(data.message, 'error');
       }
     } catch (error) {
       console.error("Erro ao enviar avaliação:", error);
@@ -148,13 +184,13 @@ function JogoDetalhesPage() {
 
   return (
     <div className="main-container">
-      {/* === HERO BANNER SEM IMAGEM === */}
       <div 
         className="game-hero" 
         id="game-hero" 
         style={{
-          background: 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%)', // Gradiente escuro elegante
-          borderBottom: '4px solid #e53935' // Linha vermelha de destaque
+          background: 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%)',
+          borderBottom: '4px solid #e53935',
+          position: 'relative'
         }}
       >
         <h1 id="game-title">{jogo.nome}</h1>
@@ -217,16 +253,31 @@ function JogoDetalhesPage() {
         <aside className="game-sidebar">
           <div className="purchase-box">
             <span className="price-tag" id="game-price">${jogo.preco.toFixed(2)}</span>
-            <button className="buy-button" id="add-to-cart-btn" onClick={handleAddToCart}>
-              Comprar
-            </button>
-            <i 
-              className={`icon favorite-icon ${isFavorited ? 'active' : ''}`}
-              onClick={handleToggleWishlist} 
-              style={{cursor: 'pointer'}}
-            >
-              ❤
-            </i>
+            
+            {/* 3. BOTÃO INTELIGENTE */}
+            {hasGame ? (
+                <button className="buy-button" style={{backgroundColor: '#555', cursor: 'default'}} disabled>
+                    Adquirido
+                </button>
+            ) : (
+                <button className="buy-button" id="add-to-cart-btn" onClick={handleAddToCart}>
+                    Adicionar ao Carrinho
+                </button>
+            )}
+            
+            {/* 4. CORAÇÃO INTELIGENTE */}
+            {hasGame ? (
+                 <i className="icon favorite-icon" title="Você já tem este jogo" style={{color: '#444', cursor: 'default'}}>✔</i>
+            ) : (
+                <i 
+                    className={`icon favorite-icon ${isFavorited ? 'active' : ''}`}
+                    onClick={handleToggleWishlist} 
+                    style={{cursor: 'pointer'}}
+                    title="Lista de Desejos"
+                >
+                ❤
+                </i>
+            )}
           </div>
           <div className="details-box" id="game-details">
             <p><strong>Lançamento:</strong> {jogo.ano}</p>
@@ -237,6 +288,18 @@ function JogoDetalhesPage() {
           </div>
         </aside>
       </div>
+
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            {notification.type === 'error' ? <i className="fas fa-exclamation-circle"></i> : <i className="fas fa-check-circle"></i>}
+          </div>
+          <div className="toast-content">
+            <h4>{notification.type === 'error' ? 'Ops!' : 'Sucesso!'}</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

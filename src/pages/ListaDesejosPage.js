@@ -1,15 +1,28 @@
 // No arquivo: src/pages/ListaDesejosPage.js
-// VERSÃO FINAL - Corrigida (useCallback + Remoção de Link não usado)
+// VERSÃO FINAL - Com Imagem Genérica
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom'; // 'Link' removido
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+// 1. IMAGEM GENÉRICA
+const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function ListaDesejosPage() {
   const [listaDesejos, setListaDesejos] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [showModal, setShowModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [notification, setNotification] = useState(null);
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const showToast = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => { setNotification(null); }, 3000);
+  };
 
   const fetchListaDesejos = useCallback(() => {
     setLoading(true);
@@ -29,36 +42,40 @@ function ListaDesejosPage() {
       setLoading(false);
     })
     .catch(err => {
-      console.error("Erro ao buscar lista de desejos:", err.message);
+      console.error("Erro ao buscar lista:", err.message);
       setLoading(false);
     });
   }, [logout, navigate]);
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    } else {
-      fetchListaDesejos();
-    }
-  }, [user, navigate, fetchListaDesejos]); // Dependências corretas
+    if (!user) { navigate('/login'); } else { fetchListaDesejos(); }
+  }, [user, navigate, fetchListaDesejos]);
 
-  const handleRemove = async (jogoId) => {
-    if (!window.confirm("Remover este jogo da sua lista de desejos?")) return;
-    
+  const handleRemoveClick = (jogoId) => {
+    setItemToDelete(jogoId);
+    setShowModal(true);
+  };
+
+  const confirmRemove = async () => {
+    setShowModal(false);
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:3000/api/v1/lista-desejo', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ jogoId })
+        body: JSON.stringify({ jogoId: itemToDelete })
       });
       const data = await response.json();
-      alert(data.message);
+      
       if (response.ok) {
+        showToast(data.message, 'success');
         fetchListaDesejos(); 
+      } else {
+        showToast(data.message, 'error');
       }
     } catch (error) {
       console.error("Erro ao remover:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
@@ -71,9 +88,15 @@ function ListaDesejosPage() {
         body: JSON.stringify({ jogoId })
       });
       const data = await response.json();
-      alert(data.message);
+      
+      if (response.ok) {
+        showToast(data.message, 'success');
+      } else {
+        showToast(data.message, 'error');
+      }
     } catch (error) {
-      console.error("Erro ao adicionar ao carrinho:", error);
+      console.error("Erro ao adicionar:", error);
+      showToast("Erro de conexão.", 'error');
     }
   };
 
@@ -94,29 +117,17 @@ function ListaDesejosPage() {
         <h1>Sua Lista De Desejos</h1>
         
         <div className="controls-bar">
-          <label className="select-all-label">
-            <input type="checkbox" id="selectAllCheckbox" />
-            Selecionar Tudo
-          </label>
-          <div className="search-box">
-            <input type="text" id="searchInput" placeholder="Procurar na lista" />
-          </div>
-          <div className="utility-buttons">
-            <button className="remove-all-button" id="removeAllButton">
-              Remover Selecionados
-            </button>
-          </div>
+            <p style={{color: '#ccc', margin: 0}}>Gerencie os seus jogos favoritos</p>
         </div>
         
         <div className="items-list" id="itemsList">
           {listaDesejos.length === 0 ? (
-            <p style={{textAlign: 'center', marginTop: '20px'}}>Sua lista de desejos está vazia.</p>
+            <p style={{textAlign: 'center', marginTop: '20px', color: '#aaa'}}>Sua lista de desejos está vazia.</p>
           ) : (
             listaDesejos.map(jogo => (
-              <div className="wishlist-item" data-title={jogo.nome} key={jogo.id}>
-                <input type="checkbox" className="item-checkbox" />
-                
-                <img src="https://via.placeholder.com/180x60/888/FFFFFF?text=Game" alt={jogo.nome} style={{width: '180px', borderRadius: '3px'}}/>
+              <div className="wishlist-item" key={jogo.id}>
+                {/* 2. IMAGEM ATUALIZADA */}
+                <img src={GENERIC_IMAGE} alt={jogo.nome} style={{width: '180px', height: '100px', objectFit: 'cover', borderRadius: '3px'}}/>
                 
                 <div className="item-card-right">
                   <p className="item-title-main">{jogo.nome}</p>
@@ -131,7 +142,7 @@ function ListaDesejosPage() {
                   </button>
                   <button 
                     className="action-button remove-item-button"
-                    onClick={() => handleRemove(jogo.id)}
+                    onClick={() => handleRemoveClick(jogo.id)}
                   >
                     Remover
                   </button>
@@ -141,6 +152,33 @@ function ListaDesejosPage() {
           )}
         </div>
       </div>
+
+      {/* MODAL */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Remover Favorito?</h3>
+            <p>Tem certeza que deseja remover este jogo da sua lista de desejos?</p>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancelar</button>
+              <button className="btn-confirm" onClick={confirmRemove}>Sim, Remover</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TOAST */}
+      {notification && (
+        <div className={`toast-notification ${notification.type}`}>
+          <div className="toast-icon">
+            {notification.type === 'error' ? <i className="fas fa-exclamation-circle"></i> : <i className="fas fa-check-circle"></i>}
+          </div>
+          <div className="toast-content">
+            <h4>{notification.type === 'error' ? 'Ops!' : 'Sucesso!'}</h4>
+            <p>{notification.message}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
