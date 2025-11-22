@@ -1,5 +1,5 @@
 // No arquivo: src/pages/AdminEmpresas.js
-// VERSÃO 2 - CRUD Completo
+// VERSÃO 3 - Com Modal de Confirmação "Bonito"
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,20 +8,20 @@ import { useAuth } from '../context/AuthContext';
 function AdminEmpresas() {
   // === ESTADOS ===
   const [empresas, setEmpresas] = useState([]);
-  const [nome, setNome] = useState(''); // Estado para o formulário
-  const [editingId, setEditingId] = useState(null); // Guarda o ID da empresa em edição
+  const [nome, setNome] = useState(''); 
+  const [editingId, setEditingId] = useState(null); 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState('id-asc');
+
+  // 1. NOVO ESTADO: Controla a visibilidade do Modal
+  const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // =================================================================
-  // FUNÇÃO PARA CARREGAR DADOS
-  // =================================================================
+  // === Carregar Dados ===
   const fetchEmpresas = () => {
     const token = localStorage.getItem('token');
-    
     fetch('http://localhost:3000/api/v1/empresas', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
@@ -40,19 +40,26 @@ function AdminEmpresas() {
 
   useEffect(() => {
     fetchEmpresas();
-  }, [navigate, logout]); // Dependências corretas
+  }, [navigate, logout]);
 
-  // =================================================================
-  // FUNÇÃO DE CADASTRO E EDIÇÃO
-  // =================================================================
-  const handleSubmit = async (event) => {
+  // === Lógica do Formulário ===
+
+  // 2. Função chamada pelo formulário (apenas abre o modal)
+  const handleFormSubmit = (event) => {
     event.preventDefault();
-    const token = localStorage.getItem('token');
+    // Abre o modal para pedir confirmação
+    setShowModal(true);
+  };
 
+  // 3. Função chamada ao clicar em "Sim" no modal (Faz o envio real)
+  const confirmCadastro = async () => {
+    setShowModal(false); // Fecha o modal
+    
+    const token = localStorage.getItem('token');
     const isUpdating = editingId !== null;
     const url = isUpdating 
-      ? `http://localhost:3000/api/v1/empresas/${editingId}` // Rota de Update
-      : 'http://localhost:3000/api/v1/empresas';          // Rota de Create
+      ? `http://localhost:3000/api/v1/empresas/${editingId}`
+      : 'http://localhost:3000/api/v1/empresas';
     const method = isUpdating ? 'PUT' : 'POST';
 
     try {
@@ -62,14 +69,14 @@ function AdminEmpresas() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ nome: nome }), // A API só aceita 'nome'
+        body: JSON.stringify({ nome: nome }),
       });
 
       if (response.ok) {
         alert(`Empresa ${isUpdating ? 'atualizada' : 'cadastrada'} com sucesso!`);
-        setNome(''); // Limpa o formulário
+        setNome('');
         setEditingId(null);
-        fetchEmpresas(); // Atualiza a lista
+        fetchEmpresas();
       } else {
         const data = await response.json();
         alert(`Erro ao salvar: ${data.message || 'Erro desconhecido'}`);
@@ -79,13 +86,9 @@ function AdminEmpresas() {
     }
   };
 
-  // =================================================================
-  // FUNÇÃO DE EXCLUSÃO
-  // =================================================================
+  // Função de Exclusão (mantém o window.confirm padrão ou pode mudar depois)
   const handleDeleteClick = async (empresa) => {
-    if (!window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome}"?`)) {
-      return;
-    }
+    if (!window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome}"?`)) return;
     const token = localStorage.getItem('token');
     try {
       const response = await fetch(`http://localhost:3000/api/v1/empresas/${empresa.id}`, {
@@ -94,25 +97,23 @@ function AdminEmpresas() {
       });
       if (response.ok) {
         alert('Empresa excluída com sucesso!');
-        fetchEmpresas(); // Atualiza a lista
+        fetchEmpresas();
       } else {
         const data = await response.json();
-        alert(`Erro ao excluir: ${data.message || 'Erro desconhecido'}`);
+        alert(`Erro: ${data.message}`);
       }
     } catch (error) {
-      console.error("Erro ao excluir empresa:", error);
+      console.error("Erro ao excluir:", error);
     }
   };
 
-  // =================================================================
-  // FUNÇÕES DE EDIÇÃO E FILTRO
-  // =================================================================
   const handleEditClick = (empresa) => {
     setNome(empresa.nome);
     setEditingId(empresa.id);
     window.scrollTo(0, 0);
   };
 
+  // === Filtros ===
   const empresasFiltradas = useMemo(() => {
     let lista = [...empresas];
     if (searchTerm) {
@@ -121,14 +122,12 @@ function AdminEmpresas() {
     if (sortCriteria === 'nome-asc') {
       lista.sort((a, b) => a.nome.localeCompare(b.nome));
     } else {
-      lista.sort((a, b) => a.id - b.id); // 'id-asc'
+      lista.sort((a, b) => a.id - b.id);
     }
     return lista;
   }, [empresas, searchTerm, sortCriteria]);
 
-  // =================================================================
-  // RENDERIZAÇÃO (JSX)
-  // =================================================================
+  // === Renderização ===
   return (
     <div className="main-content-area">
       <div className="admin-container">
@@ -136,12 +135,13 @@ function AdminEmpresas() {
         <h1 className="admin-section-title">
           {editingId ? `Editando Empresa (ID: ${editingId})` : 'Cadastrar Nova Empresa'}
         </h1>
+        
         <div className="cadastro-box">
-          <form id="cadastro-empresa-form" onSubmit={handleSubmit}>
+          {/* O onSubmit chama handleFormSubmit, que abre o modal */}
+          <form id="cadastro-empresa-form" onSubmit={handleFormSubmit}>
             <div className="form-grid">
-              {/* Formulário simplificado para bater com a API */}
               <div className="input-group full-width">
-                <label htmlFor="nome">Nome:</label>
+                <label htmlFor="nome">Nome da Empresa:</label>
                 <input type="text" id="nome" name="nome" required 
                        value={nome} onChange={(e) => setNome(e.target.value)} />
               </div>
@@ -149,17 +149,35 @@ function AdminEmpresas() {
             
             <div className="form-actions">
               <button type="submit" className="btn-cadastrar-empresa">
-                {editingId ? 'Atualizar Empresa' : 'Cadastrar Empresa'}
+                {editingId ? 'Atualizar' : 'Cadastrar'}
               </button>
               {editingId && (
                 <button type="button" className="btn-cancelar" onClick={() => { setNome(''); setEditingId(null); }}>
-                  Cancelar Edição
+                  Cancelar
                 </button>
               )}
             </div>
           </form>
         </div>
         
+        {/* 4. O POP-UP (MODAL) */}
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Confirmação</h3>
+              <p>
+                Tem certeza que deseja {editingId ? 'atualizar' : 'adicionar'} a empresa 
+                <br/>
+                <strong style={{color: '#39FF14', fontSize: '1.2em'}}>"{nome}"</strong>?
+              </p>
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancelar</button>
+                <button className="btn-confirm" onClick={confirmCadastro}>Sim, Confirmar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <h1 className="admin-section-title list-title">Listar Empresas</h1>
         
         <div className="listagem-box">
@@ -204,12 +222,14 @@ function AdminEmpresas() {
                       <i 
                         className="fas fa-edit action-icon icon-edit"
                         onClick={() => handleEditClick(emp)}
+                        style={{cursor: 'pointer'}}
                       ></i>
                     </td>
                     <td>
                       <i 
                         className="fas fa-trash-alt action-icon icon-delete"
                         onClick={() => handleDeleteClick(emp)}
+                        style={{cursor: 'pointer'}}
                       ></i>
                     </td>
                   </tr>

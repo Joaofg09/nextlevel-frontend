@@ -1719,43 +1719,7 @@ input[type="checkbox"]:checked::before {
     padding: 20px;
     border-radius: 8px;
 }
-.filter-bar {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-    align-items: center;
-}
-.search-input-group {
-    position: relative;
-    flex-grow: 1;
-}
-.search-input-group input {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--cor-input-admin);
-    border: 1px solid var(--cor-borda-admin);
-    color: var(--cor-texto-principal);
-    border-radius: 4px;
-    font-size: 1em; /* Garante que o texto não seja pequeno */
-    outline: none;
 
-    /* Mantém o espaço para o ícone de lupa */
-    padding-left: 35px;
-}
-.search-input-group i {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--cor-texto-secundario);
-}
-.select-filter {
-    padding: 10px;
-    background-color: var(--cor-input-admin);
-    border: 1px solid var(--cor-borda-admin);
-    color: var(--cor-texto-principal);
-    border-radius: 4px;
-}
 
 /* Estilo da Tabela */
 .tabela-jogos {
@@ -2062,45 +2026,421 @@ input[type="checkbox"]:checked::before {
     align-items: center;
     color: var(--cor-texto-secundario);
 }
-.select-filter {
-    width: 100%;
-    padding: 8px;
-    background-color: var(--cor-input-admin);
-    border: 1px solid var(--cor-borda-admin);
-    color: var(--cor-texto-principal);
-    border-radius: 4px;
+
+/* --- MELHORIAS VISUAIS DO ADMIN (Adicione ao final do index.css) --- */
+
+
+
+
+/* 4. Tabela Moderna */
+.tabela-jogos-container {
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    overflow: hidden; /* Arredonda os cantos da tabela */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Estilo do input de busca no filtro */
-.search-input-group {
-    background-color: var(--cor-input-admin);
+.tabela-jogos {
+    width: 100%;
+    border-collapse: separate; /* Permite bordas arredondadas */
+    border-spacing: 0;
+}
+
+.tabela-jogos thead th {
+    background-color: #222; /* Cabeçalho mais escuro */
+    color: #eee;
+    padding: 18px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e53935; /* Linha de destaque vermelha */
+}
+
+.tabela-jogos tbody tr {
+    transition: background-color 0.2s;
+}
+
+.tabela-jogos tbody tr:hover {
+    background-color: #333; /* Efeito hover na linha */
+}
+
+.tabela-jogos tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #444;
+    color: #ccc;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.tabela-jogos tbody tr:last-child td {
+    border-bottom: none; /* Remove borda da última linha */
+}
+
+/* Ícones de Ação (Alinhados e coloridos) */
+.action-icon {
+    padding: 8px;
     border-radius: 4px;
-    border: 1px solid var(--cor-borda-admin);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.icon-edit {
+    color: #4facfe; /* Azul claro */
+}
+.icon-edit:hover {
+    background-color: rgba(79, 172, 254, 0.1);
+}
+
+.icon-delete {
+    color: #ff5252; /* Vermelho claro */
+}
+.icon-delete:hover {
+    background-color: rgba(255, 82, 82, 0.1);
+}
+/* --- CORREÇÃO DE FILTROS E PESQUISA (Substitua o bloco anterior) --- */
+
+/* 1. Container da Barra */
+.filter-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: center;
+    background-color: #2c2c2c;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 2. Grupo de Pesquisa (O Container "Invisível") */
+.search-input-group {
+    flex-grow: 2;
+    position: relative;
+    /* Removemos qualquer borda ou fundo deste container para evitar a "caixa dupla" */
+    border: none; 
+    background: transparent;
+    padding: 0;
+    display: flex; /* Garante que o input ocupe a altura correta */
+    align-items: center;
+}
+
+/* 3. O Campo de Input (A "Caixa" Real) */
+.search-input-group input {
+    width: 100%;
+    height: 45px; /* Altura fixa para igualar aos dropdowns */
+    padding: 0 15px 0 40px; /* Padding esquerdo maior para o ícone */
+    
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    
+    /* Garante que o padding não aumente o tamanho total */
+    box-sizing: border-box; 
+    transition: border-color 0.3s;
+}
+
+.search-input-group input:focus {
+    border-color: #e53935;
+}
+
+/* 4. O Ícone de Lupa */
+.search-input-group i {
+    position: absolute;
+    left: 12px;
+    /* Centraliza verticalmente de forma absoluta */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 14px;
+    z-index: 1; /* Garante que fique acima do input */
+    pointer-events: none;
+}
+
+/* 5. Dropdowns (Selects) */
+.select-filter {
+    flex-grow: 1;
+    max-width: 200px;
+    height: 45px; /* MESMA altura do input */
+    padding: 0 15px; /* Padding lateral igual */
+    
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    color: #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box; /* Crucial para alinhar */
+}
+
+.select-filter:focus {
+    border-color: #e53935;
+}
+/* --- FORMULÁRIO COLAPSÁVEL (Acordeão) --- */
+
+/* Cabeçalho com o botão de adicionar */
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+.header-flex h1 {
+    margin: 0; /* Remove margem padrão para alinhar */
+}
+
+/* Botão Moderno de "Novo Jogo" */
+.btn-novo-jogo {
+    background-color: #39FF14; /* Verde Neon */
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* Borda arredondada (estilo pílula) */
+    font-weight: 700;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 0 10px;
-    margin-bottom: 15px;
+    gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(57, 255, 20, 0.2);
 }
-.search-input-group input {
-    padding: 10px;
-    background-color: var(--cor-input-admin);
-    border: 1px solid var(--cor-borda-admin);
-    color: var(--cor-texto-principal);
-    border-radius: 4px;
 
-    /* Garantias de alinhamento e tamanho */
+.btn-novo-jogo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(57, 255, 20, 0.3);
+}
+
+.btn-novo-jogo.cancelar {
+    background-color: #e53935; /* Vermelho se for para fechar */
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+}
+
+/* Container da Animação */
+.form-collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    opacity: 0;
+    margin-bottom: 0;
+}
+
+.form-collapsible.open {
+    max-height: 1000px; /* Um valor alto o suficiente para caber o formulário */
+    opacity: 1;
+    margin-bottom: 30px;
+}
+
+/* O conteúdo do formulário */
+.form-content {
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #444;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+/* --- FORMULÁRIO COLAPSÁVEL (Acordeão) --- */
+
+/* Cabeçalho com o botão de adicionar */
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+.header-flex h1 {
+    margin: 0; /* Remove margem padrão para alinhar */
+}
+
+/* Botão Moderno de "Novo Jogo" */
+.btn-novo-jogo {
+    background-color: #39FF14; /* Verde Neon */
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* Borda arredondada (estilo pílula) */
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(57, 255, 20, 0.2);
+}
+
+.btn-novo-jogo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(57, 255, 20, 0.3);
+}
+
+.btn-novo-jogo.cancelar {
+    background-color: #e53935; /* Vermelho se for para fechar */
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
+}
+
+/* Container da Animação */
+.form-collapsible {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    opacity: 0;
+    margin-bottom: 0;
+}
+
+.form-collapsible.open {
+    max-height: 1000px; /* Um valor alto o suficiente para caber o formulário */
+    opacity: 1;
+    margin-bottom: 30px;
+}
+
+/* O conteúdo do formulário */
+.form-content {
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #444;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+/* --- CORREÇÃO DE ESPAÇAMENTO DO BOTÃO --- */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end; /* Alinha tudo à direita */
+    align-items: center;       /* Alinha verticalmente ao centro (o segredo!) */
+    gap: 15px;                 /* Espaço entre os botões */
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    grid-column: 1 / -1;
+}
+
+/* --- MODAL DE CONFIRMAÇÃO CUSTOMIZADO --- */
+
+/* O Fundo Escuro (Overlay) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    box-sizing: border-box; /* Essencial para o padding funcionar */
-    font-size: 14px;      /* Para o texto não ficar pequeno */
-    outline: none;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Garante que fique por cima de tudo */
+    animation: fadeIn 0.3s ease;
+}
 
-    /* Mantendo o espaço para o ícone de lupa */
-    padding-left: 35px;
+/* A Caixa do Modal */
+.modal-content {
+    background-color: #2c2c2c;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid #444;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
 }
-.search-input-group i {
-    color: var(--cor-texto-secundario);
-    margin-right: 5px;
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.3em;
 }
-.favorite-icon.active {
-  color: #e53935; /* O vermelho padrão do "NextLevel" */
+
+.modal-content p {
+    color: #ccc;
+    margin: 15px 0 25px 0;
+    font-size: 1em;
+}
+
+/* Botões do Modal */
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-confirm {
+    background-color: #39FF14;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-confirm:hover {
+    transform: scale(1.05);
+}
+
+.btn-cancel {
+    background-color: #e53935;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-cancel:hover {
+    transform: scale(1.05);
+}
+
+/* Animações */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
+
+/* --- ESTILO DO BOTÃO CANCELAR (Edição) --- */
+
+.btn-cancelar {
+    background-color: transparent;
+    color: #e53935; /* Vermelho da identidade visual */
+    border: 2px solid #e53935;
+    padding: 10px 20px;
+    border-radius: 4px; /* Combina com os inputs */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cancelar:hover {
+    background-color: #e53935;
+    color: #fff; /* Texto fica branco no hover */
+    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); /* Sombra suave vermelha */
+    transform: translateY(-2px); /* Efeito de leve subida */
+}
+
+/* Ajuste para garantir que os botões fiquem alinhados lado a lado */
+.form-actions button {
+    height: 45px; /* Mesma altura para todos */
+}
+/* 2. Reseta os botões para funcionarem bem juntos */
+.form-actions .btn-cadastrar,
+.form-actions .btn-cancelar {
+    float: none;       /* Remove o 'float: right' antigo que causava o problema */
+    margin: 0;         /* Remove margens negativas antigas */
+    height: 45px;      /* Força a mesma altura para ambos */
+    
+    /* Centraliza o texto dentro do próprio botão */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

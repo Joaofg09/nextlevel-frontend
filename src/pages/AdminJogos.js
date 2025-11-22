@@ -1,18 +1,22 @@
 // No arquivo: src/pages/AdminJogos.js
-// VERSÃO 9 - Com Filtro de Categoria Inteligente
+// VERSÃO 10 - Design Moderno e Formulário Colapsável
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminJogos() {
-  // === ESTADOS (sem mudança) ===
+  // === ESTADOS ===
   const [jogos, setJogos] = useState([]);
-  const [categorias, setCategorias] = useState([]); // Esta é a lista "suja"
+  const [categorias, setCategorias] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState(''); // Guarda o ID da categoria
+  const [filterCategory, setFilterCategory] = useState('');
   const [sortCriteria, setSortCriteria] = useState('id-asc');
+  
+  // 1. NOVO ESTADO: Controla se o formulário está visível
+  const [showForm, setShowForm] = useState(false);
+
   const [formState, setFormState] = useState({
     nome: '', preco: '', fkCategoria: '', ano: '', descricao: '', fkEmpresa: ''
   });
@@ -21,11 +25,8 @@ function AdminJogos() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   
-  // =================================================================
-  // LÓGICA DE "TRADUÇÃO" DE IDs
-  // =================================================================
+  // === Mapas de Tradução ===
   const categoriaMap = useMemo(() => {
-    // { 3: 'RPG', 14: ' RPG' }
     return categorias.reduce((acc, cat) => {
       acc[cat.id] = cat.nome;
       return acc;
@@ -39,39 +40,29 @@ function AdminJogos() {
     }, {});
   }, [empresas]);
 
-  // =================================================================
-  // NOVA LÓGICA: Criar lista limpa para o Dropdown de Filtro
-  // =================================================================
+  // === Lista Limpa para Filtro ===
   const categoriasParaDropdown = useMemo(() => {
     const nomesVistos = new Set();
     const listaLimpa = [];
-
     categorias.forEach(cat => {
-      const nomeLimpo = cat.nome.trim(); // " RPG" vira "RPG"
+      const nomeLimpo = cat.nome.trim();
       if (!nomesVistos.has(nomeLimpo)) {
         nomesVistos.add(nomeLimpo);
-        listaLimpa.push({
-          ...cat, // Mantém o ID original (ex: 3)
-          nome: nomeLimpo // Mas usa o nome limpo
-        });
+        listaLimpa.push({ ...cat, nome: nomeLimpo });
       }
     });
-
-    // Ordena alfabeticamente
     listaLimpa.sort((a, b) => a.nome.localeCompare(b.nome));
     return listaLimpa;
   }, [categorias]);
 
-  // =================================================================
-  // FUNÇÃO PARA CARREGAR DADOS (sem mudança)
-  // =================================================================
+  // === Fetch Data ===
   const fetchData = () => {
     const token = localStorage.getItem('token');
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
           if (res.status === 401) {
-            alert('Sua sessão expirou. Por favor, faça login novamente.');
+            alert('Sessão expirada.');
             logout(); 
             navigate('/login');
             throw new Error('Sessão expirada');
@@ -88,7 +79,7 @@ function AdminJogos() {
     ])
     .then(([jogosData, categoriasData, empresasData]) => {
       if (Array.isArray(jogosData)) setJogos(jogosData);
-      if (Array.isArray(categoriasData)) setCategorias(categoriasData); // Pega a lista "suja"
+      if (Array.isArray(categoriasData)) setCategorias(categoriasData);
       if (Array.isArray(empresasData)) setEmpresas(empresasData);
     })
     .catch(err => console.error("Erro ao buscar dados:", err.message));
@@ -96,11 +87,19 @@ function AdminJogos() {
 
   useEffect(() => {
     fetchData();
-  }, [navigate, logout]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [navigate, logout]);
 
-  // =================================================================
-  // LÓGICA DO FORMULÁRIO (sem mudança)
-  // =================================================================
+  // === Lógica do Formulário ===
+  const toggleForm = () => {
+    if (showForm) {
+      // Se for fechar, limpa tudo
+      clearForm();
+      setShowForm(false);
+    } else {
+      setShowForm(true);
+    }
+  };
+
   const clearForm = () => {
     setFormState({
       nome: '', preco: '', fkCategoria: '', ano: '', descricao: '', fkEmpresa: ''
@@ -118,6 +117,7 @@ function AdminJogos() {
       descricao: jogo.descricao || '',
       fkEmpresa: jogo.fkEmpresa
     });
+    setShowForm(true); // 2. Abre o formulário automaticamente
     window.scrollTo(0, 0); 
   };
 
@@ -126,7 +126,7 @@ function AdminJogos() {
     const anoInt = parseInt(formState.ano);
     const anoAtual = new Date().getFullYear();
     if (anoInt > anoAtual) {
-      alert(`O ano de lançamento (${anoInt}) não pode ser maior que o ano atual (${anoAtual}).`);
+      alert(`O ano de lançamento não pode ser futuro.`);
       return; 
     }
 
@@ -155,6 +155,7 @@ function AdminJogos() {
       if (response.ok) {
         alert(`Jogo ${isUpdating ? 'atualizado' : 'cadastrado'} com sucesso!`);
         clearForm();
+        setShowForm(false); // 3. Fecha o formulário após sucesso
         fetchData(); 
       } else {
         const data = await response.json();
@@ -165,151 +166,129 @@ function AdminJogos() {
     }
   };
 
-  // =================================================================
-  // FUNÇÃO DE EXCLUSÃO (sem mudança)
-  // =================================================================
   const handleDeleteClick = async (jogo) => {
-    if (!window.confirm(`Tem certeza que deseja excluir o jogo "${jogo.nome}" (ID: ${jogo.id})?`)) {
-      return;
-    }
+    if (!window.confirm(`Tem certeza que deseja excluir "${jogo.nome}"?`)) return;
     const token = localStorage.getItem('token');
     try {
       const response = await fetch(`http://localhost:3000/api/v1/jogos/${jogo.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
       if (response.ok) {
         alert('Jogo excluído com sucesso!');
         setJogos(jogosAtuais => jogosAtuais.filter(j => j.id !== jogo.id));
       } else {
         const data = await response.json();
-        alert(`Erro ao excluir: ${data.message || 'Erro desconhecido'}`);
+        alert(`Erro: ${data.message}`);
       }
     } catch (error) {
       console.error("Erro ao excluir jogo:", error);
     }
   };
 
-  // =================================================================
-  // NOVA LÓGICA: Filtro Inteligente
-  // =================================================================
+  // === Filtros ===
   const jogosFiltrados = useMemo(() => {
     let lista = [...jogos];
-
     if (searchTerm) {
-      lista = lista.filter(jogo => 
-        jogo.nome.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      lista = lista.filter(jogo => jogo.nome.toLowerCase().includes(searchTerm.toLowerCase()));
     }
-
-    // Filtro de Categoria Inteligente
-    if (filterCategory) { // filterCategory é o ID da categoria "limpa" (ex: 3)
-      // 1. Pega o nome limpo da categoria selecionada (ex: "RPG")
+    if (filterCategory) {
       const nomeLimpoSelecionado = categoriaMap[filterCategory]?.trim();
-
       if (nomeLimpoSelecionado) {
         lista = lista.filter(jogo => {
-          // 2. Pega o nome da categoria do jogo (ex: " RPG")
           const nomeLimpoJogo = categoriaMap[jogo.fkCategoria]?.trim();
-          // 3. Compara os nomes limpos (ex: "RPG" === "RPG")
           return nomeLimpoJogo === nomeLimpoSelecionado;
         });
       }
     }
-
-    // Ordenação (sem mudança)
-    if (sortCriteria === 'preco-desc') {
-      lista.sort((a, b) => b.preco - a.preco);
-    } else if (sortCriteria === 'titulo-asc') {
-      lista.sort((a, b) => a.nome.localeCompare(b.nome));
-    } else if (sortCriteria === 'id-asc') {
-      lista.sort((a, b) => a.id - b.id);
-    }
+    if (sortCriteria === 'preco-desc') lista.sort((a, b) => b.preco - a.preco);
+    else if (sortCriteria === 'titulo-asc') lista.sort((a, b) => a.nome.localeCompare(b.nome));
+    else if (sortCriteria === 'id-asc') lista.sort((a, b) => a.id - b.id);
     return lista;
-  }, [jogos, searchTerm, filterCategory, sortCriteria, categoriaMap]); // Adicionado categoriaMap
+  }, [jogos, searchTerm, filterCategory, sortCriteria, categoriaMap]);
 
-  // =================================================================
-  // RENDERIZAÇÃO DO COMPONENTE (JSX)
-  // =================================================================
+  // === Renderização ===
   return (
     <div className="main-content-area">
       <div className="admin-container">
         
-        <h1 className="admin-section-title">
-          {editingId ? `Editando Jogo (ID: ${editingId})` : 'Cadastrar Novo Jogo'}
-        </h1>
-        <div className="cadastro-box">
-          {/* O formulário de cadastro não mudou */}
-          <form id="cadastro-jogo-form" onSubmit={handleSubmit}>
-            <div className="form-grid">
-              {/* Todos os inputs do formulário (sem mudança) */}
-              <div className="input-group">
-                <label htmlFor="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" required 
-                       value={formState.nome} 
-                       onChange={(e) => setFormState({...formState, nome: e.target.value})} />
+        {/* CABEÇALHO MODERNO COM BOTÃO */}
+        <div className="header-flex">
+          <h1 className="admin-section-title" style={{marginTop: 0}}>Gerenciamento de Jogos</h1>
+          <button 
+            className={`btn-novo-jogo ${showForm ? 'cancelar' : ''}`} 
+            onClick={toggleForm}
+          >
+            {showForm ? (
+              <><i className="fas fa-times"></i> Fechar</>
+            ) : (
+              <><i className="fas fa-plus"></i> Novo Jogo</>
+            )}
+          </button>
+        </div>
+
+        {/* ÁREA DO FORMULÁRIO (COM ANIMAÇÃO) */}
+        <div className={`form-collapsible ${showForm ? 'open' : ''}`}>
+          <div className="form-content">
+            <h2 style={{marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px'}}>
+              {editingId ? `Editando Jogo (ID: ${editingId})` : 'Cadastrar Novo Jogo'}
+            </h2>
+            <form id="cadastro-jogo-form" onSubmit={handleSubmit}>
+              <div className="form-grid">
+                <div className="input-group">
+                  <label htmlFor="titulo">Título:</label>
+                  <input type="text" id="titulo" name="titulo" required 
+                         value={formState.nome} onChange={(e) => setFormState({...formState, nome: e.target.value})} />
+                </div>
+                <div className="input-group preco-group">
+                  <label htmlFor="preco">Preço:</label>
+                  <input type="number" step="0.01" id="preco" name="preco" placeholder="0.00" required
+                         value={formState.preco} onChange={(e) => setFormState({...formState, preco: e.target.value})} />
+                </div>
+                <div className="input-group">
+                  <label htmlFor="categoria">Categoria:</label>
+                  <select id="categoria" name="categoria" required
+                          value={formState.fkCategoria} onChange={(e) => setFormState({...formState, fkCategoria: e.target.value})}>
+                    <option value="">Selecione...</option>
+                    {categorias.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.nome}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label htmlFor="ano">Ano:</label>
+                  <input type="number" id="ano" name="ano" placeholder="AAAA" maxLength="4" required
+                         value={formState.ano} onChange={(e) => setFormState({...formState, ano: e.target.value})} />
+                </div>
+                <div className="input-group full-width">
+                  <label htmlFor="descricao">Descrição:</label>
+                  <textarea id="descricao" name="descricao" required style={{height: '80px'}}
+                            value={formState.descricao} onChange={(e) => setFormState({...formState, descricao: e.target.value})}></textarea>
+                </div>
+                <div className="input-group full-width">
+                  <label htmlFor="desenvolvedora">Desenvolvedora:</label>
+                  <select id="desenvolvedora" name="desenvolvedora" required
+                          value={formState.fkEmpresa} onChange={(e) => setFormState({...formState, fkEmpresa: e.target.value})}>
+                    <option value="">Selecione...</option>
+                    {empresas.map(emp => (
+                      <option key={emp.id} value={emp.id}>{emp.nome}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className="input-group preco-group">
-                <label htmlFor="preco">Preço:</label>
-                <input type="number" step="0.01" id="preco" name="preco" placeholder="0.00" required
-                       value={formState.preco} 
-                       onChange={(e) => setFormState({...formState, preco: e.target.value})} />
-              </div>
-              <div className="input-group">
-                <label htmlFor="categoria">Categoria:</label>
-                <select id="categoria" name="categoria" required
-                        value={formState.fkCategoria} 
-                        onChange={(e) => setFormState({...formState, fkCategoria: e.target.value})}>
-                  <option value="">Selecione uma categoria</option>
-                  {/* O dropdown do *formulário* usa a lista limpa */}
-                  {categoriasParaDropdown.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.nome}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="input-group">
-                <label htmlFor="ano">Ano de Lançamento:</label>
-                <input type="number" id="ano" name="ano" placeholder="AAAA" maxLength="4" required
-                       value={formState.ano} 
-                       onChange={(e) => setFormState({...formState, ano: e.target.value})} />
-              </div>
-              <div className="input-group full-width">
-                <label htmlFor="descricao">Descrição:</label>
-                <textarea id="descricao" name="descricao" placeholder="Escreva sua descrição sobre o jogo aqui." required
-                          value={formState.descricao} 
-                          onChange={(e) => setFormState({...formState, descricao: e.target.value})}></textarea>
-              </div>
-              <div className="input-group full-width">
-                <label htmlFor="desenvolvedora">Desenvolvedora (Empresa):</label>
-                <select id="desenvolvedora" name="desenvolvedora" required
-                        value={formState.fkEmpresa} 
-                        onChange={(e) => setFormState({...formState, fkEmpresa: e.target.value})}>
-                  <option value="">Selecione uma empresa</option>
-                  {empresas.map(emp => (
-                    <option key={emp.id} value={emp.id}>{emp.nome}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="form-actions">
-              <button type="submit" className="btn-cadastrar">
-                {editingId ? 'Atualizar Jogo' : 'Cadastrar Jogo'}
-              </button>
-              {editingId && (
-                <button type="button" className="btn-cancelar" onClick={clearForm}>
-                  Cancelar Edição
+              
+              <div className="form-actions">
+                <button type="submit" className="btn-cadastrar">
+                  {editingId ? 'Salvar Alterações' : 'Cadastrar'}
                 </button>
-              )}
-            </div>
-          </form>
+              </div>
+            </form>
+          </div>
         </div>
         
-        <h1 className="admin-section-title list-title">Listar Jogos</h1>
-        
+        {/* LISTA DE JOGOS */}
         <div className="listagem-box">
           <div className="filter-bar">
-            {/* ... (search) ... */}
             <div className="search-input-group">
               <i className="fas fa-search"></i>
               <input 
@@ -320,8 +299,6 @@ function AdminJogos() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
-            {/* === DROPDOWN DE FILTRO ATUALIZADO === */}
             <select 
               id="select-categoria" 
               className="select-filter"
@@ -329,22 +306,19 @@ function AdminJogos() {
               onChange={(e) => setFilterCategory(e.target.value)}
             >
               <option value="">Todas as Categorias</option>
-              {/* Usa a lista de categorias limpa, sem duplicatas */}
               {categoriasParaDropdown.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.nome}</option>
               ))}
             </select>
-            
-            {/* ... (sort) ... */}
             <select 
               id="select-classificar" 
               className="select-filter"
               value={sortCriteria}
               onChange={(e) => setSortCriteria(e.target.value)}
             >
-              <option value="id-asc">Classificar por: ID (Crescente)</option>
-              <option value="titulo-asc">Classificar por: Título (A-Z)</option>
-              <option value="preco-desc">Classificar por: Preço (Maior)</option>
+              <option value="id-asc">Ordenar: ID</option>
+              <option value="titulo-asc">Ordenar: A-Z</option>
+              <option value="preco-desc">Ordenar: Preço</option>
             </select>
           </div>
 
@@ -353,35 +327,36 @@ function AdminJogos() {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Título do Jogo</th>
+                  <th>Título</th>
                   <th>Preço</th>
                   <th>Categoria</th>
                   <th>Empresa</th>
-                  <th>Editar</th>
-                  <th>Excluir</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {/* A tabela usa 'jogosFiltrados' e os 'mapas' */}
                 {jogosFiltrados.map(jogo => (
                   <tr key={jogo.id}>
                     <td>{jogo.id}</td>
                     <td>{jogo.nome}</td>
                     <td className="preco-tabela">$ {jogo.preco ? jogo.preco.toFixed(2) : '0.00'}</td>
-                    {/* Tradução usando o mapa (ex: categoriaMap[14] -> " RPG") */}
                     <td>{categoriaMap[jogo.fkCategoria] || '...'}</td>
                     <td>{empresaMap[jogo.fkEmpresa] || '...'}</td>
                     <td>
-                      <i 
-                        className="fas fa-edit action-icon icon-edit"
-                        onClick={() => handleEditClick(jogo)}
-                      ></i>
-                    </td>
-                    <td>
-                      <i 
-                        className="fas fa-trash-alt action-icon icon-delete"
-                        onClick={() => handleDeleteClick(jogo)}
-                      ></i>
+                      <div style={{display: 'flex', gap: '10px'}}>
+                        <i 
+                          className="fas fa-edit action-icon icon-edit"
+                          title="Editar"
+                          onClick={() => handleEditClick(jogo)}
+                          style={{cursor: 'pointer'}}
+                        ></i>
+                        <i 
+                          className="fas fa-trash-alt action-icon icon-delete"
+                          title="Excluir"
+                          onClick={() => handleDeleteClick(jogo)}
+                          style={{cursor: 'pointer'}}
+                        ></i>
+                      </div>
                     </td>
                   </tr>
                 ))}
