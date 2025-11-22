@@ -1,8 +1,12 @@
-// No ficheiro: src/pages/RevisarPedidoPage.js
+// No arquivo: src/pages/RevisarPedidoPage.js
+// VERSÃO 2 - Com Imagem Genérica de Joystick
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+// A mesma imagem para manter o padrão
+const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function RevisarPedidoPage() {
   const [carrinho, setCarrinho] = useState(null);
@@ -11,7 +15,6 @@ function RevisarPedidoPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  // 1. Busca os dados do carrinho e o mapa de jogos (tal como o CarrinhoPage)
   useEffect(() => {
     const token = localStorage.getItem('token');
     const secureFetch = (url) => {
@@ -46,13 +49,11 @@ function RevisarPedidoPage() {
     });
   }, [logout, navigate]);
 
-  // 2. Função para FINALIZAR O PEDIDO
   const handleCheckout = async () => {
     if (!window.confirm("Confirmar a compra deste(s) jogo(s)?")) return;
     
     const token = localStorage.getItem('token');
     try {
-      // 3. Chame a API de checkout
       const response = await fetch('http://localhost:3000/api/v1/vendas/checkout', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -60,8 +61,7 @@ function RevisarPedidoPage() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message); // Ex: "Compra realizada com sucesso!"
-        // 4. Envia o utilizador para a biblioteca para ver as chaves
+        alert(data.message); 
         navigate('/biblioteca');
       } else {
         alert(`Erro: ${data.message}`);
@@ -70,8 +70,6 @@ function RevisarPedidoPage() {
       console.error("Erro ao finalizar pedido:", error);
     }
   };
-
-  // --- Renderização ---
 
   if (loading) {
     return (
@@ -92,13 +90,11 @@ function RevisarPedidoPage() {
     );
   }
 
-  // Calcula o total
   const subtotal = carrinho.itens.reduce((total, item) => {
     const jogoInfo = jogosMap.get(item.fkJogo);
     return total + (jogoInfo ? jogoInfo.preco : 0);
   }, 0);
 
-  // Baseado no seu revisar-pedido.html
   return (
     <div className="main-container">
       <h1>Finalizar Pedido</h1>
@@ -110,7 +106,8 @@ function RevisarPedidoPage() {
               const jogoInfo = jogosMap.get(item.fkJogo);
               return (
                 <div className="cart-item" key={item.id}>
-                  <img src="https://via.placeholder.com/120x60/888/FFFFFF?text=Game" alt="Capa do Jogo" />
+                  {/* === IMAGEM NOVA AQUI === */}
+                  <img src={GENERIC_IMAGE} alt="Capa do Jogo" />
                   <div className="item-details">
                     <h3>{jogoInfo ? jogoInfo.nome : `Jogo ID: ${item.fkJogo}`}</h3>
                     <span className="item-price">$ {jogoInfo ? jogoInfo.preco.toFixed(2) : '0.00'}</span>
@@ -128,7 +125,6 @@ function RevisarPedidoPage() {
             <div className="total-line"><strong>Total do Pedido:</strong> <strong id="review-total">$ {subtotal.toFixed(2)}</strong></div>
           </div>
           
-          {/* 5. Botão de Finalizar Pedido ligado à função */}
           <button 
             id="finalize-order-btn" 
             className="checkout-button"

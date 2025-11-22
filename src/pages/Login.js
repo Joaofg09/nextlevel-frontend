@@ -1,51 +1,52 @@
 // No arquivo: src/pages/Login.js
+// VERSÃO SEM BOTÃO VOLTAR
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // 1. Importe o useAuth
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const navigate = useNavigate();
-  const auth = useAuth(); // 2. Pegue o contexto
+  const auth = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault(); 
+
     try {
       const response = await fetch('http://localhost:3000/api/v1/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, senha }), 
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // 3. Chame a função de login do Contexto!
         auth.login(data.token); 
-
-        alert(data.message); // Opcional
-        navigate('/'); // Redireciona para a Home
+        navigate('/'); 
       } else {
         alert(data.message); 
       }
     } catch (error) {
       console.error('Erro ao conectar:', error);
-      alert('Não foi possível conectar ao servidor.');
+      alert('Não foi possível conectar ao servidor. Verifique se a API está rodando.');
     }
   };
 
-  // O resto do seu JSX (HTML) continua igual...
   return (
     <div className="login-page-body"> 
       <div className="login-container">
-        {/* ... (todo o seu HTML/JSX do login) ... */}
         <div className="login-wrapper">
+          
+          {/* CABEÇALHO LIMPO: Apenas o Título */}
           <div className="header">
-            <h2>Iniciar Sua Sessão</h2>
-            <button onClick={() => navigate('/')} className="back-button">&lt; Voltar</button>
+            <h2>Iniciar Sessão</h2>
           </div>
+
           <div className="login-box">
             <form onSubmit={handleSubmit}> 
               <div className="input-group">
@@ -74,6 +75,7 @@ function Login() {
               <a href="/" className="forgot-password">Esqueci minha Senha.</a>
             </form>
           </div>
+
           <div className="signup-box">
             <h3>Primeira vez na NextLevel?</h3>
             <br />

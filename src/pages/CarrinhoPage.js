@@ -1,9 +1,12 @@
 // No arquivo: src/pages/CarrinhoPage.js
-// VERSÃO 3 - Busca jogos para exibir nome e preço
+// VERSÃO 4 - Com Imagem Genérica de Joystick
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+// URL de uma imagem de controle (Joystick) com fundo escuro
+const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState(null);
@@ -11,10 +14,8 @@ function CarrinhoPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  // 1. NOVO ESTADO: Guarda um "mapa" de todos os jogos (ID => Jogo)
   const [jogosMap, setJogosMap] = useState(new Map());
 
-  // 2. Função para buscar TUDO (Carrinho e Lista de Jogos)
   const fetchData = () => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -23,29 +24,26 @@ function CarrinhoPage() {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
           if (res.status === 401) { logout(); navigate('/login'); throw new Error('Sessão expirada'); }
-          if (res.status === 204) return null; // 204 = Sem conteúdo (Carrinho vazio)
+          if (res.status === 204) return null; 
           return res.json();
         });
     };
 
-    // 3. Faz as duas chamadas à API ao mesmo tempo
     Promise.all([
       secureFetch('http://localhost:3000/api/v1/carrinho/ativo'),
-      secureFetch('http://localhost:3000/api/v1/jogos') // Rota de jogos
+      secureFetch('http://localhost:3000/api/v1/jogos') 
     ])
     .then(([dataCarrinho, dataJogos]) => {
-      // Processa o carrinho
       if (dataCarrinho && dataCarrinho.carrinho) {
         setCarrinho(dataCarrinho.carrinho);
       } else {
         setCarrinho(null);
       }
 
-      // 4. Processa a lista de jogos e cria o "mapa"
       if (Array.isArray(dataJogos)) {
         const mapa = new Map();
         dataJogos.forEach(jogo => {
-          mapa.set(jogo.id, jogo); // Ex: 1 => { id: 1, nome: "Witcher 3", ... }
+          mapa.set(jogo.id, jogo); 
         });
         setJogosMap(mapa);
       }
@@ -58,12 +56,10 @@ function CarrinhoPage() {
     });
   };
 
-  // Busca os dados quando a página carrega
   useEffect(() => {
     fetchData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
-  // Função para remover (sem mudança)
   const handleRemoveItem = (gameId) => {
     if (!window.confirm("Tem certeza que deseja remover este item do carrinho?")) return;
     const token = localStorage.getItem('token');
@@ -75,12 +71,10 @@ function CarrinhoPage() {
     .then(res => res.json())
     .then(data => {
       alert(data.message);
-      fetchData(); // Atualiza a lista
+      fetchData(); 
     })
     .catch(err => console.error("Erro ao remover item:", err));
   };
-
-  // --- Renderização ---
   
   if (loading) {
     return (
@@ -91,7 +85,6 @@ function CarrinhoPage() {
     );
   }
 
-  // Se o carrinho estiver vazio ou não existir
   if (!carrinho || !carrinho.itens || carrinho.itens.length === 0) {
     return (
       <div className="main-container">
@@ -108,7 +101,6 @@ function CarrinhoPage() {
     );
   }
 
-  // 5. Calcula o subtotal USANDO o mapa
   const subtotal = carrinho.itens.reduce((total, item) => {
     const jogoInfo = jogosMap.get(item.fkJogo);
     return total + (jogoInfo ? jogoInfo.preco : 0);
@@ -120,14 +112,14 @@ function CarrinhoPage() {
       <div className="cart-layout">
         <div className="cart-items" id="cart-items-container">
           
-          {/* 6. Renderiza os itens USANDO o mapa */}
           {carrinho.itens.map(item => {
-            // Pega o nome e preço do mapa
             const jogoInfo = jogosMap.get(item.fkJogo);
             
             return (
               <div className="cart-item" key={item.id} data-id={item.fkJogo}>
-                <img src="https://via.placeholder.com/120x60/888/FFFFFF?text=Game" alt="Capa do Jogo" />
+                {/* === IMAGEM NOVA AQUI === */}
+                <img src={GENERIC_IMAGE} alt="Capa do Jogo" />
+                
                 <div className="item-details">
                   {jogoInfo ? (
                     <>
