@@ -1,7 +1,7 @@
 // No arquivo: src/pages/JogoDetalhesPage.js
-// VERSÃO 3 - Corrige o erro 'fetchData is not defined'
+// VERSÃO FINAL - SEM IMAGEM (Apenas Gradiente)
 
-import React, { useState, useEffect, useCallback } from 'react'; // 1. Importe o 'useCallback'
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; 
 
@@ -10,41 +10,33 @@ function JogoDetalhesPage() {
   const [jogo, setJogo] = useState(null);
   const [avaliacoes, setAvaliacoes] = useState(null);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [nota, setNota] = useState(5);
+  
+  const [nota, setNota] = useState(0);
+  const [hoverNota, setHoverNota] = useState(0);
   const [comentario, setComentario] = useState("");
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // =================================================================
-  // 2. FUNÇÃO 'fetchData' DEFINIDA FORA DO useEffect
-  // =================================================================
-  // Usamos useCallback para que esta função não seja recriada a cada
-  // renderização, evitando loops infinitos no useEffect.
   const fetchData = useCallback(() => {
     const token = localStorage.getItem('token');
-    
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
           if (res.status === 401) { logout(); navigate('/login'); throw new Error('Sessão expirada'); }
-          // Retorna null se for 204 (Sem conteúdo), senão, retorna o JSON
           if (res.status === 204) return null; 
           return res.json();
         });
     };
 
-    // 1. Buscar o Jogo específico
     secureFetch(`http://localhost:3000/api/v1/jogos/${id}`)
       .then(data => setJogo(data))
       .catch(err => console.error("Erro ao buscar jogo:", err.message));
     
-    // 2. Buscar as Avaliações e a Média
     secureFetch(`http://localhost:3000/api/v1/avaliacoes/media/${id}`)
       .then(data => setAvaliacoes(data))
       .catch(err => console.error("Erro ao buscar avaliações:", err.message));
 
-    // 3. Verificar se o jogo já está na lista de desejos
     if (user) {
       secureFetch('http://localhost:3000/api/v1/lista-desejo')
         .then(data => {
@@ -56,22 +48,13 @@ function JogoDetalhesPage() {
         })
         .catch(err => console.error("Erro ao buscar wishlist:", err.message));
     }
-  // 3. Adicione 'id', 'user', 'logout', 'navigate' como dependências
   }, [id, user, logout, navigate]);
 
-  // =================================================================
-  // 4. useEffect AGORA SÓ CHAMA O fetchData
-  // =================================================================
   useEffect(() => {
-    fetchData(); // Chama a função ao carregar a página
-  }, [fetchData]); // Roda sempre que o fetchData (ou suas dependências) mudar
-
-  // =================================================================
-  // FUNÇÕES DE AÇÃO (Carrinho, Desejos, Avaliar)
-  // =================================================================
+    fetchData(); 
+  }, [fetchData]); 
 
   const handleAddToCart = async () => {
-    // (Sem mudanças)
     if (!user) return navigate('/login');
     const token = localStorage.getItem('token');
     try {
@@ -88,12 +71,10 @@ function JogoDetalhesPage() {
   };
 
   const handleToggleWishlist = async () => {
-    // (Sem mudanças)
     if (!user) return navigate('/login');
     const token = localStorage.getItem('token');
     
     if (isFavorited) {
-      // Remover (DELETE)
       try {
         const response = await fetch('http://localhost:3000/api/v1/lista-desejo', {
           method: 'DELETE',
@@ -111,7 +92,6 @@ function JogoDetalhesPage() {
         console.error("Erro ao remover da lista:", error);
       }
     } else {
-      // Adicionar (POST)
       try {
         const response = await fetch('http://localhost:3000/api/v1/lista-desejo', {
           method: 'POST',
@@ -134,6 +114,11 @@ function JogoDetalhesPage() {
   const handleSubmitReview = async (event) => {
     event.preventDefault();
     if (!user) return navigate('/login');
+    if (nota === 0) {
+        alert("Por favor, selecione uma nota clicando nas estrelas.");
+        return;
+    }
+
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:3000/api/v1/avaliacoes', {
@@ -145,16 +130,13 @@ function JogoDetalhesPage() {
       alert(data.message);
       if (response.ok) {
         setComentario(""); 
-        
-        // 5. O ERRO ESTAVA AQUI. Agora 'fetchData' está acessível!
-        fetchData(); // Atualiza as avaliações
+        setNota(0);
+        fetchData(); 
       }
     } catch (error) {
       console.error("Erro ao enviar avaliação:", error);
     }
   };
-
-  // --- Renderização ---
   
   if (!jogo) {
     return (
@@ -164,38 +146,42 @@ function JogoDetalhesPage() {
     );
   }
 
-  // O JSX abaixo não mudou
   return (
     <div className="main-container">
-      <div className="game-hero" id="game-hero" style={{backgroundImage: 'url(https://via.placeholder.com/800x300/B22222/FFFFFF?text=Imagem+do+Jogo)'}}>
+      {/* === HERO BANNER SEM IMAGEM === */}
+      <div 
+        className="game-hero" 
+        id="game-hero" 
+        style={{
+          background: 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%)', // Gradiente escuro elegante
+          borderBottom: '4px solid #e53935' // Linha vermelha de destaque
+        }}
+      >
         <h1 id="game-title">{jogo.nome}</h1>
       </div>
+
       <div className="game-content-layout">
         <div className="game-main-content">
           <h2>Descrição do Jogo</h2>
           <p id="game-description">{jogo.descricao || "Este jogo não tem descrição."}</p>
 
-          <h2>Requisitos de Sistema</h2>
-          <div className="requirements-grid">
-            <div>
-              <h3>Mínimo</h3>
-              <ul id="min-reqs"><li>Não especificado.</li></ul>
-            </div>
-            <div>
-              <h3>Recomendado</h3>
-              <ul id="rec-reqs"><li>Não especificado.</li></ul>
-            </div>
-          </div>
-
           <h2>Avaliar Jogo</h2>
           <form onSubmit={handleSubmitReview}>
-            <select value={nota} onChange={(e) => setNota(e.target.value)} style={{margin: '10px 0', padding: '5px'}}>
-              <option value={5}>5 Estrelas</option>
-              <option value={4}>4 Estrelas</option>
-              <option value={3}>3 Estrelas</option>
-              <option value={2}>2 Estrelas</option>
-              <option value={1}>1 Estrela</option>
-            </select>
+            <div className="star-input-container">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <i 
+                        key={star}
+                        className={`fas fa-star star-input ${star <= (hoverNota || nota) ? 'filled' : ''}`}
+                        onClick={() => setNota(star)}
+                        onMouseEnter={() => setHoverNota(star)}
+                        onMouseLeave={() => setHoverNota(0)}
+                    ></i>
+                ))}
+                <span style={{marginLeft: '10px', marginTop: '5px', color: '#ccc'}}>
+                    {nota > 0 ? `${nota} Estrelas` : 'Toque para avaliar'}
+                </span>
+            </div>
+
             <textarea 
               className="review-textarea" 
               placeholder="Escreva o que achou sobre o jogo aqui!"
@@ -211,7 +197,9 @@ function JogoDetalhesPage() {
               avaliacoes.avaliacoes.map(review => (
                 <div className="user-review-card" key={review.id}>
                   <div className="review-header">
-                    <strong>Usuário ID: {review.fkUsuario}</strong>
+                    <strong style={{color: '#39FF14'}}>
+                        {review.nomeUsuario ? review.nomeUsuario : `Usuário ID: ${review.fkUsuario}`}
+                    </strong>
                     <div className="stars">
                       {'★'.repeat(review.nota)}
                       <span className="unfilled">{'☆'.repeat(5 - review.nota)}</span>
