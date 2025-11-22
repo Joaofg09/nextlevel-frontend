@@ -1,26 +1,23 @@
 // No arquivo: src/pages/AdminEmpresas.js
-// VERSÃO 3 - Com Modal de Confirmação "Bonito"
+// VERSÃO FINAL - Corrigida (useCallback)
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminEmpresas() {
-  // === ESTADOS ===
   const [empresas, setEmpresas] = useState([]);
   const [nome, setNome] = useState(''); 
   const [editingId, setEditingId] = useState(null); 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState('id-asc');
-
-  // 1. NOVO ESTADO: Controla a visibilidade do Modal
   const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // === Carregar Dados ===
-  const fetchEmpresas = () => {
+  // 1. Envolvemos a função em useCallback
+  const fetchEmpresas = useCallback(() => {
     const token = localStorage.getItem('token');
     fetch('http://localhost:3000/api/v1/empresas', {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -36,25 +33,20 @@ function AdminEmpresas() {
     })
     .then(data => { if (Array.isArray(data)) setEmpresas(data); })
     .catch(err => console.error("Erro ao buscar empresas:", err.message));
-  };
+  }, [logout, navigate]); // Dependências do useCallback
 
+  // 2. Adicionamos fetchEmpresas à lista de dependências do useEffect
   useEffect(() => {
     fetchEmpresas();
-  }, [navigate, logout]);
+  }, [fetchEmpresas]);
 
-  // === Lógica do Formulário ===
-
-  // 2. Função chamada pelo formulário (apenas abre o modal)
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    // Abre o modal para pedir confirmação
     setShowModal(true);
   };
 
-  // 3. Função chamada ao clicar em "Sim" no modal (Faz o envio real)
   const confirmCadastro = async () => {
-    setShowModal(false); // Fecha o modal
-    
+    setShowModal(false);
     const token = localStorage.getItem('token');
     const isUpdating = editingId !== null;
     const url = isUpdating 
@@ -86,7 +78,6 @@ function AdminEmpresas() {
     }
   };
 
-  // Função de Exclusão (mantém o window.confirm padrão ou pode mudar depois)
   const handleDeleteClick = async (empresa) => {
     if (!window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome}"?`)) return;
     const token = localStorage.getItem('token');
@@ -113,7 +104,6 @@ function AdminEmpresas() {
     window.scrollTo(0, 0);
   };
 
-  // === Filtros ===
   const empresasFiltradas = useMemo(() => {
     let lista = [...empresas];
     if (searchTerm) {
@@ -127,17 +117,13 @@ function AdminEmpresas() {
     return lista;
   }, [empresas, searchTerm, sortCriteria]);
 
-  // === Renderização ===
   return (
     <div className="main-content-area">
       <div className="admin-container">
-        
         <h1 className="admin-section-title">
           {editingId ? `Editando Empresa (ID: ${editingId})` : 'Cadastrar Nova Empresa'}
         </h1>
-        
         <div className="cadastro-box">
-          {/* O onSubmit chama handleFormSubmit, que abre o modal */}
           <form id="cadastro-empresa-form" onSubmit={handleFormSubmit}>
             <div className="form-grid">
               <div className="input-group full-width">
@@ -146,7 +132,6 @@ function AdminEmpresas() {
                        value={nome} onChange={(e) => setNome(e.target.value)} />
               </div>
             </div>
-            
             <div className="form-actions">
               <button type="submit" className="btn-cadastrar-empresa">
                 {editingId ? 'Atualizar' : 'Cadastrar'}
@@ -160,7 +145,6 @@ function AdminEmpresas() {
           </form>
         </div>
         
-        {/* 4. O POP-UP (MODAL) */}
         {showModal && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -179,7 +163,6 @@ function AdminEmpresas() {
         )}
 
         <h1 className="admin-section-title list-title">Listar Empresas</h1>
-        
         <div className="listagem-box">
           <div className="filter-bar">
             <div className="search-input-group">

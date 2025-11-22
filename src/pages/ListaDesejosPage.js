@@ -1,7 +1,8 @@
 // No arquivo: src/pages/ListaDesejosPage.js
+// VERSÃO FINAL - Corrigida (useCallback + Remoção de Link não usado)
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom'; // 'Link' removido
 import { useAuth } from '../context/AuthContext';
 
 function ListaDesejosPage() {
@@ -10,8 +11,7 @@ function ListaDesejosPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // 1. Função para buscar a lista de desejos
-  const fetchListaDesejos = () => {
+  const fetchListaDesejos = useCallback(() => {
     setLoading(true);
     const token = localStorage.getItem('token');
     
@@ -32,18 +32,16 @@ function ListaDesejosPage() {
       console.error("Erro ao buscar lista de desejos:", err.message);
       setLoading(false);
     });
-  };
+  }, [logout, navigate]);
 
-  // 2. Busca a lista quando a página carrega
   useEffect(() => {
-    if (!user) { // Se não há usuário, não busca
+    if (!user) {
       navigate('/login');
     } else {
       fetchListaDesejos();
     }
-  }, [user, navigate, logout]); // Dependências
+  }, [user, navigate, fetchListaDesejos]); // Dependências corretas
 
-  // 3. Função para REMOVER da lista
   const handleRemove = async (jogoId) => {
     if (!window.confirm("Remover este jogo da sua lista de desejos?")) return;
     
@@ -57,14 +55,13 @@ function ListaDesejosPage() {
       const data = await response.json();
       alert(data.message);
       if (response.ok) {
-        fetchListaDesejos(); // Atualiza a lista
+        fetchListaDesejos(); 
       }
     } catch (error) {
       console.error("Erro ao remover:", error);
     }
   };
 
-  // 4. Função para ADICIONAR AO CARRINHO
   const handleAddToCart = async (jogoId) => {
     const token = localStorage.getItem('token');
     try {
@@ -75,16 +72,11 @@ function ListaDesejosPage() {
       });
       const data = await response.json();
       alert(data.message);
-      // Opcional: remover da lista de desejos após adicionar ao carrinho
-      // handleRemove(jogoId); 
     } catch (error) {
       console.error("Erro ao adicionar ao carrinho:", error);
     }
   };
 
-
-  // --- Renderização ---
-  
   if (loading) {
     return (
       <div className="main-container">
@@ -96,13 +88,11 @@ function ListaDesejosPage() {
     );
   }
 
-  // Baseado no seu listaDesejos.html
   return (
     <div className="main-container">
       <div className="wishlist-container">
         <h1>Sua Lista De Desejos</h1>
         
-        {/* A barra de controles do protótipo (filtros) ainda não é funcional */}
         <div className="controls-bar">
           <label className="select-all-label">
             <input type="checkbox" id="selectAllCheckbox" />
@@ -124,10 +114,8 @@ function ListaDesejosPage() {
           ) : (
             listaDesejos.map(jogo => (
               <div className="wishlist-item" data-title={jogo.nome} key={jogo.id}>
-                {/* O checkbox ainda não é funcional */}
                 <input type="checkbox" className="item-checkbox" />
                 
-                {/* O protótipo tinha um card vermelho, mas usaremos uma <img> placeholder */}
                 <img src="https://via.placeholder.com/180x60/888/FFFFFF?text=Game" alt={jogo.nome} style={{width: '180px', borderRadius: '3px'}}/>
                 
                 <div className="item-card-right">

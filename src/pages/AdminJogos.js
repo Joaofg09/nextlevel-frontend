@@ -1,22 +1,18 @@
 // No arquivo: src/pages/AdminJogos.js
-// VERSÃO 10 - Design Moderno e Formulário Colapsável
+// VERSÃO FINAL - Corrigida (useCallback)
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminJogos() {
-  // === ESTADOS ===
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
   const [sortCriteria, setSortCriteria] = useState('id-asc');
-  
-  // 1. NOVO ESTADO: Controla se o formulário está visível
   const [showForm, setShowForm] = useState(false);
-
   const [formState, setFormState] = useState({
     nome: '', preco: '', fkCategoria: '', ano: '', descricao: '', fkEmpresa: ''
   });
@@ -25,7 +21,6 @@ function AdminJogos() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   
-  // === Mapas de Tradução ===
   const categoriaMap = useMemo(() => {
     return categorias.reduce((acc, cat) => {
       acc[cat.id] = cat.nome;
@@ -40,7 +35,6 @@ function AdminJogos() {
     }, {});
   }, [empresas]);
 
-  // === Lista Limpa para Filtro ===
   const categoriasParaDropdown = useMemo(() => {
     const nomesVistos = new Set();
     const listaLimpa = [];
@@ -55,8 +49,8 @@ function AdminJogos() {
     return listaLimpa;
   }, [categorias]);
 
-  // === Fetch Data ===
-  const fetchData = () => {
+  // 1. Envolvemos fetchData em useCallback
+  const fetchData = useCallback(() => {
     const token = localStorage.getItem('token');
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
@@ -83,16 +77,15 @@ function AdminJogos() {
       if (Array.isArray(empresasData)) setEmpresas(empresasData);
     })
     .catch(err => console.error("Erro ao buscar dados:", err.message));
-  };
+  }, [logout, navigate]); // Dependências do useCallback
 
+  // 2. Adicionamos fetchData nas dependências
   useEffect(() => {
     fetchData();
-  }, [navigate, logout]);
+  }, [fetchData]);
 
-  // === Lógica do Formulário ===
   const toggleForm = () => {
     if (showForm) {
-      // Se for fechar, limpa tudo
       clearForm();
       setShowForm(false);
     } else {
@@ -117,7 +110,7 @@ function AdminJogos() {
       descricao: jogo.descricao || '',
       fkEmpresa: jogo.fkEmpresa
     });
-    setShowForm(true); // 2. Abre o formulário automaticamente
+    setShowForm(true); 
     window.scrollTo(0, 0); 
   };
 
@@ -155,7 +148,7 @@ function AdminJogos() {
       if (response.ok) {
         alert(`Jogo ${isUpdating ? 'atualizado' : 'cadastrado'} com sucesso!`);
         clearForm();
-        setShowForm(false); // 3. Fecha o formulário após sucesso
+        setShowForm(false);
         fetchData(); 
       } else {
         const data = await response.json();
@@ -186,7 +179,6 @@ function AdminJogos() {
     }
   };
 
-  // === Filtros ===
   const jogosFiltrados = useMemo(() => {
     let lista = [...jogos];
     if (searchTerm) {
@@ -207,12 +199,9 @@ function AdminJogos() {
     return lista;
   }, [jogos, searchTerm, filterCategory, sortCriteria, categoriaMap]);
 
-  // === Renderização ===
   return (
     <div className="main-content-area">
       <div className="admin-container">
-        
-        {/* CABEÇALHO MODERNO COM BOTÃO */}
         <div className="header-flex">
           <h1 className="admin-section-title" style={{marginTop: 0}}>Gerenciamento de Jogos</h1>
           <button 
@@ -227,7 +216,6 @@ function AdminJogos() {
           </button>
         </div>
 
-        {/* ÁREA DO FORMULÁRIO (COM ANIMAÇÃO) */}
         <div className={`form-collapsible ${showForm ? 'open' : ''}`}>
           <div className="form-content">
             <h2 style={{marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px'}}>
@@ -286,7 +274,6 @@ function AdminJogos() {
           </div>
         </div>
         
-        {/* LISTA DE JOGOS */}
         <div className="listagem-box">
           <div className="filter-bar">
             <div className="search-input-group">

@@ -1,11 +1,11 @@
 // No arquivo: src/pages/CarrinhoPage.js
-// VERSÃO 4 - Com Imagem Genérica de Joystick
+// VERSÃO FINAL - Corrigida (useCallback)
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// URL de uma imagem de controle (Joystick) com fundo escuro
+// Imagem genérica local
 const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function CarrinhoPage() {
@@ -16,7 +16,7 @@ function CarrinhoPage() {
 
   const [jogosMap, setJogosMap] = useState(new Map());
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     setLoading(true);
     const token = localStorage.getItem('token');
 
@@ -54,11 +54,11 @@ function CarrinhoPage() {
       console.error("Erro ao buscar dados:", err.message);
       setLoading(false);
     });
-  };
+  }, [logout, navigate]);
 
   useEffect(() => {
     fetchData();
-  }, []); 
+  }, [fetchData]); 
 
   const handleRemoveItem = (gameId) => {
     if (!window.confirm("Tem certeza que deseja remover este item do carrinho?")) return;
@@ -117,7 +117,6 @@ function CarrinhoPage() {
             
             return (
               <div className="cart-item" key={item.id} data-id={item.fkJogo}>
-                {/* === IMAGEM NOVA AQUI === */}
                 <img src={GENERIC_IMAGE} alt="Capa do Jogo" />
                 
                 <div className="item-details">
