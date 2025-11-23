@@ -242,7 +242,7 @@ function MeusDados() {
         <div className="cadastro-box">
           <form onSubmit={handleUpdateDados} className="form-grid" style={{marginBottom: '40px'}}>
             <div className="input-group">
-              <label htmlFor="nome">Nome Completo</label>
+              <label htmlFor="nome">Nome Do Usuário</label>
               <input type="text" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
             </div>
             <div className="input-group">
