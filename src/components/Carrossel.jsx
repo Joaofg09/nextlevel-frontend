@@ -1,4 +1,6 @@
-// src/components/Carrossel.js
+// No arquivo: src/components/Carrossel.js
+// VERSÃO FINAL - Loop Infinito (Circular)
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Carrossel.module.css';
@@ -8,26 +10,37 @@ function Carrossel({ jogos }) {
 
   // Configurações
   const VISIBLE_CARDS = 3;
-  const CARD_WIDTH = 200;
+  const CARD_WIDTH = 350; 
   const GAP = 20;
 
-  // Proteção: Se 'jogos' vier vazio ou indefinido, usa array vazio para não quebrar
   const listaJogos = jogos || [];
-
-  // Lógica de corte (slice)
+  // Pega os jogos de destaque
   const carouselJogos = listaJogos.slice(8, 16);
 
-  // Cálculos de navegação
   const step = CARD_WIDTH + GAP;
-  const offset = -currentIndex * step;
+  
+  // Calcula o deslocamento visual
+  const offset = -currentIndex * (350 + 20); 
+
+  // Índice máximo possível
   const maxIndex = Math.max(0, carouselJogos.length - VISIBLE_CARDS);
 
+  // === LÓGICA INFINITA (Próximo) ===
   const handleNext = () => {
-    setCurrentIndex(prevIndex => Math.min(prevIndex + 1, maxIndex));
+    if (currentIndex >= maxIndex) {
+      setCurrentIndex(0); // Se chegou no fim, volta para o início
+    } else {
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
   };
 
+  // === LÓGICA INFINITA (Anterior) ===
   const handlePrev = () => {
-    setCurrentIndex(prevIndex => Math.max(prevIndex - 1, 0));
+    if (currentIndex === 0) {
+      setCurrentIndex(maxIndex); // Se está no início, vai para o fim
+    } else {
+      setCurrentIndex(prevIndex => prevIndex - 1);
+    }
   };
 
   return (
@@ -36,7 +49,7 @@ function Carrossel({ jogos }) {
         className={`${styles.arrow} ${styles.left}`}
         aria-label="Anterior"
         onClick={handlePrev}
-        disabled={currentIndex === 0}
+        // Removido o 'disabled' para permitir o loop
       >
         ❮
       </button>
@@ -47,9 +60,16 @@ function Carrossel({ jogos }) {
           style={{ transform: `translateX(${offset}px)` }}
         >
           {carouselJogos.map(jogo => (
-            <Link to={`/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
+            // Adicionado '/loja' ao link conforme a nova estrutura
+            <Link to={`/loja/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
               <div className={styles.card}>
-                {jogo.nome}
+                {/* Título */}
+                <h3>{jogo.nome}</h3>
+                
+                {/* Preço no canto inferior esquerdo */}
+                <span className={styles.price}>
+                  $ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : '0,00'}
+                </span>
               </div>
             </Link>
           ))}
@@ -60,7 +80,7 @@ function Carrossel({ jogos }) {
         className={`${styles.arrow} ${styles.right}`}
         aria-label="Próximo"
         onClick={handleNext}
-        disabled={currentIndex >= maxIndex}
+        // Removido o 'disabled' para permitir o loop
       >
         ❯
       </button>
