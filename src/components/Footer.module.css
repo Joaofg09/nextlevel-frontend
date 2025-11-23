@@ -1,0 +1,24 @@
+.footer {
+  background: #0d0d0d;
+  padding: 20px;
+  color: #ccc;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.links {
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.copyNote {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
