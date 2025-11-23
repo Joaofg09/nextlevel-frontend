@@ -22,6 +22,22 @@ body.light-mode {
     color: #333;
 }
 
+
+/* 2. MUITO IMPORTANTE: Muda o "Next" para preto */
+/* O seletor .header.light .logo é mais específico que apenas .logo */
+.header.light .logo {
+    color: #1a1a1a;
+}
+
+/* 3. Muda ícones (carrinho, coração, perfil) e links de login para preto */
+.header.light .user-actions a,
+.header.light .icon,
+.header.light .menu-trigger {
+    color: #1a1a1a;
+}
+
+
+
 body.light-mode .profile-dropdown,
 body.light-mode .submenu {
     /* Mudar o fundo do dropdown de cinza escuro para branco */
@@ -30,6 +46,7 @@ body.light-mode .submenu {
 }
 
 /* Regra CRÍTICA: Mudar a cor do TEXTO dentro do dropdown */
+body.light-mode .input-group,
 body.light-mode .profile-dropdown ul li a,
 body.light-mode .submenu ul li a {
     color: #333 !important; /* Força o texto para preto/cinza escuro */
@@ -43,12 +60,19 @@ body.light-mode .submenu a:hover {
     color: #000 !important; /* Texto preto no hover */
 }
 
+body.light-mode .form-content {
+    background-color: #fafafa ;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
 /* Os contêineres cinza-escuros que precisam ser brancos */
 body.light-mode .listagem-box,
 body.light-mode .filter-bar,
 body.light-mode .admin-container {
     background-color: #fafafa !important; /* Fundo totalmente branco */
-    border: 1px solid #ddd;
+    
 }
 
 
@@ -318,213 +342,6 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* ---------- TOPO ---------- */
-header {
-    background-color: #1a1a1a;
-    border-bottom: 2px solid #333;
-    transition: background-color 0.3s;
-}
-
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 40px;
-}
-
-.logo {
-    font-size: 26px;
-    font-weight: 800;
-    color: #fff;
-}
-
-.logo span {
-    color: #e53935;
-}
-
-.support {
-    font-size: 14px;
-    color: #aaa;
-}
-
-.user-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-actions a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.icon {
-    cursor: pointer;
-    font-size: 1.2rem;
-}
-
-/* ---------- MENU ---------- */
-.menu {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #2c2c2c;
-    padding: 10px 40px;
-    transition: background-color 0.3s;
-}
-
-.menu ul {
-    display: flex;
-    gap: 25px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.menu a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.search-bar input {
-    padding: 6px 12px;
-    border-radius: 20px;
-    border: none;
-    width: 200px;
-    outline: none;
-}
-
-/* ---------- CARROSSEL ---------- */
-.carousel {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 0;
-    background-color: #0d0d0d;
-}
-
-.carousel-viewport {
-    overflow: hidden;
-    width: calc((200px * 3) + (20px * 2)); /* mostra 3 cards */
-}
-
-.carousel-track {
-    display: flex;
-    gap: 20px;
-    transition: transform 0.45s cubic-bezier(.22, .9, .38, 1);
-    will-change: transform;
-}
-
-.card {
-    min-width: 200px;
-    height: 140px;
-    background: linear-gradient(180deg, #b22222, #600000);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
-    transition: transform 0.3s;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-.arrow {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 5;
-    padding: 8px;
-    transition: color 0.3s;
-}
-
-.arrow[disabled] {
-    opacity: 0.3;
-    cursor: default;
-}
-
-.dots {
-    position: absolute;
-    bottom: 10px;
-    display: flex;
-    gap: 6px;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #ccc;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.dot.active {
-    background: #e53935;
-    transform: scale(1.3);
-}
-
-@media (max-width: 700px) {
-    .carousel-viewport {
-        width: 200px; /* mostra 1 card em telas pequenas */
-    }
-}
-
-/* ---------- SEÇÕES ---------- */
-.section {
-    padding: 30px 60px;
-}
-
-.section h2 {
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-}
-
-/* ---------- LIGHT MODE ---------- */
-body.light-mode {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-body.light-mode header {
-    background-color: #fff;
-    border-bottom: 2px solid #ddd;
-    color: #333;
-}
-
-body.light-mode .logo,
-body.light-mode .user-actions a,
-body.light-mode .icon,
-body.light-mode .menu a {
-    color: #333;
-}
-
-body.light-mode .menu {
-    background-color: #eee;
-}
-
-body.light-mode .carousel {
-    background-color: #f0f0f0;
-}
-
-body.light-mode .arrow {
-    color: #333;
-}
 
 
 /* ===================================================================
@@ -1307,6 +1124,19 @@ input[type="checkbox"]:checked::before {
     --cor-acao-perigo: #ff3914; /* Vermelho (Excluir) */
 }
 
+/* Quando o body tiver a classe 'light-mode', as variáveis mudam de valor */
+body.light-mode {
+    /* 1. Fundos: Invertemos para tons claros */
+    --cor-fundo-principal: #f4f6f8;  
+    --cor-fundo-admin-box: #ffffff;  
+    --cor-input-admin: #ffffff;       
+    --cor-borda-admin: #cccccc;       
+    --cor-acao-sucesso: #39FF14;      
+    --cor-acao-manutencao: #1a1a1a;   
+    --cor-acao-perigo: #d32f2f;       
+}
+
+
 /* CONTAINER GERAL DO ADMIN */
 .main-content-area {
     max-width: 1100px;
@@ -1926,7 +1756,6 @@ input[type="checkbox"]:checked::before {
     background-color: #2c2c2c;
     padding: 30px;
     border-radius: 12px;
-    border: 1px solid #444;
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 /* --- FORMULÁRIO COLAPSÁVEL (Acordeão) --- */
@@ -2521,4 +2350,146 @@ input[type="checkbox"]:checked::before {
     background-color: rgba(57, 255, 20, 0.15);
     color: #39FF14;
     border: 1px solid rgba(57, 255, 20, 0.3);
+}
+
+/* ============================================================
+   ESTILIZAÇÃO DO ADMIN (Adaptável Claro/Escuro via Variáveis)
+   ============================================================ */
+
+/* Área Principal */
+.main-content-area {
+    background-color: var(--cor-fundo-principal);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--cor-acao-manutencao); /* Texto principal muda de cor auto */
+}
+
+.admin-section-title {
+    color: var(--cor-acao-manutencao);
+}
+
+/* --- FORMULÁRIO (Cards) --- */
+.form-content {
+    background-color: var(--cor-fundo-admin-box); /* Fundo do card */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+/* Aquele H2 que tiramos o estilo inline */
+.form-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--cor-borda-admin);
+    color: var(--cor-acao-manutencao);
+}
+
+/* --- INPUTS E SELECTS --- */
+.input-group label {
+    color: var(--cor-acao-manutencao);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea,
+.search-input-group input,
+.select-filter {
+    background-color: var(--cor-input-admin); /* Muda fundo do input */
+    color: var(--cor-acao-manutencao);        /* Muda texto do input */
+    border: 1px solid var(--cor-borda-admin);
+    padding: 10px;
+    border-radius: 5px;
+    outline: none;
+}
+
+/* Foco no input */
+.input-group input:focus,
+.select-filter:focus {
+    border-color: var(--cor-acao-sucesso);
+}
+
+/* --- TABELA DE JOGOS --- */
+.tabela-jogos-container {
+    background-color: var(--cor-fundo-admin-box);
+    border-radius: 8px;
+    padding: 10px;
+    
+}
+
+.tabela-jogos {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--cor-acao-manutencao);
+}
+
+.tabela-jogos th {
+    background-color: rgba(0,0,0,0.2); /* Escurece levemente o header independente do tema */
+    color: var(--cor-acao-manutencao);
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--cor-borda-admin);
+}
+
+.tabela-jogos td {
+    padding: 12px;
+    border-bottom: 1px solid var(--cor-borda-admin);
+}
+
+.preco-tabela {
+    color: var(--cor-acao-sucesso);
+    font-weight: bold;
+}
+
+/* Ícones de Ação (Editar/Excluir) */
+.icon-edit {
+    color: var(--cor-acao-manutencao); /* Branco no escuro, preto no claro */
+}
+.icon-edit:hover {
+    color: #3498db; /* Azul no hover */
+}
+
+.icon-delete {
+    color: var(--cor-acao-perigo);
+}
+
+/* --- MODAL --- */
+.modal-content {
+    background-color: var(--cor-fundo-admin-box); /* Modal obedece o tema */
+    color: var(--cor-acao-manutencao);
+    border: 1px solid var(--cor-borda-admin);
+}
+
+/* --- BOTÕES --- */
+/* Botão "Novo Jogo" */
+.btn-novo-jogo {
+    background-color: var(--cor-acao-sucesso);
+    color: #000; /* Texto sempre preto no verde neon fica melhor de ler */
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Ajuste para o botão Fechar (Vermelho) */
+.btn-novo-jogo.cancelar {
+    background-color: var(--cor-acao-perigo);
+    color: #fff;
+}
+
+.btn-cadastrar {
+    background-color: var(--cor-acao-sucesso);
+    color: #000;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+    
 }

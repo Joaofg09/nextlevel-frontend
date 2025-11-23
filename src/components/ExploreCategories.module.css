@@ -86,3 +86,10 @@
 .arrow.right {
     right: 0; /* Posiciona no canto direito */
 }
+
+:global(.light-mode) .exploreSection {
+    padding: 40px 20px;
+    font-weight: bold;
+    background-color: #f0f0f0; /* Mantenha o fundo da seção escuro */
+    color: #1a1a1a;
+}

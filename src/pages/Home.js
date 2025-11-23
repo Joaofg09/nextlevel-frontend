@@ -84,7 +84,7 @@ function Home() {
       </div>
     );
   }
-
+  
   // Se estiver logado, mostra os jogos
   return (
     <>
@@ -105,8 +105,8 @@ function Home() {
               <Link to={`/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
                 <div className={styles.card}>{jogo.nome}</div>
                 <div className={styles.priceTag}>
-                    {/* Formate o preço conforme necessário (ex: R$ 162,00) */}
-                    R$ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
+                  {/* Formate o preço conforme necessário (ex: R$ 162,00) */}
+                  $ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
                 </div>
               </Link>
             ))
@@ -122,9 +122,9 @@ function Home() {
             <Link to={`/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
               <div className={styles.card}>{jogo.nome}</div>
               <div className={styles.priceTag}>
-                    {/* Formate o preço conforme necessário (ex: R$ 162,00) */}
-                    R$ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
-                </div>
+                {/* Formate o preço conforme necessário (ex: R$ 162,00) */}
+                $ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
+              </div>
             </Link>
           ))}
         </div>
@@ -138,9 +138,9 @@ function Home() {
             <Link to={`/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
               <div className={styles.card}>{jogo.nome}</div>
               <div className={styles.priceTag}>
-                    {/* Formate o preço conforme necessário (ex: R$ 162,00) */}
-                    R$ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
-                </div>
+                {/* Formate o preço conforme necessário (ex: R$ 162,00) */}
+                $ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
+              </div>
             </Link>
           ))}
         </div>
@@ -150,7 +150,11 @@ function Home() {
         <ExploreCategories
           categories={categorias.map(cat => ({
             name: cat.nome,
-            slug: cat.id // Use o ID ou um slug se a sua API tiver
+            slug: cat.nome
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+              .replace(/\s+/g, "-")
           }))}
         />
       )}

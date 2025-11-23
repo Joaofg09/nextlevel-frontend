@@ -17,6 +17,7 @@ import ListaDesejosPage from './pages/ListaDesejosPage';
 import BibliotecaPage from './pages/BibliotecaPage';
 import RevisarPedidoPage from './pages/RevisarPedidoPage';
 import RelatoriosPage from './pages/RelatoriosPage';
+import CategoriaPage from './pages/CategoriaPage';
 
 // 1. Importe a nova página
 import AdminUsuariosPage from './pages/AdminUsuariosPage';
@@ -45,6 +46,8 @@ function App() {
           <Route path="/lista-desejos" element={<ListaDesejosPage />} />
           <Route path="/biblioteca" element={<BibliotecaPage />} />
           <Route path="/revisar-pedido" element={<RevisarPedidoPage />} />
+          <Route path="/categoria/:slug" element={<CategoriaPage />} />
+
 
         </Route>
 

@@ -229,7 +229,7 @@ function AdminJogos() {
 
         <div className={`form-collapsible ${showForm ? 'open' : ''}`}>
           <div className="form-content">
-            <h2 style={{marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #444', paddingBottom: '10px'}}>
+            <h2 className="form-title">
               {editingId ? `Editando Jogo (ID: ${editingId})` : 'Cadastrar Novo Jogo'}
             </h2>
             <form id="cadastro-jogo-form" onSubmit={handleSubmit}>

@@ -59,9 +59,17 @@
     flex: 0 0 auto;
     min-width: 200px; /* Ajuste este valor até que apenas 4 caibam na sua tela */
     height: 120px;
-    
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
 }
+
+.priceTag{
+    font-weight: bold;
+}
+
+:global(.light-mode) .section-h1 {
+    color: #1a1a1a; /* Muda de Branco para Preto */
+}
+

@@ -4,13 +4,12 @@ import { Link } from 'react-router-dom';
 import styles from './ExploreCategories.module.css';
 import homeStyles from './Home.module.css'; 
 
-// Dados de exemplo (SUBSTITUA PELOS SEUS DADOS REAIS DA API)
 const categoriesData = [
-    { name: 'TERROR', slug: 'terror' },
-    { name: 'COMÉDIA', slug: 'comedia' },
-    { name: 'AÇÃO', slug: 'acao' },
-    { name: 'DRAMA', slug: 'drama' },
-    { name: 'FANTASIA & FICÇÃO CIENTÍFICA', slug: 'fantasia-ficcao' },
+    { name: 'RPG', slug: 'rpg' },
+    { name: 'AÇÃO', slug: 'Acao' },
+    { name: 'AVENTURA', slug: 'aventura' },
+    { name: 'TIRO', slug: 'tiro' },
+    { name: 'SIMULAÇÃO', slug: 'simulação' },
 ];
 
 // O componente agora espera a lista de categorias como prop
@@ -23,10 +22,10 @@ function ExploreCategories({ categories = categoriesData }) {
     if (gridRef.current) {
         const scrollAmount = gridRef.current.clientWidth / 2;
         
-        // NOVO: Use scrollLeft com um objeto de opções para suavização
+       
         gridRef.current.scrollBy({
             left: direction === 'left' ? -scrollAmount : scrollAmount,
-            behavior: 'smooth' // ISTO ADICIONA A SUAVIZAÇÃO
+            behavior: 'smooth' 
         });
     }
 };

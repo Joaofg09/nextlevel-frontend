@@ -101,3 +101,30 @@
     }
 }
 
+/* =========================================
+   ESTILOS DO MODO CLARO (LIGHT MODE)
+   ========================================= */
+
+
+/* 1. Muda o fundo da seção do carrossel */
+:global(.light-mode) .carousel {
+    background-color: #f0f0f0; /* Fundo branco */
+    /* Se quiser uma borda sutil separando: */
+    border-top: 1px solid #eee; 
+    border-bottom: 1px solid #eee;
+}
+
+/* 2. Muda a aparência dos CARDS (Jogos) */
+:global(.light-mode) .card {
+    background-color: #f0f0f0; /* Card cinza bem claro */
+    color: #fff;            /* Texto preto */
+    border-radius: 10px;
+    border: 1px solid #e0e0e0; /* Borda fininha para destaque */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra suave */
+}
+
+/* 3. Muda a cor das setas de navegação */
+:global(.light-mode) .arrow {
+    background-color: rgba(0, 0, 0, 0); /* Fundo da seta escurecido levemente */
+    color: #1a1a1a; /* Seta preta */
+}
