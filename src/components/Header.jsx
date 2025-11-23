@@ -154,11 +154,7 @@ function Header() {
               </Link>
             </li>
           ))}
-        </ul>
-
-        <div className={styles.searchBar}>
-          <input type="text" placeholder="Procurar na loja" />
-        </div>
+        </ul>     
       </nav>
 
     </header>

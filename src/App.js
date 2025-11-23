@@ -7,7 +7,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
-import AdminJogos from './pages/AdminJogos'; 
+import AdminJogos from './pages/AdminJogos';
 import AdminEmpresas from './pages/AdminEmpresas';
 import HistoricoCompras from './pages/HistoricoCompras';
 import MeusDados from './pages/MeusDados';
@@ -18,9 +18,9 @@ import BibliotecaPage from './pages/BibliotecaPage';
 import RevisarPedidoPage from './pages/RevisarPedidoPage';
 import RelatoriosPage from './pages/RelatoriosPage';
 import CategoriaPage from './pages/CategoriaPage';
-
-// 1. Importe a nova página
 import AdminUsuariosPage from './pages/AdminUsuariosPage';
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import './index.css';
 
@@ -28,30 +28,133 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rotas que usam o Layout (com Header) */}
+
+        {/* Rotas com Header */}
         <Route path="/" element={<Layout />}>
-          
-          <Route index element={<Home />} />
-          <Route path="/admin/jogos" element={<AdminJogos />} />
-          <Route path="/admin/empresas" element={<AdminEmpresas />} />
-          <Route path="/admin/relatorios" element={<RelatoriosPage />} />
 
-          {/* 2. Adicione a nova rota de usuários */}
-          <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
+          {/* HOME → só abre logado */}
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/historico" element={<HistoricoCompras />} />
-          <Route path="/meus-dados" element={<MeusDados />} />
-          <Route path="/carrinho" element={<CarrinhoPage />} />
-          <Route path="/jogo/:id" element={<JogoDetalhesPage />} />
-          <Route path="/lista-desejos" element={<ListaDesejosPage />} />
-          <Route path="/biblioteca" element={<BibliotecaPage />} />
-          <Route path="/revisar-pedido" element={<RevisarPedidoPage />} />
-          <Route path="/categoria/:slug" element={<CategoriaPage />} />
+          {/* Rotas ADMIN - só Admin acessa */}
+          <Route
+            path="/admin/jogos"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminJogos />
+              </ProtectedRoute>
+            }
+          />
 
+          <Route
+            path="/admin/empresas"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminEmpresas />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/relatorios"
+            element={
+              <ProtectedRoute adminOnly>
+                <RelatoriosPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/usuarios"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminUsuariosPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Rotas NORMAIS — só logado acessa */}
+          <Route
+            path="/historico"
+            element={
+              <ProtectedRoute>
+                <HistoricoCompras />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/meus-dados"
+            element={
+              <ProtectedRoute>
+                <MeusDados />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/carrinho"
+            element={
+              <ProtectedRoute>
+                <CarrinhoPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/jogo/:id"
+            element={
+              <ProtectedRoute>
+                <JogoDetalhesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/lista-desejos"
+            element={
+              <ProtectedRoute>
+                <ListaDesejosPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/biblioteca"
+            element={
+              <ProtectedRoute>
+                <BibliotecaPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/revisar-pedido"
+            element={
+              <ProtectedRoute>
+                <RevisarPedidoPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/categoria/:slug"
+            element={
+              <ProtectedRoute>
+                <CategoriaPage />
+              </ProtectedRoute>
+            }
+          />
 
         </Route>
 
-        {/* Rotas que NÃO usam o Layout (tela cheia) */}
+        {/* Login e Cadastro (sem header) */}
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
 
