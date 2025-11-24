@@ -1,5 +1,5 @@
 // No arquivo: src/pages/AdminEmpresas.js
-// VERSÃO FINAL - Corrigida (useCallback)
+// VERSÃO FINAL - Modal Moderno de Exclusão
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +11,15 @@ function AdminEmpresas() {
   const [editingId, setEditingId] = useState(null); 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState('id-asc');
-  const [showModal, setShowModal] = useState(false);
+  
+  // Estados dos Modais
+  const [showModal, setShowModal] = useState(false); // Modal de Cadastro/Edição
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal de Exclusão
+  const [empresaToDelete, setEmpresaToDelete] = useState(null); // Empresa a excluir
 
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // 1. Envolvemos a função em useCallback
   const fetchEmpresas = useCallback(() => {
     const token = localStorage.getItem('token');
     fetch('http://localhost:3000/api/v1/empresas', {
@@ -33,9 +36,8 @@ function AdminEmpresas() {
     })
     .then(data => { if (Array.isArray(data)) setEmpresas(data); })
     .catch(err => console.error("Erro ao buscar empresas:", err.message));
-  }, [logout, navigate]); // Dependências do useCallback
+  }, [logout, navigate]);
 
-  // 2. Adicionamos fetchEmpresas à lista de dependências do useEffect
   useEffect(() => {
     fetchEmpresas();
   }, [fetchEmpresas]);
@@ -78,11 +80,20 @@ function AdminEmpresas() {
     }
   };
 
-  const handleDeleteClick = async (empresa) => {
-    if (!window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome}"?`)) return;
+  // === 1. AÇÃO DE CLIQUE NO BOTÃO EXCLUIR ===
+  const handleDeleteClick = (empresa) => {
+    setEmpresaToDelete(empresa);
+    setShowDeleteModal(true); // Abre o modal personalizado
+  };
+
+  // === 2. CONFIRMAÇÃO DE EXCLUSÃO ===
+  const confirmDelete = async () => {
+    setShowDeleteModal(false); // Fecha o modal
+    if (!empresaToDelete) return;
+
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/empresas/${empresa.id}`, {
+      const response = await fetch(`http://localhost:3000/api/v1/empresas/${empresaToDelete.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -145,6 +156,7 @@ function AdminEmpresas() {
           </form>
         </div>
         
+        {/* Modal de Confirmação de CADASTRO/EDIÇÃO */}
         {showModal && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -157,6 +169,30 @@ function AdminEmpresas() {
               <div className="modal-actions">
                 <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn-confirm" onClick={confirmCadastro}>Sim, Confirmar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === 3. MODAL DE CONFIRMAÇÃO DE EXCLUSÃO === */}
+        {showDeleteModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3>Excluir Empresa?</h3>
+              <p>
+                Tem certeza que deseja excluir a empresa <strong>"{empresaToDelete?.nome}"</strong>?
+                <br />
+                <span style={{color: '#e53935', fontSize: '0.9em'}}>Esta ação é permanente.</span>
+              </p>
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
+                <button 
+                  className="btn-confirm" 
+                  onClick={confirmDelete} 
+                  style={{backgroundColor: '#e53935', color: '#fff'}}
+                >
+                  Excluir
+                </button>
               </div>
             </div>
           </div>

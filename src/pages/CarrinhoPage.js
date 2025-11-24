@@ -1,19 +1,16 @@
 // No arquivo: src/pages/CarrinhoPage.js
-// VERSÃO FINAL - Imagens + Modal Moderno + Toasts
+// VERSÃO FINAL - Botão "Carrinho Vazio" corrigido
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// 1. A Imagem Genérica é mantida
 const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState(null);
   const [loading, setLoading] = useState(true);
   const [jogosMap, setJogosMap] = useState(new Map());
-
-  // 2. Novos Estados para o Modal e Notificação
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -21,7 +18,6 @@ function CarrinhoPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  // Função auxiliar de Notificação (Toast)
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
     setTimeout(() => {
@@ -73,15 +69,13 @@ function CarrinhoPage() {
     fetchData();
   }, [fetchData]); 
 
-  // 3. Função chamada ao clicar em "Remover" (Abre o Modal)
   const handleRemoveClick = (gameId) => {
     setItemToDelete(gameId);
     setShowModal(true);
   };
 
-  // 4. Função chamada ao confirmar no Modal (Faz a exclusão)
   const confirmRemove = async () => {
-    setShowModal(false); // Fecha o modal
+    setShowModal(false);
     const token = localStorage.getItem('token');
     
     try {
@@ -94,7 +88,7 @@ function CarrinhoPage() {
 
       if (response.ok) {
         showToast("Item removido do carrinho!", 'success');
-        fetchData(); // Atualiza a lista
+        fetchData();
       } else {
         showToast(data.message, 'error');
       }
@@ -115,6 +109,7 @@ function CarrinhoPage() {
     );
   }
 
+  // Se o carrinho estiver vazio
   if (!carrinho || !carrinho.itens || carrinho.itens.length === 0) {
     return (
       <div className="main-container">
@@ -124,7 +119,16 @@ function CarrinhoPage() {
             <div className="cart-items" id="cart-items-container"></div>
             <div className="cart-summary">
               <h2>Subtotal: <span id="subtotal">$0.00</span></h2>
-              <a href="/" className="checkout-button" style={{backgroundColor: '#555', cursor: 'not-allowed'}}>Carrinho Vazio</a>
+              
+              {/* === MUDANÇA AQUI: Botão real desabilitado === */}
+              <button 
+                className="checkout-button" 
+                style={{backgroundColor: '#555', cursor: 'not-allowed', border: 'none'}}
+                disabled
+              >
+                Carrinho Vazio
+              </button>
+
             </div>
         </div>
       </div>
@@ -141,15 +145,11 @@ function CarrinhoPage() {
       <h1>Meu Carrinho</h1>
       <div className="cart-layout">
         <div className="cart-items" id="cart-items-container">
-          
           {carrinho.itens.map(item => {
             const jogoInfo = jogosMap.get(item.fkJogo);
-            
             return (
               <div className="cart-item" key={item.id} data-id={item.fkJogo}>
-                {/* 5. A IMAGEM ESTÁ AQUI */}
                 <img src={GENERIC_IMAGE} alt="Capa do Jogo" />
-                
                 <div className="item-details">
                   {jogoInfo ? (
                     <>
@@ -163,7 +163,6 @@ function CarrinhoPage() {
                 <div className="item-actions">
                   <button 
                     className="remove-btn"
-                    // Chama a função que abre o modal
                     onClick={() => handleRemoveClick(item.fkJogo)}
                   >
                     Remover
@@ -186,7 +185,6 @@ function CarrinhoPage() {
         </div>
       </div>
 
-      {/* 6. MODAL DE CONFIRMAÇÃO */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -204,7 +202,6 @@ function CarrinhoPage() {
         </div>
       )}
 
-      {/* 7. NOTIFICAÇÃO TOAST */}
       {notification && (
         <div className={`toast-notification ${notification.type}`}>
           <div className="toast-icon">
@@ -216,7 +213,6 @@ function CarrinhoPage() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

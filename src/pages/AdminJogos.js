@@ -288,7 +288,7 @@ function AdminJogos() {
         <div className="listagem-box">
           <div className="filter-bar">
             <div className="search-input-group">
-              <i className="fas fa-search"></i>
+              
               <input 
                 type="text" 
                 id="input-busca" 

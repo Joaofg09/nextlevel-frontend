@@ -84,7 +84,7 @@ body.light-mode .tabela-empresas thead th {
 }
 
 /* Reverte o fundo dos inputs de busca e dropdowns */
-body.light-mode .search-input-group,
+
 body.light-mode .select-filter,
 body.light-mode .search-input-group input,
 body.light-mode .tabela-jogos tbody td {
@@ -92,7 +92,10 @@ body.light-mode .tabela-jogos tbody td {
     color: #333 !important; /* Texto da célula em preto */
     border-color: #ccc !important;
 }
-
+body.light-mode #select-empresa-filter{
+    background-color: #ffffff !important;
+    color: #333 !important;
+}
 /* Texto que era Neon Green no Dark Mode, volta a ser preto */
 body.light-mode .preco-tabela {
     color: #000000 !important;
@@ -2372,7 +2375,7 @@ body.light-mode {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    margin-bottom: 20px;
+    
 }
 
 /* Aquele H2 que tiramos o estilo inline */
@@ -2631,13 +2634,12 @@ body.light-mode .legal-modal li{
     font-weight: 800;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;    
     transition: all 0.2s ease;
     box-shadow: 0 4px 15px rgba(57, 255, 20, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
 }
 
 .btn-buy-now:hover {
@@ -2680,4 +2682,138 @@ body.light-mode .legal-modal li{
     cursor: default;
     font-weight: bold;
     text-align: center;
+}
+
+/* =================================================================
+   === ESTILO: AJUSTES PARA MODO CLARO (Light Mode) ===
+   ================================================================= */
+
+/* Ajuste Base do Hero (Padrão Escuro) */
+.game-hero {
+    background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+    border-bottom: 4px solid #e53935;
+    position: relative;
+}
+
+/* Ajuste Texto do Label de Estrela */
+.star-label {
+    margin-left: 10px; 
+    margin-top: 5px; 
+    color: #ccc;
+}
+
+/* Ajuste Autor do Review (Cor padrão verde neon) */
+.review-author {
+    color: #39FF14;
+}
+
+/* --- REGRAS ESPECÍFICAS DO MODO CLARO (.light-mode) --- */
+
+/* Fundo da Página e Textos Gerais */
+body.light-mode {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* 1. Hero Banner no Modo Claro */
+body.light-mode .game-hero {
+    background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 100%);
+    border-bottom: 4px solid #d32f2f;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+body.light-mode .game-hero h1 {
+    color: #d32f2f; /* Título em Vermelho Escuro */
+    text-shadow: none;
+}
+
+/* 2. Conteúdo Principal */
+body.light-mode .game-main-content p {
+    color: #555; /* Texto cinza escuro para leitura */
+}
+
+body.light-mode .game-main-content h2 {
+    color: #d32f2f;
+    border-bottom-color: #ccc;
+}
+
+/* 3. Caixas Laterais (Sidebar) */
+body.light-mode .purchase-box,
+body.light-mode .details-box,
+body.light-mode .rating-box {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    color: #333;
+}
+
+body.light-mode .price-tag {
+    color: #d32f2f; /* Preço em vermelho */
+}
+
+body.light-mode .rating-box strong {
+    color: #333;
+    border-color: #333;
+}
+
+/* 4. Avaliações */
+body.light-mode .review-textarea {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
+body.light-mode .star-label {
+    color: #666;
+}
+
+body.light-mode .user-review-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-left: 4px solid #d32f2f;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+body.light-mode .review-header strong.review-author {
+    color: #d32f2f; /* Nome do usuário em vermelho escuro */
+}
+
+body.light-mode .user-review-card p {
+    color: #444;
+}
+
+/* 5. Botões */
+body.light-mode .btn-add-cart {
+    color: #333;
+    border-color: #333;
+}
+body.light-mode .btn-add-cart:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+/* Ajuste específico para o Coração no Modo Claro */
+body.light-mode .favorite-icon {
+    color: #ccc; /* Cinza claro quando não está favoritado */
+}
+
+body.light-mode .favorite-icon:hover {
+    color: #ff8a80; /* Um vermelho bem suave ao passar o mouse */
+    transform: scale(1.2);
+}
+
+body.light-mode .favorite-icon.active {
+    color: #d32f2f; /* Vermelho forte quando está favoritado */
+}
+/* Ajuste do Botão de Compra no Modo Claro */
+body.light-mode .btn-buy-now {
+    /* Sombra um pouco mais escura para destacar no fundo branco */
+    box-shadow: 0 4px 15px rgba(0, 128, 0, 0.25); 
+}
+
+body.light-mode .btn-buy-now:hover {
+    box-shadow: 0 6px 20px rgba(0, 128, 0, 0.4);
+}
+body.light-mode .user-review-card {
+    background-color: #fff;
+    border: none; 
+    border-left: 4px solid #d32f2f; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
 }

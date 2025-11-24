@@ -112,7 +112,7 @@ function RelatoriosPage() {
         <div className="filter-bar" style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
           {/* FILTRO POR NOME DO JOGO (Input de Texto) */}
           <div className="search-input-group">
-            <i className="fas fa-search"></i>
+            
             <input
               type="text"
               id="input-busca-jogo"

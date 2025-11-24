@@ -1,5 +1,5 @@
 // No arquivo: src/pages/Cadastro.js
-// VERSÃO FINAL - Com Toasts
+// VERSÃO 5 - Validação de Senha Forte
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ function Cadastro() {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState(''); 
   const [dataNascimento, setDataNascimento] = useState('');
-  const [notification, setNotification] = useState(null); // Estado do Toast
+  const [notification, setNotification] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
@@ -30,13 +30,23 @@ function Cadastro() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!nome || !email || !senha || dataNascimento.length < 10) {
+      showToast('Por favor, preencha todos os campos corretamente.', 'error');
+      return;
+    }
+
     if (senha !== confirmarSenha) {
       showToast('As senhas não coincidem!', 'error');
       return;
     }
 
-    if (!nome || !email || !senha || dataNascimento.length < 10) {
-      showToast('Por favor, preencha todos os campos corretamente.', 'error');
+    // === NOVA VALIDAÇÃO DE SENHA ===
+    const temOitoCaracteres = senha.length >= 8;
+    const temLetra = /[a-zA-Z]/.test(senha);
+    const temNumero = /\d/.test(senha);
+
+    if (!temOitoCaracteres || !temLetra || !temNumero) {
+      showToast('A senha deve ter no mínimo 8 caracteres, contendo letras e números.', 'error');
       return;
     }
 
@@ -51,7 +61,6 @@ function Cadastro() {
 
       if (response.ok) {
         showToast('Cadastro realizado com sucesso!', 'success');
-        // Espera 2 segundos para o usuário ler antes de ir pro login
         setTimeout(() => {
             navigate('/login');
         }, 2000);
@@ -90,6 +99,9 @@ function Cadastro() {
               <div className="input-group">
                 <label htmlFor="password">Senha</label>
                 <input type="password" id="password" placeholder="Digite aqui." value={senha} onChange={(e) => setSenha(e.target.value)} />
+                <p className="password-hint" style={{color: '#aaa'}}>
+                    Mínimo de 8 dígitos, contendo letras e números.
+                </p>
               </div>
               <div className="input-group">
                 <label htmlFor="confirmPassword">Confirmar Senha</label>
@@ -97,7 +109,6 @@ function Cadastro() {
                   type="password" id="confirmPassword" placeholder="Digite a senha novamente." value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)}
                   style={confirmarSenha && senha !== confirmarSenha ? {borderColor: '#e53935'} : {}}
                 />
-                <p className="password-hint">Sua senha precisa ter um mínimo de 8 dígitos...</p>
               </div>
               <button type="submit" className="login-button">Cadastrar</button>
             </form>
@@ -105,7 +116,6 @@ function Cadastro() {
         </div>
       </div>
 
-      {/* Toast Notification */}
       {notification && (
         <div className={`toast-notification ${notification.type}`}>
           <div className="toast-icon">

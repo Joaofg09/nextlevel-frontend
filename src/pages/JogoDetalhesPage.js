@@ -1,5 +1,5 @@
 // No arquivo: src/pages/JogoDetalhesPage.js
-// VERSÃO 8 - Comprar Agora + Adicionar ao Carrinho
+// VERSÃO 10 - Preparada para Light Mode (Sem estilos inline)
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -70,7 +70,6 @@ function JogoDetalhesPage() {
     fetchData(); 
   }, [fetchData]); 
 
-  // === 1. ADICIONAR AO CARRINHO (Apenas avisa) ===
   const handleAddToCart = async () => {
     if (!user) return navigate('/login');
     if (hasGame) { showToast("Você já possui este jogo!", 'error'); return; }
@@ -83,41 +82,54 @@ function JogoDetalhesPage() {
         body: JSON.stringify({ jogoId: jogo.id })
       });
       const data = await response.json();
-      
-      if (response.ok) {
-        showToast(data.message, 'success');
-      } else {
-        showToast(data.message, 'error');
-      }
-    } catch (error) {
-      showToast("Erro de conexão.", 'error');
-    }
+      if (response.ok) { showToast(data.message, 'success'); }
+      else { showToast(data.message, 'error'); }
+    } catch (error) { showToast("Erro de conexão.", 'error'); }
   };
 
-  // === 2. COMPRAR AGORA (Adiciona e Redireciona) ===
   const handleBuyNow = async () => {
     if (!user) return navigate('/login');
-    if (hasGame) return; // Não faz nada se já tem
+    if (hasGame) return;
+
+    if (!window.confirm("Comprar agora irá substituir os itens atuais do seu carrinho. Deseja continuar?")) {
+        return;
+    }
 
     const token = localStorage.getItem('token');
-    try {
-      const response = await fetch('http://localhost:3000/api/v1/carrinho/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ jogoId: jogo.id })
-      });
-      const data = await response.json();
 
-      // Se deu certo OU se já estava no carrinho (erro 400), vamos para o checkout
-      if (response.ok) {
-        navigate('/revisar-pedido');
-      } else if (response.status === 400 && data.message === 'Jogo já está no carrinho.') {
-        navigate('/revisar-pedido');
-      } else {
-        showToast(data.message, 'error');
-      }
+    try {
+        const cartRes = await fetch('http://localhost:3000/api/v1/carrinho/ativo', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (cartRes.status !== 204) {
+            const cartData = await cartRes.json();
+            if (cartData && cartData.carrinho && cartData.carrinho.itens) {
+                const deletePromises = cartData.carrinho.itens.map(item => 
+                    fetch(`http://localhost:3000/api/v1/carrinho/${item.fkJogo}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    })
+                );
+                await Promise.all(deletePromises);
+            }
+        }
+
+        const addRes = await fetch('http://localhost:3000/api/v1/carrinho/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ jogoId: jogo.id })
+        });
+        
+        if (addRes.ok) {
+            navigate('/revisar-pedido');
+        } else {
+            const data = await addRes.json();
+            showToast(data.message, 'error');
+        }
     } catch (error) {
-      showToast("Erro de conexão.", 'error');
+        console.error(error);
+        showToast("Erro ao processar compra rápida.", 'error');
     }
   };
 
@@ -167,12 +179,8 @@ function JogoDetalhesPage() {
       const data = await response.json();
       if (response.ok) {
         showToast(data.message, 'success');
-        setComentario(""); 
-        setNota(0);
-        fetchData(); 
-      } else {
-        showToast(data.message, 'error');
-      }
+        setComentario(""); setNota(0); fetchData(); 
+      } else { showToast(data.message, 'error'); }
     } catch (error) { console.error(error); }
   };
   
@@ -182,15 +190,8 @@ function JogoDetalhesPage() {
 
   return (
     <div className="main-container">
-      <div 
-        className="game-hero" 
-        id="game-hero" 
-        style={{
-          background: 'linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%)',
-          borderBottom: '4px solid #e53935',
-          position: 'relative'
-        }}
-      >
+      {/* Hero sem estilos inline de cor */}
+      <div className="game-hero" id="game-hero">
         <h1 id="game-title">{jogo.nome}</h1>
       </div>
 
@@ -211,7 +212,8 @@ function JogoDetalhesPage() {
                         onMouseLeave={() => setHoverNota(0)}
                     ></i>
                 ))}
-                <span style={{marginLeft: '10px', marginTop: '5px', color: '#ccc'}}>
+                {/* Classe para o texto da nota */}
+                <span className="star-label">
                     {nota > 0 ? `${nota} Estrelas` : 'Toque para avaliar'}
                 </span>
             </div>
@@ -231,7 +233,7 @@ function JogoDetalhesPage() {
               avaliacoes.avaliacoes.map(review => (
                 <div className="user-review-card" key={review.id}>
                   <div className="review-header">
-                    <strong style={{color: '#39FF14'}}>
+                    <strong className="review-author">
                         {review.nomeUsuario ? review.nomeUsuario : `Usuário ID: ${review.fkUsuario}`}
                     </strong>
                     <div className="stars">
@@ -252,11 +254,8 @@ function JogoDetalhesPage() {
           <div className="purchase-box">
             <span className="price-tag" id="game-price">${jogo.preco.toFixed(2)}</span>
             
-            {/* === NOVOS BOTÕES === */}
             {hasGame ? (
-                <button className="btn-disabled">
-                    <i className="fas fa-check"></i> Adquirido
-                </button>
+                <button className="btn-disabled"><i className="fas fa-check"></i> Adquirido</button>
             ) : (
                 <div className="actions-container">
                     <button className="btn-buy-now" onClick={handleBuyNow}>
@@ -268,7 +267,6 @@ function JogoDetalhesPage() {
                 </div>
             )}
             
-            {/* Coração (Se já tem, mostra check discreto) */}
             {!hasGame && (
                  <div style={{marginTop: '15px', textAlign: 'center'}}>
                     <i 
