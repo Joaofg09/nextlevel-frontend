@@ -1,220 +1,208 @@
 // No arquivo: src/pages/Home.js
-// VERSÃO 6 - Usando a rota protegida para obter IDs
+// VERSÃO FINAL - Híbrida + Componentes + CSS Modules
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Carrossel from '../components/Carrossel';
-import styles from '../components/Home.module.css';
 import ExploreCategories from '../components/ExploreCategories';
+import styles from '../components/Home.module.css'; // Importa seu CSS Module
 
 function Home() {
   const [jogos, setJogos] = useState([]);
+  const [categorias, setCategorias] = useState([]); 
   const [termoPesquisa, setTermoPesquisa] = useState('');
-  const [jogosFiltrados, setJogosFiltrados] = useState([]);
-  const [categorias, setCategorias] = useState([]);
-
+  
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  
+  const isLogado = !!user;
 
   // =================================================================
-  // FUNÇÃO PARA BUSCAR DADOS
+  // 1. BUSCAR DADOS (Híbrido: Público vs Privado)
   // =================================================================
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-
     const token = localStorage.getItem('token');
-    const BASE_URL = 'http://localhost:3000/api/v1'; // Definido para uso mais limpo
+    
+    // Define URL: Privada (com IDs) ou Pública (sem IDs, mas com nomes)
+    const urlJogos = isLogado 
+        ? 'http://localhost:3000/api/v1/jogos' 
+        : 'http://localhost:3000/api/v1/public/jogos';
 
-    const secureFetch = (url) => {
-      return fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
-        .then(res => {
-          if (res.status === 401) { logout(); navigate('/login'); throw new Error('Sessão expirada'); }
-          if (res.status === 204) return null;
-          return res.json();
-        });
-    };
+    const headers = isLogado ? { 'Authorization': `Bearer ${token}` } : {};
 
-    // 1. Buscar a lista de JOGOS
-    secureFetch(`${BASE_URL}/jogos`)
-      .then(data => {
-        if (Array.isArray(data)) {
-          setJogos(data);
-          // Inicializa a lista filtrada com todos os jogos
-          setJogosFiltrados(data);
-        }
+    // A. Buscar JOGOS
+    fetch(urlJogos, { headers })
+      .then(res => {
+        if (res.status === 401 && isLogado) { logout(); navigate('/login'); return; }
+        if (res.status === 204) return [];
+        return res.json();
       })
-      .catch(err => console.error("Erro ao buscar jogos:", err.message));
-
-    // 2. Buscar a lista de CATEGORIAS
-    secureFetch(`${BASE_URL}/categorias`)
       .then(data => {
-        if (Array.isArray(data)) {
-          setCategorias(data);
-        }
+        if (Array.isArray(data)) setJogos(data);
       })
-      .catch(err => console.error("Erro ao buscar categorias:", err.message));
+      .catch(err => console.error("Erro ao buscar jogos:", err));
 
-  }, [user, logout, navigate]);
-
-  // =================================================================
-  // LÓGICA DA BARRA DE PESQUISA (FILTRAGEM CLIENT-SIDE)
-  // =================================================================
-  useEffect(() => {
-    const termoNormalizado = termoPesquisa.toLowerCase().trim();
-
-    if (termoNormalizado === '') {
-      // Se a barra estiver vazia, exibe todos os jogos originais
-      setJogosFiltrados(jogos);
-      return;
+    // B. Buscar CATEGORIAS
+    // Se logado: busca da API de categorias.
+    // Se público: a API de categorias é bloqueada, então extraímos dos próprios jogos depois.
+    if (isLogado) {
+      fetch('http://localhost:3000/api/v1/categorias', { headers })
+        .then(res => res.json())
+        .then(data => { if (Array.isArray(data)) setCategorias(data); })
+        .catch(err => console.error("Erro ao buscar categorias:", err));
     }
-
-    // Filtra a lista original de 'jogos'
-    const resultados = jogos.filter(jogo =>
-      jogo.nome.toLowerCase().includes(termoNormalizado)
-    );
-
-    setJogosFiltrados(resultados);
-  }, [termoPesquisa, jogos]); // Roda quando o termo de pesquisa ou a lista original de jogos muda
-
+  }, [isLogado, logout, navigate]);
 
   // =================================================================
-  // LÓGICA DAS SEÇÕES PADRÕES
+  // 2. NORMALIZAÇÃO DE DADOS (Resolver diferença Público/Privado)
   // =================================================================
-
+  
+  // Mapa para traduzir ID -> Nome (apenas modo privado)
   const categoriaMap = useMemo(() => {
     return categorias.reduce((acc, cat) => {
-      acc[cat.id] = cat.nome.trim();
+      acc[cat.id] = cat.nome.trim(); 
       return acc;
     }, {});
   }, [categorias]);
 
-  // Os filtros para as seções padrões SÓ USAM a lista original 'jogos'
-  // e só são usados quando não há termo de pesquisa
-  const recomendados = jogos.slice(0, 4);
-  const emAlta = jogos.slice(4, 8);
-  const rpgs = jogos.filter(j => categoriaMap[j.fkCategoria] === 'RPG').slice(0, 4);
+  // Helper para pegar o nome da categoria de um jogo, independente do modo
+  const getCategoriaNome = (jogo) => {
+    // Modo Público: A API já manda o nome em 'jogo.categoria'
+    if (jogo.categoria) return jogo.categoria.trim();
+    // Modo Privado: A API manda 'fkCategoria', traduzimos pelo mapa
+    if (jogo.fkCategoria) return categoriaMap[jogo.fkCategoria];
+    return '';
+  };
 
-  const GameCard = ({ jogo }) => (
-    <Link to={`/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
-      <div className={styles.card}>{jogo.nome}</div>
-      <div className={styles.priceTag}>
-        $ {jogo.preco ? jogo.preco.toFixed(2).replace('.', ',') : 'N/A'}
-      </div>
-    </Link>
-  );
+  // Se estiver no modo público, geramos a lista de categorias baseada nos jogos carregados
+  const listaCategoriasExibicao = useMemo(() => {
+    if (isLogado && categorias.length > 0) return categorias;
+    
+    // Extrai categorias únicas dos jogos públicos
+    const nomesUnicos = [...new Set(jogos.map(j => j.categoria))].filter(Boolean).sort();
+    return nomesUnicos.map((nome, index) => ({ id: index, nome: nome }));
+  }, [isLogado, categorias, jogos]);
 
-  if (!user) {
+  // =================================================================
+  // 3. FILTROS E SEÇÕES
+  // =================================================================
+  
+  // Filtro de Pesquisa
+  const jogosExibidos = useMemo(() => {
+    if (!termoPesquisa) return jogos;
+    return jogos.filter(j => j.nome.toLowerCase().includes(termoPesquisa.toLowerCase()));
+  }, [jogos, termoPesquisa]);
+
+  const listaBase = termoPesquisa ? jogosExibidos : jogos;
+
+  // Seções
+  const recomendados = listaBase.slice(0, 4);
+  const emAlta = listaBase.slice(4, 8);
+  
+  // Filtro RPG usando o helper unificado
+  const rpgs = listaBase.filter(j => getCategoriaNome(j) === 'RPG').slice(0, 4);
+
+  // Componente interno de Card para reutilizar lógica de clique
+  const GameCard = ({ jogo }) => {
+    // Se tem ID (privado ou público corrigido), vai pro jogo. Se não, login.
+    const linkTo = jogo.id ? `/loja/jogo/${jogo.id}` : '/login';
+    
+    const handleClick = (e) => {
+        if (!jogo.id) {
+            e.preventDefault();
+            navigate('/login');
+        }
+    };
+
     return (
-      <div className="main-container" style={{ textAlign: 'center', padding: '50px' }}>
-        <h1>Bem-vindo à NextLevel</h1>
-        <p>Por favor, <Link to="/login">faça login</Link> para ver nosso catálogo de jogos.</p>
-      </div>
+      <Link to={linkTo} className={styles['card-link']} onClick={handleClick}>
+        <div className={styles.card}>{jogo.nome}</div>
+        <div className={styles.priceTag}>
+            {/* Formatação de preço segura */}
+            $ {jogo.preco !== undefined ? Number(jogo.preco).toFixed(2).replace('.', ',') : '0,00'}
+        </div>
+      </Link>
     );
-  }
+  };
 
   return (
     <>
-      {/* ====================================================== */}
-      {/* INPUT DA BARRA DE PESQUISA (ADICIONADO) */}
-      {/* ====================================================== */}
-
-      <div className={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="Pesquisar jogos por nome..."
+      {/* Barra de Pesquisa (Estilo inline para simplificar ou adicione ao module.css) */}
+      <div style={{maxWidth: '600px', margin: '20px auto', padding: '0 20px'}}>
+        <input 
+          type="text" 
+          placeholder="Pesquisar jogos..." 
           value={termoPesquisa}
           onChange={(e) => setTermoPesquisa(e.target.value)}
-          className={styles.searchInput}
-        // Opcional: Adicione onFocus/onBlur se estiver usando o estado showSuggestions
+          style={{
+              width: '100%', 
+              padding: '12px', 
+              borderRadius: '8px', 
+              border: '1px solid #444', 
+              backgroundColor: '#1a1a1a', 
+              color: '#fff',
+              outline: 'none'
+          }}
         />
-
-        {/* Lista de Sugestões */}
-        {termoPesquisa.length > 0 && jogosFiltrados.length > 0 && (
-          <ul className={styles.suggestionsList}>
-            {/* Mapeamos APENAS um número limitado de sugestões */}
-            {jogosFiltrados.slice(0, 5).map(jogo => (
-              <li
-                key={jogo.id}
-                className={styles.suggestionItem}
-                onClick={() => {
-                  // 1. Limpa a barra de pesquisa (opcional, mas recomendado)
-                  setTermoPesquisa('');
-
-                  // 2. Navega para a página do jogo usando o ID
-                  navigate(`/jogo/${jogo.id}`);
-                }}
-              >
-                {jogo.nome}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
-      {/* ====================================================== */}
-      {/* RENDERIZAÇÃO CONDICIONAL DA PESQUISA / SEÇÕES PADRÕES */}
-      {/* ====================================================== */}
-
-      {termoPesquisa.length > 0 ? (
-        // RENDERIZA A LISTA DE PESQUISA
+      {termoPesquisa ? (
         <section className={styles.section}>
-          <h2>
-            Resultados da Pesquisa
-            {jogosFiltrados.length === 0 && `: Nenhum jogo encontrado para "${termoPesquisa}"`}
-          </h2>
+          <h2>Resultados da Pesquisa</h2>
           <div className={styles.grid}>
-            {jogosFiltrados.map(jogo => <GameCard key={jogo.id} jogo={jogo} />)}
+            {jogosExibidos.map(jogo => (
+              <GameCard key={jogo.id || jogo.nome} jogo={jogo} />
+            ))}
+            {jogosExibidos.length === 0 && <p>Nenhum jogo encontrado.</p>}
           </div>
         </section>
       ) : (
-        // RENDERIZA AS SEÇÕES PADRÕES
         <>
           <section className={styles['section-h1']}>
             <h1>Recomendados da Semana</h1>
           </section>
-
+          
+          {/* Seu componente Carrossel */}
           <Carrossel jogos={jogos} />
 
-          <hr style={{ margin: '40px 0' }} />
+          <hr style={{ margin: '40px 0', borderColor: '#333' }} />
 
           <section className={styles.section}>
             <h2>Melhores Jogos</h2>
             <div className={styles.grid}>
-              {recomendados.length > 0 ? (
-                recomendados.map(jogo => <GameCard key={jogo.id} jogo={jogo} />)
-              ) : (<p>Carregando jogos...</p>)}
+              {recomendados.map(jogo => (
+                <GameCard key={jogo.id || jogo.nome} jogo={jogo} />
+              ))}
             </div>
           </section>
 
           <section className={styles.section}>
             <h2>Em Alta</h2>
             <div className={styles.grid}>
-              {emAlta.map(jogo => <GameCard key={jogo.id} jogo={jogo} />)}
+              {emAlta.map(jogo => (
+                <GameCard key={jogo.id || jogo.nome} jogo={jogo} />
+              ))}
             </div>
           </section>
 
           <section className={styles.section}>
             <h2 id="rpg-section">RPG</h2>
             <div className={styles.grid}>
-              {rpgs.map(jogo => <GameCard key={jogo.id} jogo={jogo} />)}
+              {rpgs.map(jogo => (
+                <GameCard key={jogo.id || jogo.nome} jogo={jogo} />
+              ))}
             </div>
           </section>
         </>
       )}
 
-      {/* ExploreCategories permanece no final */}
-      {categorias.length > 0 && (
+      {/* Seu componente de Categorias */}
+      {listaCategoriasExibicao.length > 0 && (
         <ExploreCategories
-          categories={categorias.map(cat => ({
+          categories={listaCategoriasExibicao.map(cat => ({
             name: cat.nome,
-            slug: cat.nome
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .toLowerCase()
-              .replace(/\s+/g, "-")
+            slug: cat.nome.toLowerCase().replace(/\s+/g, "-")
           }))}
         />
       )}
