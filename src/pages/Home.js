@@ -1,12 +1,12 @@
 // No arquivo: src/pages/Home.js
-// VERSÃO FINAL - Híbrida + Componentes + CSS Modules
+// VERSÃO: Home Híbrida com Banner de Login
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Carrossel from '../components/Carrossel';
+import styles from '../components/Home.module.css';
 import ExploreCategories from '../components/ExploreCategories';
-import styles from '../components/Home.module.css'; // Importa seu CSS Module
 
 function Home() {
   const [jogos, setJogos] = useState([]);
@@ -19,12 +19,12 @@ function Home() {
   const isLogado = !!user;
 
   // =================================================================
-  // 1. BUSCAR DADOS (Híbrido: Público vs Privado)
+  // 1. BUSCA DE DADOS (Híbrida: Público ou Privado)
   // =================================================================
   useEffect(() => {
     const token = localStorage.getItem('token');
     
-    // Define URL: Privada (com IDs) ou Pública (sem IDs, mas com nomes)
+    // Define qual URL usar
     const urlJogos = isLogado 
         ? 'http://localhost:3000/api/v1/jogos' 
         : 'http://localhost:3000/api/v1/public/jogos';
@@ -43,9 +43,7 @@ function Home() {
       })
       .catch(err => console.error("Erro ao buscar jogos:", err));
 
-    // B. Buscar CATEGORIAS
-    // Se logado: busca da API de categorias.
-    // Se público: a API de categorias é bloqueada, então extraímos dos próprios jogos depois.
+    // B. Buscar CATEGORIAS (Só se estiver logado, pois a pública não tem esse endpoint)
     if (isLogado) {
       fetch('http://localhost:3000/api/v1/categorias', { headers })
         .then(res => res.json())
@@ -55,10 +53,10 @@ function Home() {
   }, [isLogado, logout, navigate]);
 
   // =================================================================
-  // 2. NORMALIZAÇÃO DE DADOS (Resolver diferença Público/Privado)
+  // LÓGICA DE FILTROS
   // =================================================================
   
-  // Mapa para traduzir ID -> Nome (apenas modo privado)
+  // Mapa de Categorias (ID -> Nome) - Só existe se logado
   const categoriaMap = useMemo(() => {
     return categorias.reduce((acc, cat) => {
       acc[cat.id] = cat.nome.trim(); 
@@ -66,28 +64,13 @@ function Home() {
     }, {});
   }, [categorias]);
 
-  // Helper para pegar o nome da categoria de um jogo, independente do modo
+  // Helper para pegar o nome da categoria
   const getCategoriaNome = (jogo) => {
-    // Modo Público: A API já manda o nome em 'jogo.categoria'
-    if (jogo.categoria) return jogo.categoria.trim();
-    // Modo Privado: A API manda 'fkCategoria', traduzimos pelo mapa
-    if (jogo.fkCategoria) return categoriaMap[jogo.fkCategoria];
+    if (jogo.categoria) return jogo.categoria.trim(); // Modo Público
+    if (jogo.fkCategoria) return categoriaMap[jogo.fkCategoria]; // Modo Privado
     return '';
   };
 
-  // Se estiver no modo público, geramos a lista de categorias baseada nos jogos carregados
-  const listaCategoriasExibicao = useMemo(() => {
-    if (isLogado && categorias.length > 0) return categorias;
-    
-    // Extrai categorias únicas dos jogos públicos
-    const nomesUnicos = [...new Set(jogos.map(j => j.categoria))].filter(Boolean).sort();
-    return nomesUnicos.map((nome, index) => ({ id: index, nome: nome }));
-  }, [isLogado, categorias, jogos]);
-
-  // =================================================================
-  // 3. FILTROS E SEÇÕES
-  // =================================================================
-  
   // Filtro de Pesquisa
   const jogosExibidos = useMemo(() => {
     if (!termoPesquisa) return jogos;
@@ -96,17 +79,21 @@ function Home() {
 
   const listaBase = termoPesquisa ? jogosExibidos : jogos;
 
-  // Seções
   const recomendados = listaBase.slice(0, 4);
   const emAlta = listaBase.slice(4, 8);
-  
-  // Filtro RPG usando o helper unificado
   const rpgs = listaBase.filter(j => getCategoriaNome(j) === 'RPG').slice(0, 4);
 
-  // Componente interno de Card para reutilizar lógica de clique
+  // Se não estiver logado, gera categorias baseadas nos jogos visíveis
+  const categoriasExibicao = useMemo(() => {
+      if (isLogado && categorias.length > 0) return categorias.map(c => ({ name: c.nome, slug: c.id }));
+      // Extrai categorias únicas dos jogos
+      const cats = [...new Set(jogos.map(j => j.categoria))].filter(Boolean).sort();
+      return cats.map(c => ({ name: c, slug: c.toLowerCase() }));
+  }, [isLogado, categorias, jogos]);
+
+  // Componente Card Interno (com lógica de clique)
   const GameCard = ({ jogo }) => {
-    // Se tem ID (privado ou público corrigido), vai pro jogo. Se não, login.
-    const linkTo = jogo.id ? `/loja/jogo/${jogo.id}` : '/login';
+    const linkTo = jogo.id ? `/jogo/${jogo.id}` : '/login';
     
     const handleClick = (e) => {
         if (!jogo.id) {
@@ -119,8 +106,7 @@ function Home() {
       <Link to={linkTo} className={styles['card-link']} onClick={handleClick}>
         <div className={styles.card}>{jogo.nome}</div>
         <div className={styles.priceTag}>
-            {/* Formatação de preço segura */}
-            $ {jogo.preco !== undefined ? Number(jogo.preco).toFixed(2).replace('.', ',') : '0,00'}
+            $ {jogo.preco ? Number(jogo.preco).toFixed(2).replace('.', ',') : '0,00'}
         </div>
       </Link>
     );
@@ -128,22 +114,51 @@ function Home() {
 
   return (
     <>
-      {/* Barra de Pesquisa (Estilo inline para simplificar ou adicione ao module.css) */}
-      <div style={{maxWidth: '600px', margin: '20px auto', padding: '0 20px'}}>
+      {/* === NOVO: BANNER DE BOAS-VINDAS (Só aparece se NÃO estiver logado) === */}
+      {!isLogado && (
+        <div style={{
+            textAlign: 'center', 
+            padding: '40px 20px', 
+            background: 'linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%)', 
+            borderBottom: '2px solid #333',
+            marginBottom: '20px'
+        }}>
+            {/* LOGO GRANDE */}
+            <h1 style={{fontSize: '3rem', fontWeight: '800', color: '#fff', marginBottom: '10px'}}>
+                Next<span style={{color: '#e53935'}}>Level</span>
+            </h1>
+            <p style={{color: '#ccc', marginBottom: '25px', fontSize: '1.1rem'}}>
+                Explore os melhores jogos digitais. Faça login para comprar e jogar.
+            </p>
+            {/* BOTÃO INICIAR SESSÃO */}
+            <Link to="/login" style={{
+                display: 'inline-block',
+                padding: '12px 30px',
+                backgroundColor: '#39FF14',
+                color: '#000',
+                fontWeight: 'bold',
+                borderRadius: '50px',
+                textDecoration: 'none',
+                fontSize: '1.1rem',
+                boxShadow: '0 0 15px rgba(57, 255, 20, 0.4)',
+                transition: 'transform 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+                Iniciar Sessão
+            </Link>
+        </div>
+      )}
+
+      {/* BARRA DE PESQUISA */}
+      <div className={styles.searchContainer} style={{maxWidth: '600px', margin: '0 auto 30px auto'}}>
         <input 
           type="text" 
           placeholder="Pesquisar jogos..." 
           value={termoPesquisa}
           onChange={(e) => setTermoPesquisa(e.target.value)}
-          style={{
-              width: '100%', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              border: '1px solid #444', 
-              backgroundColor: '#1a1a1a', 
-              color: '#fff',
-              outline: 'none'
-          }}
+          className={styles.searchInput}
         />
       </div>
 
@@ -163,7 +178,6 @@ function Home() {
             <h1>Recomendados da Semana</h1>
           </section>
           
-          {/* Seu componente Carrossel */}
           <Carrossel jogos={jogos} />
 
           <hr style={{ margin: '40px 0', borderColor: '#333' }} />
@@ -197,14 +211,8 @@ function Home() {
         </>
       )}
 
-      {/* Seu componente de Categorias */}
-      {listaCategoriasExibicao.length > 0 && (
-        <ExploreCategories
-          categories={listaCategoriasExibicao.map(cat => ({
-            name: cat.nome,
-            slug: cat.nome.toLowerCase().replace(/\s+/g, "-")
-          }))}
-        />
+      {categoriasExibicao.length > 0 && (
+        <ExploreCategories categories={categoriasExibicao} />
       )}
     </>
   );
