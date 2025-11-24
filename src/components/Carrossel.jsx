@@ -1,56 +1,61 @@
 // No arquivo: src/components/Carrossel.js
+// VERSÃO LIMPA - Sem avisos (no-unused-vars)
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Importe useNavigate
+import { Link } from 'react-router-dom';
 import styles from './Carrossel.module.css';
 
 function Carrossel({ jogos }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const navigate = useNavigate(); // Hook para navegação
 
-  // ... (código de configuração VISIBLE_CARDS, etc. mantido igual) ...
+  // Configurações
   const VISIBLE_CARDS = 3;
-  const CARD_WIDTH = 350; 
-  const GAP = 20;
+  // const CARD_WIDTH = 350; // (Removido pois não estamos usando variáveis para calcular)
+  // const GAP = 20;         // (Removido pois não estamos usando variáveis para calcular)
+
   const listaJogos = jogos || [];
   const carouselJogos = listaJogos.slice(8, 16);
-  const step = CARD_WIDTH + GAP;
-  const offset = -currentIndex * (350 + 20); 
+
+  // REMOVIDA a variável 'step' que causava o aviso
+  
+  // Cálculo do deslocamento (350px largura + 20px gap = 370px por item)
+  const offset = -currentIndex * 370; 
+
   const maxIndex = Math.max(0, carouselJogos.length - VISIBLE_CARDS);
 
   const handleNext = () => {
-    if (currentIndex >= maxIndex) setCurrentIndex(0);
-    else setCurrentIndex(prevIndex => prevIndex + 1);
+    if (currentIndex >= maxIndex) {
+      setCurrentIndex(0); 
+    } else {
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
   };
 
   const handlePrev = () => {
-    if (currentIndex === 0) setCurrentIndex(maxIndex);
-    else setCurrentIndex(prevIndex => prevIndex - 1);
-  };
-
-  // Função para tratar o clique
-  const handleCardClick = (e, jogoId) => {
-    if (!jogoId) {
-        e.preventDefault();
-        navigate('/login');
+    if (currentIndex === 0) {
+      setCurrentIndex(maxIndex); 
+    } else {
+      setCurrentIndex(prevIndex => prevIndex - 1);
     }
   };
 
   return (
     <section className={styles.carousel}>
-      <button className={`${styles.arrow} ${styles.left}`} onClick={handlePrev}>❮</button>
+      <button
+        className={`${styles.arrow} ${styles.left}`}
+        aria-label="Anterior"
+        onClick={handlePrev}
+      >
+        ❮
+      </button>
 
       <div className={styles['carousel-viewport']}>
-        <div className={styles['carousel-track']} style={{ transform: `translateX(${offset}px)` }}>
-          {carouselJogos.map((jogo, index) => (
-            <Link 
-                // Key com fallback para index
-                key={jogo.id || index} 
-                // Link condicional
-                to={jogo.id ? `/loja/jogo/${jogo.id}` : '/login'} 
-                className={styles['card-link']}
-                onClick={(e) => handleCardClick(e, jogo.id)}
-            >
+        <div
+          className={styles['carousel-track']}
+          style={{ transform: `translateX(${offset}px)` }}
+        >
+          {carouselJogos.map(jogo => (
+            <Link to={`/loja/jogo/${jogo.id}`} key={jogo.id} className={styles['card-link']}>
               <div className={styles.card}>
                 <h3>{jogo.nome}</h3>
                 <span className={styles.price}>
@@ -62,7 +67,13 @@ function Carrossel({ jogos }) {
         </div>
       </div>
 
-      <button className={`${styles.arrow} ${styles.right}`} onClick={handleNext}>❯</button>
+      <button
+        className={`${styles.arrow} ${styles.right}`}
+        aria-label="Próximo"
+        onClick={handleNext}
+      >
+        ❯
+      </button>
     </section>
   );
 }

@@ -1,13 +1,12 @@
 // No arquivo: src/pages/CategoriaPage.js
-// VERSÃO FINAL - Híbrida + GameCard
+// VERSÃO LIMPA - Sem avisos
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react'; // Removido 'useMemo'
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import GameCard from '../components/GameCard'; // Reutiliza o card bonito da Home
-import styles from '../components/Home.module.css'; // Reutiliza a grid da Home
+import GameCard from '../components/GameCard'; 
+import styles from '../components/Home.module.css'; 
 
-// Função auxiliar para normalizar texto (remover acentos, minúsculas)
 function normalizar(text) {
   if (!text) return '';
   return text
@@ -18,7 +17,7 @@ function normalizar(text) {
 }
 
 function CategoriaPage() {
-  const { slug } = useParams(); // ex: "rpg", "acao"
+  const { slug } = useParams(); 
   const [jogosFiltrados, setJogosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,30 +32,24 @@ function CategoriaPage() {
       const headers = isLogado ? { "Authorization": `Bearer ${token}` } : {};
 
       try {
-        // 1. BUSCAR JOGOS (Híbrido)
         const urlJogos = isLogado 
             ? 'http://localhost:3000/api/v1/jogos' 
             : 'http://localhost:3000/api/v1/public/jogos';
 
         const resJogos = await fetch(urlJogos, { headers });
         
-        // Se der erro de sessão
         if (resJogos.status === 401 && isLogado) {
              logout(); navigate('/login'); return;
         }
         
         const listaJogos = await resJogos.json();
-
-        // 2. LÓGICA DE FILTRAGEM
         const slugNormalizado = normalizar(slug);
         let filtrados = [];
 
         if (isLogado) {
-          // MODO PRIVADO: Precisamos buscar as categorias para traduzir o ID
           const resCategorias = await fetch("http://localhost:3000/api/v1/categorias", { headers });
           const listaCategorias = await resCategorias.json();
 
-          // Cria mapa: ID -> Slug Normalizado (ex: 1 -> "rpg")
           const categoriaMap = {};
           listaCategorias.forEach(c => {
             categoriaMap[c.id] = normalizar(c.nome);
@@ -67,7 +60,6 @@ function CategoriaPage() {
           );
 
         } else {
-          // MODO PÚBLICO: A API já retorna o nome da categoria (ex: "RPG")
           filtrados = listaJogos.filter(jogo => 
             normalizar(jogo.categoria) === slugNormalizado
           );
@@ -98,10 +90,8 @@ function CategoriaPage() {
       {jogosFiltrados.length === 0 ? (
         <p style={{color: '#ccc'}}>Nenhum jogo encontrado nesta categoria.</p>
       ) : (
-        // Reutiliza o estilo de Grid da Home
         <div className={styles.grid}>
           {jogosFiltrados.map(jogo => (
-            // Usa o componente GameCard para ficar visualmente igual à Home
             <GameCard key={jogo.id || jogo.nome} jogo={jogo} isLogado={isLogado} />
           ))}
         </div>
