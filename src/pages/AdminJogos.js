@@ -1,12 +1,9 @@
-// No arquivo: src/pages/AdminJogos.js
-// VERSÃO FINAL - Com Modal de Exclusão e Toasts
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminJogos() {
-  // === ESTADOS ===
+  // Estados atuais
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [empresas, setEmpresas] = useState([]);
@@ -21,7 +18,7 @@ function AdminJogos() {
   });
   const [editingId, setEditingId] = useState(null); 
 
-  // 1. NOVOS ESTADOS para Modal e Toast
+  // Novos estados para Modal e Toast
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -35,7 +32,7 @@ function AdminJogos() {
     setTimeout(() => { setNotification(null); }, 3000);
   };
 
-  // === Mapas ===
+  // Mapas para categoria
   const categoriaMap = useMemo(() => {
     return categorias.reduce((acc, cat) => { acc[cat.id] = cat.nome; return acc; }, {});
   }, [categorias]);
@@ -58,14 +55,13 @@ function AdminJogos() {
     return listaLimpa;
   }, [categorias]);
 
-  // === Fetch Data ===
+  // Fetch Data 
   const fetchData = useCallback(() => {
     const token = localStorage.getItem('token');
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
           if (res.status === 401) {
-            // Aqui mantemos o alert pois é um erro de sessão crítica
             alert('Sessão expirada.');
             logout(); 
             navigate('/login');
@@ -93,7 +89,7 @@ function AdminJogos() {
     fetchData();
   }, [fetchData]);
 
-  // === Lógica do Formulário ===
+  // Lógica do Formulário
   const toggleForm = () => {
     if (showForm) { clearForm(); setShowForm(false); } else { setShowForm(true); }
   };
@@ -163,13 +159,13 @@ function AdminJogos() {
     }
   };
 
-  // 2. Função que ABRE o Modal de Exclusão
+  // Função que abre o Modal de Exclusão
   const handleDeleteClick = (jogo) => {
     setGameToDelete(jogo);
     setShowDeleteModal(true);
   };
 
-  // 3. Função que CONFIRMA a Exclusão
+  // 3. Função que confirma a Exclusão
   const confirmDelete = async () => {
     setShowDeleteModal(false);
     if (!gameToDelete) return;
@@ -193,7 +189,7 @@ function AdminJogos() {
     }
   };
 
-  // === Filtros ===
+  // Filtros
   const jogosFiltrados = useMemo(() => {
     let lista = [...jogos];
     if (searchTerm) {

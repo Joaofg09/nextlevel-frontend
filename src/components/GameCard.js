@@ -1,8 +1,5 @@
-// No arquivo: src/components/GameCard.js
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// Importa o SEU arquivo de estilos
 import styles from './Home.module.css'; 
 
 function GameCard({ jogo, isLogado }) {
@@ -22,7 +19,6 @@ function GameCard({ jogo, isLogado }) {
   return (
     <Link to={linkTo} className={styles['card-link']} onClick={handleClick}>
       <div className={styles.card}>
-         {/* Container flex column para alinhar titulo e preço */}
          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <span>{jogo.nome}</span>
             

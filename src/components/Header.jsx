@@ -1,6 +1,3 @@
-// No arquivo: src/components/Header.js
-// VERSÃO FINAL - Links de categoria corrigidos (/loja/categoria/...)
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -139,7 +136,6 @@ function Header() {
             <Link to="/loja">Início</Link>
           </li>
 
-          {/* AQUI ESTÁ A CORREÇÃO */}
           {categoriasData.categorias.map((cat, index) => (
             <li key={index} className={styles.menuItem}>
               <Link to={`/loja/categoria/${cat.toLowerCase().replace(/\s/g, '-')}`}>

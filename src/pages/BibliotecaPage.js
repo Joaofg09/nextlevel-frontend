@@ -1,6 +1,3 @@
-// No arquivo: src/pages/BibliotecaPage.js
-// VERSÃO 3 - Tratamento visual para jogos sem chave (pendentes)
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -68,7 +65,7 @@ function BibliotecaPage() {
               <div className="library-card-body">
                 <h2>{item.jogo.nome}</h2>
                 
-                {/* === LÓGICA CONDICIONAL AQUI === */}
+                {/* Condicional de Chave do pedido */}
                 {item.chaveAtivacao ? (
                     // CASO 1: TEM CHAVE (Compra Finalizada)
                     <div className="key-container">

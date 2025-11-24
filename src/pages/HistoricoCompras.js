@@ -1,6 +1,3 @@
-// No arquivo: src/pages/HistoricoCompras.js
-// VERSÃO 2 - Visual Moderno
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -70,6 +67,7 @@ function HistoricoCompras() {
                     </tr>
                 </thead>
                 <tbody>
+                  {/*Criação da tabela*/}
                     {vendas.map(venda => (
                     <tr key={venda.id}>
                         <td style={{color: '#888'}}>#{venda.id}</td>

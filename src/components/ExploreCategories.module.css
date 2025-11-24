@@ -1,5 +1,3 @@
-/* src/components/ExploreCategories.module.css */
-
 .exploreSection {
     padding: 40px 20px;
     font-weight: bold;
@@ -20,14 +18,14 @@
 /* ------------------ CARROSSEL INFINITO ------------------ */
 
 .carouselContainer {
-    position: relative; /* necessário para posicionar as setas */
+    position: relative; 
     width: 100%;
-    overflow: hidden; /* evita barra externa */
+    overflow: hidden; 
     display: flex;
     align-items: center;
 }
 
-/* Área rolável */
+
 .categoryGrid {
     display: flex;
     gap: 15px;
@@ -35,14 +33,13 @@
     scroll-behavior: smooth;
     flex-wrap: nowrap;
     padding: 20px 0;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none; 
 }
 
 .categoryGrid::-webkit-scrollbar {
-    display: none; /* Chrome */
+    display: none; 
 }
 
-/* Cada item */
 .categoryGrid a {
     min-width: 350px;
     flex: 0 0 auto;
@@ -63,21 +60,17 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 15;
-
     background: rgba(0, 0, 0, 0.5);
     color: #ffffff;
     border: none;
     cursor: pointer;
-
     font-size: 2rem;
     padding: 10px;
     border-radius: 50%;
-
     height: 50px;
     width: 50px;
     line-height: 25px;
     text-align: center;
-
     transition: background-color 0.3s;
 }
 

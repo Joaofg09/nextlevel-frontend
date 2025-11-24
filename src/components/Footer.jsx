@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import styles from './Footer.module.css';
 
 function Footer() {
-  // Estado para controlar qual modal está aberto (null, 'privacy', 'terms')
   const [activeModal, setActiveModal] = useState(null);
-
-  // Função para fechar o modal
   const closeModal = () => setActiveModal(null);
 
   return (
@@ -56,7 +53,7 @@ function Footer() {
         </nav>
       </footer>
 
-      {/* === MODAIS (Renderizados condicionalmente) === */}
+      {/* MODAIS para renderizados condicionalmente */}
       
       {/* MODAL DE POLÍTICA DE PRIVACIDADE */}
       {activeModal === 'privacy' && (

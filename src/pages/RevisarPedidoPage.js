@@ -1,6 +1,3 @@
-// No arquivo: src/pages/RevisarPedidoPage.js
-// VERSÃO FINAL - Com Botão Remover
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +10,7 @@ function RevisarPedidoPage() {
   const [loading, setLoading] = useState(true);
   
   // Estados para Modal e Toast
-  const [showModal, setShowModal] = useState(null); // 'checkout' ou 'remove'
+  const [showModal, setShowModal] = useState(null);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [notification, setNotification] = useState(null);
 
@@ -25,7 +22,7 @@ function RevisarPedidoPage() {
     setTimeout(() => { setNotification(null); }, 3000);
   };
 
-  // === Fetch Data (useCallback para poder recarregar após deletar) ===
+  //Recarregar após deletar
   const fetchData = useCallback(() => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -66,10 +63,10 @@ function RevisarPedidoPage() {
     fetchData();
   }, [fetchData]);
 
-  // === Lógica de REMOVER Item ===
+  // Lógica para remover itens
   const handleRemoveClick = (gameId) => {
     setItemToDelete(gameId);
-    setShowModal('remove'); // Define o tipo do modal
+    setShowModal('remove'); 
   };
 
   const confirmRemove = async () => {
@@ -84,7 +81,7 @@ function RevisarPedidoPage() {
       
       if (response.ok) {
         showToast("Item removido do pedido.", 'success');
-        fetchData(); // Recarrega a lista atualizada
+        fetchData(); 
       } else {
         showToast(data.message, 'error');
       }
@@ -94,9 +91,9 @@ function RevisarPedidoPage() {
     }
   };
 
-  // === Lógica de FINALIZAR Pedido ===
+  // lógica para finalizar pedido
   const handleCheckoutClick = () => {
-    setShowModal('checkout'); // Define o tipo do modal
+    setShowModal('checkout'); 
   };
 
   const confirmCheckout = async () => {
@@ -121,7 +118,7 @@ function RevisarPedidoPage() {
     }
   };
 
-  // === Renderização ===
+  // Renderização da pagina
   
   if (loading) {
     return <div className="main-container"><h1>Finalizar Pedido</h1><p>Carregando resumo...</p></div>;
@@ -159,7 +156,6 @@ function RevisarPedidoPage() {
                     <span className="item-price">$ {jogoInfo ? jogoInfo.preco.toFixed(2) : '0.00'}</span>
                   </div>
                   
-                  {/* BOTÃO REMOVER NOVO */}
                   <div className="item-actions">
                     <button 
                       className="remove-btn" 
@@ -193,7 +189,7 @@ function RevisarPedidoPage() {
         </div>
       </div>
 
-      {/* MODAL DINÂMICO (Checkout ou Remover) */}
+      {/* Confirmação ou Remover */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -225,7 +221,7 @@ function RevisarPedidoPage() {
         </div>
       )}
 
-      {/* TOAST */}
+      {/* POPUP estilizado */}
       {notification && (
         <div className={`toast-notification ${notification.type}`}>
           <div className="toast-icon">

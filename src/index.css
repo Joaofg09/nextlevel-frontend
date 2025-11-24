@@ -22,14 +22,10 @@ body.light-mode {
     color: #333;
 }
 
-
-/* 2. MUITO IMPORTANTE: Muda o "Next" para preto */
-/* O seletor .header.light .logo é mais específico que apenas .logo */
 .header.light .logo {
     color: #1a1a1a;
 }
 
-/* 3. Muda ícones (carrinho, coração, perfil) e links de login para preto */
 .header.light .user-actions a,
 .header.light .icon,
 .header.light .menu-trigger {
@@ -40,24 +36,21 @@ body.light-mode {
 
 body.light-mode .profile-dropdown,
 body.light-mode .submenu {
-    /* Mudar o fundo do dropdown de cinza escuro para branco */
     background-color: #ffffff !important; 
     border: 1px solid #ccc !important;
 }
 
-/* Regra CRÍTICA: Mudar a cor do TEXTO dentro do dropdown */
 body.light-mode .input-group,
 body.light-mode .profile-dropdown ul li a,
 body.light-mode .submenu ul li a {
-    color: #333 !important; /* Força o texto para preto/cinza escuro */
+    color: #333 !important; 
 }
 
-/* Corrigir o HOVER (Para que não use o vermelho no modo claro) */
 body.light-mode .profile-dropdown ul li a:hover,
 body.light-mode .submenu ul li a:hover,
 body.light-mode .submenu a:hover {
-    background-color: #b4b3b3 !important; /* Fundo mais suave no hover */
-    color: #000 !important; /* Texto preto no hover */
+    background-color: #b4b3b3 !important; 
+    color: #000 !important; 
 }
 
 body.light-mode .form-content {
@@ -67,43 +60,37 @@ body.light-mode .form-content {
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* Os contêineres cinza-escuros que precisam ser brancos */
 body.light-mode .listagem-box,
 body.light-mode .filter-bar{
-    background-color: #fafafa !important; /* Fundo totalmente branco */
+    background-color: #fafafa !important; 
     
 }
 
-
-/* Reverte o fundo escuro do cabeçalho da tabela */
 body.light-mode .tabela-jogos thead th,
 body.light-mode .tabela-empresas thead th {
-    background-color: #e0e0e0 !important; /* Fundo cinza claro */
-    color: #333 !important; /* Texto preto */
+    background-color: #e0e0e0 !important; 
+    color: #333 !important; 
     border-bottom: 2px solid #ccc !important;
 }
-
-/* Reverte o fundo dos inputs de busca e dropdowns */
 
 body.light-mode .select-filter,
 body.light-mode .search-input-group input,
 body.light-mode .tabela-jogos tbody td {
     background-color: #ffffff !important;
-    color: #333 !important; /* Texto da célula em preto */
+    color: #333 !important; 
     border-color: #ccc !important;
 }
 body.light-mode #select-empresa-filter{
     background-color: #ffffff !important;
     color: #333 !important;
 }
-/* Texto que era Neon Green no Dark Mode, volta a ser preto */
 body.light-mode .preco-tabela {
     color: #000000 !important;
     font-weight: bold;
 }
-/* Altera o visual do input de busca no modo claro */
+
 body.light-mode .search-input-group i {
-    color: #555; /* Ícone de lupa fica cinza escuro */
+    color: #555; 
 }
 
 body.light-mode header {
@@ -136,7 +123,6 @@ body.light-mode .arrow {
    === ESTILO MODERNO: LOGIN E CADASTRO (DARK/RED) ===
    ================================================================= */
 
-/* 1. Fundo da Página */
 .login-page-body {
     background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
     min-height: 100vh;
@@ -147,21 +133,19 @@ body.light-mode .arrow {
     padding: 20px;
 }
 
-/* 2. Container Central */
 .login-container {
     width: 100%;
     max-width: 420px;
     margin: 0 auto;
 }
 
-/* 3. Cabeçalho */
 .login-wrapper .header {
-    position: relative; /* Permite elementos 'flutuantes' dentro dele */
+    position: relative;
     display: flex;
-    justify-content: center; /* Centraliza o Título H2 */
+    justify-content: center;
     align-items: center;
     margin-bottom: 25px;
-    height: 40px; /* Altura fixa ajuda no alinhamento vertical */
+    height: 40px;
 }
 
 .login-wrapper .header h2 {
@@ -170,14 +154,14 @@ body.light-mode .arrow {
     font-weight: 700;
     margin: 0;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    /* O título fica no centro exato graças ao justify-content: center do pai */
+    
 }
 
 .back-button {
-    position: absolute; /* Remove do fluxo normal */
-    left: 0;            /* Cola na ESQUERDA do container */
-    top: 50%;           /* Centraliza verticalmente */
-    transform: translateY(-50%); /* Ajuste fino vertical */
+    position: absolute; 
+    left: 0;            
+    top: 50%;           
+    transform: translateY(-50%); 
     
     color: #888;
     background: none;
@@ -187,14 +171,14 @@ body.light-mode .arrow {
     transition: color 0.3s;
     display: flex;
     align-items: center;
-    padding: 0; /* Remove padding extra */
+    padding: 0; 
 }
 
 .back-button:hover {
     color: #e53935;
 }
 
-/* 4. Cartões */
+
 .login-box, .cadastro-box, .signup-box {
     background-color: #2c2c2c;
     padding: 35px;
@@ -209,7 +193,6 @@ body.light-mode .arrow {
     border-color: #555;
 }
 
-/* 5. Inputs */
 .input-group {
     margin-bottom: 20px;
 }
@@ -238,8 +221,8 @@ body.light-mode .arrow {
 
 .input-group input:focus,
 .input-group select:focus {
-    border-color: #e53935; /* Borda Vermelha ao focar */
-    box-shadow: 0 0 8px rgba(229, 57, 53, 0.2); /* Brilho vermelho suave */
+    border-color: #e53935; 
+    box-shadow: 0 0 8px rgba(229, 57, 53, 0.2);
 }
 
 .dob-group {
@@ -253,12 +236,12 @@ body.light-mode .arrow {
     margin-top: 6px;
 }
 
-/* 6. Botões Principais */
+
 .login-button {
     width: 100%;
     padding: 14px;
-    background-color: #e53935; /* Vermelho da marca */
-    color: #fff; /* Texto branco para contraste */
+    background-color: #e53935;
+    color: #fff; 
     border: none;
     border-radius: 50px;
     font-size: 1rem;
@@ -270,11 +253,10 @@ body.light-mode .arrow {
 
 .login-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(229, 57, 53, 0.4); /* Sombra vermelha */
-    background-color: #d32f2f; /* Um vermelho levemente mais escuro no hover */
+    box-shadow: 0 5px 15px rgba(229, 57, 53, 0.4); 
+    background-color: #d32f2f; 
 }
 
-/* 7. Links Secundários */
 .forgot-password {
     display: block;
     text-align: center;
@@ -289,7 +271,6 @@ body.light-mode .arrow {
     text-decoration: underline;
 }
 
-/* 8. Caixa "Novo por aqui?" */
 .signup-box {
     text-align: center;
     background: transparent;
@@ -308,8 +289,8 @@ body.light-mode .arrow {
     width: 100%;
     padding: 12px;
     background-color: transparent;
-    color: #e53935; /* Texto Vermelho */
-    border: 2px solid #e53935; /* Borda Vermelha */
+    color: #e53935;
+    border: 2px solid #e53935;
     border-radius: 50px;
     font-weight: 700;
     text-decoration: none;
@@ -319,7 +300,7 @@ body.light-mode .arrow {
 
 .signup-button:hover {
     background-color: #e53935;
-    color: #fff; /* Fica preenchido de vermelho com texto branco */
+    color: #fff; 
 }
 
 .signup-box p {
@@ -350,7 +331,6 @@ body {
 ========== ESTILOS ESPECÍFICOS PARA A PÁGINA DE CADASTRO ==========
 =================================================================== */
 
-/* Reutiliza o estilo do box de login */
 .cadastro-box {
     background-color: #333;
     padding: 30px;
@@ -358,7 +338,7 @@ body {
     border: 1px solid #444;
 }
 
-/* Grupo para Data de Nascimento */
+
 .dob-group {
     display: flex;
     gap: 10px;
@@ -376,13 +356,6 @@ body {
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
 }
-
-/* Remove a seta padrão do select no Firefox
-.dob-group select {
-    -moz-appearance: none;
-    text-indent: 1px;
-    text-overflow: '';
-} */
 
 /* Placeholder para o input de ano */
 .dob-group input::placeholder {
@@ -408,18 +381,18 @@ body {
 }
 
 .user-profile .icon {
-    font-size: 1.5rem; /* Ícone de usuário um pouco maior */
+    font-size: 1.5rem;
 }
 
 .profile-dropdown {
-    display: none; /* O menu começa escondido */
+    display: none; 
     position: absolute;
-    top: 100%; /* Posiciona logo abaixo do ícone */
+    top: 100%;
     right: 0;
     background-color: #333;
     border: 1px solid #444;
     border-radius: 8px;
-    width: 250px; /* Largura do menu */
+    width: 250px; 
     z-index: 100;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
@@ -445,25 +418,23 @@ body {
     color: #fff;
 }
 
-/* Deixa os ícones e textos clicáveis com a aparência correta */
 .menu-trigger {
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
-    position: relative; /* Importante para o posicionamento do menu */
-    padding: 10px 0; /* Aumenta a área de clique */
+    position: relative;
+    padding: 10px 0; 
 }
 
-/* Regra para MOSTRAR o menu quando ele tiver a classe .show */
 .profile-dropdown.show {
     display: block;
 }
 
-/* Pequeno ajuste para o posicionamento do menu dropdown */
 .profile-dropdown {
-    margin-top: 0; /* Garante que não há margem no topo */
+    margin-top: 0; 
 }
+
 /* ===================================================================
 ========== ESTILOS PARA PÁGINA DO CARRINHO ========================
 =================================================================== */
@@ -477,11 +448,10 @@ body {
     margin-bottom: 30px;
 }
 
-
-
 /* ===================================================================
 ========== ESTILOS PARA PÁGINA DE PAGAMENTO =======================
 =================================================================== */
+
 .payment-layout {
     display: flex;
     gap: 30px;
@@ -492,11 +462,11 @@ body {
 }
 
 .payment-form-section {
-    flex: 2; /* O formulário ocupa 2/3 do espaço */
+    flex: 2; 
 }
 
 .payment-info-section {
-    flex: 1; /* A informação ocupa 1/3 do espaço */
+    flex: 1; 
     border-left: 1px solid #444;
     padding-left: 30px;
 }
@@ -623,9 +593,8 @@ body {
    === ESTILO MODERNO: DETALHES DO JOGO (PREMIUM UI) ===
    ================================================================= */
 
-/* 1. Hero Banner (Capa Gigante) */
 .game-hero {
-    height: 450px; /* Mais alto para impacto */
+    height: 450px; 
     background-size: cover;
     background-position: center top;
     display: flex;
@@ -638,7 +607,6 @@ body {
     overflow: hidden;
 }
 
-/* Gradiente escuro para ler o texto sobre a imagem */
 .game-hero::before {
     content: '';
     position: absolute;
@@ -661,7 +629,6 @@ body {
     letter-spacing: -1px;
 }
 
-/* 2. Layout de Conteúdo */
 .game-content-layout {
     display: flex;
     gap: 40px;
@@ -676,7 +643,7 @@ body {
     font-size: 1.8rem;
     margin-bottom: 20px;
     margin-top: 0;
-    color: #e53935; /* Títulos em vermelho */
+    color: #e53935; 
     border-bottom: 1px solid #333;
     padding-bottom: 10px;
 }
@@ -688,11 +655,11 @@ body {
     margin-bottom: 30px;
 }
 
-/* 3. Sidebar de Compra (Sticky) */
+
 .game-sidebar {
     flex: 1;
     position: sticky;
-    top: 20px; /* Cola no topo ao rolar */
+    top: 20px;
     z-index: 10;
 }
 
@@ -717,7 +684,7 @@ body {
 .buy-button {
     width: 100%;
     padding: 15px;
-    background-color: #39FF14; /* Verde Neon para ação de compra */
+    background-color: #39FF14; 
     color: #000;
     border: none;
     border-radius: 50px;
@@ -734,7 +701,6 @@ body {
     box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
 }
 
-/* Ícone de Coração (Favorito) */
 .favorite-icon {
     font-size: 1.8rem;
     color: #555;
@@ -746,10 +712,10 @@ body {
 }
 
 .favorite-icon.active {
-    color: #e53935; /* Vermelho quando ativo */
+    color: #e53935;
 }
 
-/* 4. Caixas de Detalhes Extras */
+
 .details-box, .rating-box {
     background-color: #1a1a1a;
     border: 1px solid #333;
@@ -768,10 +734,10 @@ body {
     margin-bottom: 5px;
 }
 
-/* 5. Avaliações (Estilo Card) */
+
 .user-review-card {
     background-color: #222;
-    border-left: 4px solid #e53935; /* Detalhe vermelho */
+    border-left: 4px solid #e53935; 
     padding: 20px;
     border-radius: 6px;
     margin-bottom: 15px;
@@ -810,7 +776,7 @@ body {
     border-color: #e53935;
     outline: none;
 }
-/* Sidebar */
+
 .purchase-box, .details-box, .rating-box {
     background-color: #2c2c2c;
     border: 1px solid #444;
@@ -864,7 +830,7 @@ body {
     font-size: 0.8rem;
     color: #ccc;
 }
-/* User Reviews */
+
 .user-review-card {
     border: 1px solid #444;
     padding: 15px;
@@ -897,26 +863,22 @@ body {
     font-size: 1.2rem;
 }
 
-/*Estilo para a pagina de LISTA DE DESEJO
+/*Estilo para a pagina de LISTA DE DESEJO*/
 
-/* Variáveis de Cor (Mantenha este bloco no topo do seu style.css) */
 :root {
     --color-background-dark: #1e1e1e;
     --color-header-dark: #222222; 
     --color-card-dark: #333333;
-    --color-controls-bar: #4a4a4a; /* Cinza da barra de controles */
+    --color-controls-bar: #4a4a4a;
     --color-text-light: #ffffff;
     --color-text-faint: #b3b3b3;
-    --color-accent-red: #cc0000; /* Vermelho da capa/nome */
+    --color-accent-red: #cc0000; 
     --color-button-blue: #007bff;
     --color-hover-blue: #0056b3;
     --color-hover-red: #a30000;
     --color-price: #cccccc;
     --color-search-bg: #292929;
 }
-
-/* Certifique-se de que o main ainda tem padding-top para evitar que o header o cubra */
-/* main { padding-top: 55px; } */ 
 
 /* --- LISTA DE DESEJOS GERAL --- */
 .wishlist-container {
@@ -933,14 +895,13 @@ h1 {
 
 /* --- BARRA DE CONTROLES (TOPO DA LISTA) --- */
 .controls-bar {
-    /* LAYOUT: Alinha todos os elementos em uma ÚNICA linha horizontal (Flexbox) */
     display: flex; 
     align-items: center;
     background-color: var(--color-controls-bar); 
-    padding: 10px 15px; /* Padding interno */
+    padding: 10px 15px;
     border-radius: 5px;
     margin-bottom: 20px;
-    gap: 15px; /* Espaço entre os elementos */
+    gap: 15px; 
 }
 
 /* Checkbox e Label "Selecionar Tudo" */
@@ -949,12 +910,12 @@ h1 {
     align-items: center;
     font-size: 14px;
     color: var(--color-text-light);
-    flex-shrink: 0; /* Não deixa encolher */
+    flex-shrink: 0; 
 }
 
 /* Campo de Pesquisa ("Procurar na lista") */
 .search-box {
-    flex-grow: 1; /* Ocupa a maior parte do espaço disponível */
+    flex-grow: 1;
     position: relative;
     max-width: 300px; 
 }
@@ -971,7 +932,6 @@ h1 {
 }
 
 .remove-all-button {
-    /* O botão aparece com fundo escuro/cinza claro e texto branco, alinhado à direita */
     background-color: var(--color-controls-bar);
     color: var(--color-text-light);
     border: none;
@@ -987,7 +947,6 @@ h1 {
     background-color: var(--color-hover-red); 
 }
 
-/* Customização do Checkbox (Square Look) */
 input[type="checkbox"] {
     appearance: none;
     width: 18px;
@@ -995,14 +954,13 @@ input[type="checkbox"] {
     border: 1px solid var(--color-text-faint); 
     border-radius: 3px;
     cursor: pointer;
-    background-color: var(--color-controls-bar); /* Fundo igual ao da barra de controle */
+    background-color: var(--color-controls-bar); 
     position: relative;
     margin-right: 8px;
     flex-shrink: 0;
 }
 
 input[type="checkbox"]:checked::before {
-    /* O ponto/círculo de marcação */
     content: '';
     position: absolute;
     top: 50%;
@@ -1011,7 +969,7 @@ input[type="checkbox"]:checked::before {
     width: 10px;
     height: 10px;
     background-color: var(--color-text-light);
-    border-radius: 50%; /* Faz um círculo */
+    border-radius: 50%;
 }
 
 
@@ -1019,7 +977,7 @@ input[type="checkbox"]:checked::before {
 .wishlist-item {
     display: flex;
     align-items: center;
-    background-color: var(--color-card-dark); /* #333333 */
+    background-color: var(--color-card-dark); 
     border-radius: 5px;
     margin-bottom: 10px;
     padding: 15px 20px;
@@ -1028,20 +986,18 @@ input[type="checkbox"]:checked::before {
 
 /* Container Vermelho (Capa/Nome Esquerdo) */
 .item-card-left {
-    /* Reintroduz a caixa vermelha de capa/nome */
-    width: 180px; /* Largura ajustada para o protótipo */
+    width: 180px; 
     display: flex;
     flex-direction: column; 
     justify-content: center; 
     align-items: center;
-    background-color: var(--color-accent-red); /* Vermelho */
+    background-color: var(--color-accent-red); 
     padding: 10px;
     border-radius: 3px;
     flex-shrink: 0;
     text-align: center;
 }
 
-/* Se houver texto diretamente em <p> dentro de item-card-left */
 .item-card-left p {
     font-size: 14px;
     font-weight: bold;
@@ -1050,7 +1006,6 @@ input[type="checkbox"]:checked::before {
     color: var(--color-text-light);
 }
 
-/* Estrutura do Meio (Nome, Preço) */
 .item-card-right {
     flex-grow: 1; 
     display: flex;
@@ -1068,17 +1023,16 @@ input[type="checkbox"]:checked::before {
 
 .item-price {
     font-size: 14px; 
-    font-weight: normal; /* Sem negrito para o preço, como no protótipo */
-    color: var(--color-text-faint); /* Cor mais sutil para o preço */
+    font-weight: normal;
+    color: var(--color-text-faint);
     margin: 0;
 }
 
-/* Ações (Botões Carrinho e Remover) */
 .item-actions {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    width: 90px; /* Largura dos botões */
+    width: 90px;
     text-align: right;
     flex-shrink: 0;
 }
@@ -1112,23 +1066,21 @@ input[type="checkbox"]:checked::before {
     background-color: var(--color-hover-red);
 }
 
-/* Codigo CSS para a parte de Gerenciamento de Jogos
+/* Codigo CSS para a parte de Gerenciamento de Jogos*/
 
-/* 1. VARIÁVEIS DE COR (A SEREM USADAS NAS SUAS VARIÁVEIS GERAIS) */
 :root {
-    --cor-fundo-principal: #282828; /* Fundo principal escuro */
-    --cor-fundo-admin-box: #333333; /* Fundo dos cards do admin */
-    --cor-input-admin: #1a1a1a; /* Fundo dos campos de input */
-    --cor-borda-admin: #555555; /* Borda da tabela/inputs */
+    --cor-fundo-principal: #282828; 
+    --cor-fundo-admin-box: #333333; 
+    --cor-input-admin: #1a1a1a;
+    --cor-borda-admin: #555555; 
     
-    --cor-acao-sucesso: #39FF14; /* Verde Neon (Cadastrar, Preço) */
-    --cor-acao-manutencao: #ffffff; /* Branco (Editar, Borda Ativa) */
-    --cor-acao-perigo: #ff3914; /* Vermelho (Excluir) */
+    --cor-acao-sucesso: #39FF14; 
+    --cor-acao-manutencao: #ffffff; 
+    --cor-acao-perigo: #ff3914;
 }
 
-/* Quando o body tiver a classe 'light-mode', as variáveis mudam de valor */
 body.light-mode {
-    /* 1. Fundos: Invertemos para tons claros */
+
     --cor-fundo-principal: #f4f6f8;  
     --cor-fundo-admin-box: #ffffff;  
     --cor-input-admin: #ffffff;       
@@ -1138,8 +1090,6 @@ body.light-mode {
     --cor-acao-perigo: #d32f2f;       
 }
 
-
-/* CONTAINER GERAL DO ADMIN */
 .main-content-area {
     max-width: 1100px;
     margin: 40px auto;
@@ -1152,10 +1102,10 @@ body.light-mode {
     margin-bottom: 15px;
 }
 .list-title {
-    margin-top: 40px; /* Mais espaço para separar Listar de Cadastrar */
+    margin-top: 40px;
 }
 
-/* 2. ESTILOS DO FORMULÁRIO DE CADASTRO */
+/* ESTILOS DO FORMULÁRIO DE CADASTRO */
 .cadastro-box {
     background-color: var(--cor-fundo-admin-box);
     padding: 30px;
@@ -1188,7 +1138,6 @@ body.light-mode {
     transition: border-color 0.2s;
 }
 
-/* Destacar campo ativo (Branco) */
 .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
     border-color: var(--cor-acao-manutencao);
 }
@@ -1206,17 +1155,17 @@ body.light-mode {
     position: relative;
 }
 .preco-group input {
-    padding-left: 20px; /* Espaço para o cifrão */
+    padding-left: 20px;
 }
 .currency-symbol {
     position: absolute;
-    top: 36px; /* Ajuste vertical */
+    top: 36px; 
     left: 8px;
     color: var(--cor-texto-secundario);
 }
 /* Botão Cadastrar */
 .btn-cadastrar {
-    background-color: var(--cor-acao-sucesso); /* Verde Neon */
+    background-color: var(--cor-acao-sucesso); 
     color: #000;
     font-weight: bold;
     border: none;
@@ -1224,7 +1173,7 @@ body.light-mode {
     border-radius: 4px;
     cursor: pointer;
     float: right;
-    margin-top: -10px; /* Puxa o botão para a área do formulário */
+    margin-top: -10px;
 }
 .btn-cadastrar:hover {
     filter: brightness(1.1);
@@ -1241,7 +1190,7 @@ body.light-mode {
 /* Estilo da Tabela */
 .tabela-jogos {
     width: 100%;
-    border-collapse: collapse; /* Remove espaçamento entre células */
+    border-collapse: collapse; 
 }
 .tabela-jogos thead th {
     background-color: var(--cor-input-admin);
@@ -1260,22 +1209,21 @@ body.light-mode {
 
 /* Estilização da Coluna de Preço */
 .preco-tabela {
-    color: var(--cor-acao-sucesso); /* Verde Neon */
+    color: var(--cor-acao-sucesso); 
     font-weight: bold;
 }
 
-/* Estilização dos Ícones de Ação (Manutenção e Perigo) */
 .tabela-jogos .action-icon {
     font-size: 1.1em;
     cursor: pointer;
     transition: color 0.2s;
 }
 .icon-edit {
-    color: var(--cor-acao-manutencao); /* Branco para Editar */
+    color: var(--cor-acao-manutencao);
     margin-right: 15px;
 }
 .icon-delete {
-    color: var(--cor-acao-perigo); /* Vermelho para Excluir */
+    color: var(--cor-acao-perigo); 
 }
 
 .icon-edit:hover {
@@ -1287,16 +1235,7 @@ body.light-mode {
 
 /* -------------------------------------------------------------------
 ---------Estilização da tela de Gerenciamento de Empresas-------------
----------------------------------------------------------------------/*
-
-/* REGRAS EXISTENTES: */
-/* .admin-section-title, .cadastro-box, .form-grid, .input-group, 
-.btn-cadastrar (Mudar a cor do botão específico), .listagem-box,
-.filter-bar, .search-input-group, .tabela-jogos (Reutilizar para tabela-empresas) */
-
-/* ESTILOS NOVOS/AJUSTADOS (Adicione ao seu style.css): */
-
-/* Botão de Cadastro de Empresa (Usando a cor de Sucesso - Verde Neon) */
+---------------------------------------------------------------------*/
 .btn-cadastrar-empresa {
     background-color: var(--cor-acao-sucesso); 
     color: #000;
@@ -1312,14 +1251,11 @@ body.light-mode {
     filter: brightness(1.1);
 }
 
-/* Estilo para a Tabela de Empresas (Reutiliza as classes da tabela de jogos) */
 .tabela-empresas {
     width: 100%;
     border-collapse: collapse;
-    /* Estilos de bordas, cores de fundo etc. serão herdados das classes .tabela-jogos */
 }
 .tabela-empresas thead th {
-    /* Mesmo estilo de thead de .tabela-jogos */
     background-color: var(--cor-input-admin);
     color: var(--cor-texto-principal);
     padding: 12px 10px;
@@ -1328,44 +1264,36 @@ body.light-mode {
     font-weight: bold;
 }
 .tabela-empresas tbody td {
-    /* Mesmo estilo de tbody td de .tabela-jogos */
     padding: 12px 10px;
     border-bottom: 1px solid #444;
 }
 
 /* Estilização da Coluna de Jogos no Catálogo */
 .jogos-catalogo {
-    color: var(--cor-acao-manutencao); /* Ciano para destaque do número */
+    color: var(--cor-acao-manutencao); 
     font-weight: bold;
 }
 
 /* ----------------------------------------------------------------------------------
 -----------------Css para pagina de Moderação e Avaliação do jogo--------------------
------------------------------------------------------------------------------------/*
-
-/* Reutiliza a maioria das classes de .tabela-jogos */
-
-/* ESTILOS ESPECÍFICOS PARA MODERAÇÃO (Adicione ao seu style.css) */
+-----------------------------------------------------------------------------------*/
 
 .moderacao-filter-bar {
-    /* Ajuste para alinhar os elementos de filtro */
     display: flex;
     gap: 15px;
     align-items: center;
 }
 
 .search-review {
-    flex-grow: 1; /* Ocupa o espaço restante */
+    flex-grow: 1; 
 }
 
-/* Estilo da Tabela de Moderação */
 .tabela-moderação {
     width: 100%;
     border-collapse: collapse;
 }
 
 .tabela-moderação thead th {
-    /* Herda o fundo escuro do thead das outras tabelas */
     background-color: var(--cor-input-admin);
     color: var(--cor-texto-principal);
     padding: 12px 10px;
@@ -1375,21 +1303,21 @@ body.light-mode {
 }
 
 .tabela-moderação tbody td {
-    padding: 15px 10px; /* Mais espaço para o comentário */
+    padding: 15px 10px; 
     border-bottom: 1px solid #444;
     color: var(--cor-texto-principal);
     font-size: 0.95em;
-    vertical-align: top; /* Alinha o conteúdo ao topo */
+    vertical-align: top;
 }
 
 /* Estilo para a Nota (Estrelas) */
 .rating-stars {
-    font-size: 1.4em; /* Tamanho das estrelas */
-    color: gold; /* Cor das estrelas preenchidas */
-    letter-spacing: -2px; /* Reduz o espaço entre as estrelas */
+    font-size: 1.4em;
+    color: gold; 
+    letter-spacing: -2px; 
 }
 .rating-stars .unfilled {
-    color: var(--cor-borda-admin); /* Estrelas não preenchidas em cinza */
+    color: var(--cor-borda-admin); 
 }
 
 /* Estilo para os Ícones de Ação (Aprovar/Remover) */
@@ -1397,14 +1325,14 @@ body.light-mode {
     font-size: 1.4em;
     cursor: pointer;
     transition: color 0.2s;
-    display: block; /* Garante que o ícone ocupe a célula sozinho */
+    display: block; 
     text-align: center;
 }
 .icon-aprovar {
-    color: var(--cor-acao-sucesso); /* Verde Neon para Aprovar */
+    color: var(--cor-acao-sucesso);
 }
 .icon-remover {
-    color: var(--cor-acao-perigo); /* Vermelho para Remover */
+    color: var(--cor-acao-perigo); 
 }
 
 .icon-aprovar:hover {
@@ -1418,11 +1346,6 @@ body.light-mode {
 ----------------------Css para pagina de Minha Biblioteca----------------------------
 -----------------------------------------------------------------------------------/*
 
-/* REGRAS EXISTENTES: 
-    --cor-fundo-principal, --cor-bordo-gradiente, etc.
-    .main-content-area, .page-title 
-*/
-
 /* 1. LAYOUT PRINCIPAL DA BIBLIOTECA */
 .biblioteca-layout {
     display: flex;
@@ -1434,10 +1357,9 @@ body.light-mode {
     flex-grow: 1;
 }
 
-/* O GRID ONDE OS JOGOS FICAM */
 .jogos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* 3 a 4 colunas */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
     gap: 20px;
 }
 
@@ -1446,10 +1368,10 @@ body.light-mode {
     background: var(--cor-bordo-gradiente);
     border-radius: 8px;
     overflow: hidden;
-    height: 220px; /* Altura fixa para todos os cards */
+    height: 220px; 
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Conteúdo no fundo */
+    justify-content: flex-end; 
     position: relative;
     padding: 10px;
     text-align: center;
@@ -1485,11 +1407,11 @@ body.light-mode {
 
 /* Botão JOGAR (Cor de Ação Principal - Azul/Ciano) */
 .btn-jogar {
-    background-color: var(--cor-acao-manutencao); /* Ciano */
+    background-color: var(--cor-acao-manutencao); 
     color: #000;
 }
 .btn-jogar:hover {
-    background-color: var(--cor-acao-sucesso); /* Verde Neon no hover */
+    background-color: var(--cor-acao-sucesso); 
     color: #000;
 }
 
@@ -1521,7 +1443,7 @@ body.light-mode {
     padding: 20px;
     border-radius: 8px;
     position: sticky;
-    top: 20px; /* Mantém o filtro visível ao rolar */
+    top: 20px; 
 }
 .filtro-card h2 {
     font-size: 1.4em;
@@ -1544,27 +1466,22 @@ body.light-mode {
     color: var(--cor-texto-secundario);
 }
 
-/* --- MELHORIAS VISUAIS DO ADMIN (Adicione ao final do index.css) --- */
-
-
-
-
 /* 4. Tabela Moderna */
 .tabela-jogos-container {
     background-color: #2c2c2c;
     border-radius: 8px;
-    overflow: hidden; /* Arredonda os cantos da tabela */
+    overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .tabela-jogos {
     width: 100%;
-    border-collapse: separate; /* Permite bordas arredondadas */
+    border-collapse: separate;
     border-spacing: 0;
 }
 
 .tabela-jogos thead th {
-    background-color: #222; /* Cabeçalho mais escuro */
+    background-color: #222; 
     color: #eee;
     padding: 18px 15px;
     text-align: left;
@@ -1572,7 +1489,7 @@ body.light-mode {
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid #e53935; /* Linha de destaque vermelha */
+    border-bottom: 2px solid #e53935; 
 }
 
 .tabela-jogos tbody tr {
@@ -1580,7 +1497,7 @@ body.light-mode {
 }
 
 .tabela-jogos tbody tr:hover {
-    background-color: #333; /* Efeito hover na linha */
+    background-color: #333; 
 }
 
 .tabela-jogos tbody td {
@@ -1592,7 +1509,7 @@ body.light-mode {
 }
 
 .tabela-jogos tbody tr:last-child td {
-    border-bottom: none; /* Remove borda da última linha */
+    border-bottom: none; 
 }
 
 /* Ícones de Ação (Alinhados e coloridos) */
@@ -1603,19 +1520,18 @@ body.light-mode {
 }
 
 .icon-edit {
-    color: #4facfe; /* Azul claro */
+    color: #4facfe; 
 }
 .icon-edit:hover {
     background-color: rgba(79, 172, 254, 0.1);
 }
 
 .icon-delete {
-    color: #ff5252; /* Vermelho claro */
+    color: #ff5252;
 }
 .icon-delete:hover {
     background-color: rgba(255, 82, 82, 0.1);
 }
-/* --- CORREÇÃO DE FILTROS E PESQUISA (Substitua o bloco anterior) --- */
 
 /* 1. Container da Barra */
 .filter-bar {
@@ -1629,23 +1545,22 @@ body.light-mode {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* 2. Grupo de Pesquisa (O Container "Invisível") */
 .search-input-group {
     flex-grow: 2;
     position: relative;
-    /* Removemos qualquer borda ou fundo deste container para evitar a "caixa dupla" */
+    
     border: none; 
     background: transparent;
     padding: 0;
-    display: flex; /* Garante que o input ocupe a altura correta */
+    display: flex;
     align-items: center;
 }
 
 /* 3. O Campo de Input (A "Caixa" Real) */
 .search-input-group input {
     width: 100%;
-    height: 45px; /* Altura fixa para igualar aos dropdowns */
-    padding: 0 15px 0 50px; /* Padding esquerdo maior para o ícone */
+    height: 45px; 
+    padding: 0 15px 0 50px; 
     
     background-color: #1a1a1a;
     border: 1px solid #444;
@@ -1654,7 +1569,6 @@ body.light-mode {
     font-size: 14px;
     outline: none;
     
-    /* Garante que o padding não aumente o tamanho total */
     box-sizing: border-box; 
     transition: border-color 0.3s;
 }
@@ -1663,16 +1577,14 @@ body.light-mode {
     border-color: #e53935;
 }
 
-/* 4. O Ícone de Lupa */
 .search-input-group i {
     position: absolute;
     left: 12px;
-    /* Centraliza verticalmente de forma absoluta */
     top: 50%;
     transform: translateY(-50%);
     color: #888;
     font-size: 14px;
-    z-index: 1; /* Garante que fique acima do input */
+    z-index: 1; 
     pointer-events: none;
 }
 
@@ -1680,8 +1592,8 @@ body.light-mode {
 .select-filter {
     flex-grow: 1;
     max-width: 200px;
-    height: 45px; /* MESMA altura do input */
-    padding: 0 15px; /* Padding lateral igual */
+    height: 45px; 
+    padding: 0 15px;
     
     background-color: #1a1a1a;
     border: 1px solid #444;
@@ -1690,7 +1602,7 @@ body.light-mode {
     font-size: 14px;
     cursor: pointer;
     outline: none;
-    box-sizing: border-box; /* Crucial para alinhar */
+    box-sizing: border-box; 
 }
 
 .select-filter:focus {
@@ -1708,16 +1620,16 @@ body.light-mode {
 }
 
 .header-flex h1 {
-    margin: 0; /* Remove margem padrão para alinhar */
+    margin: 0;
 }
 
 /* Botão Moderno de "Novo Jogo" */
 .btn-novo-jogo {
-    background-color: #39FF14; /* Verde Neon */
+    background-color: #39FF14; 
     color: #000;
     border: none;
     padding: 10px 20px;
-    border-radius: 50px; /* Borda arredondada (estilo pílula) */
+    border-radius: 50px; 
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -1733,7 +1645,7 @@ body.light-mode {
 }
 
 .btn-novo-jogo.cancelar {
-    background-color: #e53935; /* Vermelho se for para fechar */
+    background-color: #e53935; 
     color: #fff;
     box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
 }
@@ -1749,7 +1661,7 @@ body.light-mode {
 }
 
 .form-collapsible.open {
-    max-height: 1000px; /* Um valor alto o suficiente para caber o formulário */
+    max-height: 1000px;
     opacity: 1;
     margin-bottom: 30px;
 }
@@ -1773,16 +1685,16 @@ body.light-mode {
 }
 
 .header-flex h1 {
-    margin: 0; /* Remove margem padrão para alinhar */
+    margin: 0; 
 }
 
 /* Botão Moderno de "Novo Jogo" */
 .btn-novo-jogo {
-    background-color: #39FF14; /* Verde Neon */
+    background-color: #39FF14; 
     color: #000;
     border: none;
     padding: 10px 20px;
-    border-radius: 50px; /* Borda arredondada (estilo pílula) */
+    border-radius: 50px; 
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -1798,7 +1710,7 @@ body.light-mode {
 }
 
 .btn-novo-jogo.cancelar {
-    background-color: #e53935; /* Vermelho se for para fechar */
+    background-color: #e53935;
     color: #fff;
     box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3);
 }
@@ -1813,7 +1725,7 @@ body.light-mode {
 }
 
 .form-collapsible.open {
-    max-height: 1000px; /* Um valor alto o suficiente para caber o formulário */
+    max-height: 1000px; 
     opacity: 1;
     margin-bottom: 30px;
 }
@@ -1830,9 +1742,9 @@ body.light-mode {
 
 .form-actions {
     display: flex;
-    justify-content: flex-end; /* Alinha tudo à direita */
-    align-items: center;       /* Alinha verticalmente ao centro (o segredo!) */
-    gap: 15px;                 /* Espaço entre os botões */
+    justify-content: flex-end; 
+    align-items: center;      
+    gap: 15px;                
     margin-top: 20px;
     padding-top: 20px;
     border-top: 1px solid #444;
@@ -1848,11 +1760,11 @@ body.light-mode {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Garante que fique por cima de tudo */
+    z-index: 1000; 
     animation: fadeIn 0.3s ease;
 }
 
@@ -1926,10 +1838,10 @@ body.light-mode {
 
 .btn-cancelar {
     background-color: transparent;
-    color: #e53935; /* Vermelho da identidade visual */
+    color: #e53935;
     border: 2px solid #e53935;
     padding: 10px 20px;
-    border-radius: 4px; /* Combina com os inputs */
+    border-radius: 4px; 
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -1940,21 +1852,20 @@ body.light-mode {
 
 .btn-cancelar:hover {
     background-color: #e53935;
-    color: #fff; /* Texto fica branco no hover */
-    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); /* Sombra suave vermelha */
-    transform: translateY(-2px); /* Efeito de leve subida */
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3); 
+    transform: translateY(-2px); 
 }
 
-/* Ajuste para garantir que os botões fiquem alinhados lado a lado */
 .form-actions button {
-    height: 45px; /* Mesma altura para todos */
+    height: 45px; 
 }
-/* 2. Reseta os botões para funcionarem bem juntos */
+
 .form-actions .btn-cadastrar,
 .form-actions .btn-cancelar {
-    float: none;       /* Remove o 'float: right' antigo que causava o problema */
-    margin: 0;         /* Remove margens negativas antigas */
-    height: 45px;      /* Força a mesma altura para ambos */
+    float: none;   
+    margin: 0;       
+    height: 45px;
     
     /* Centraliza o texto dentro do próprio botão */
     display: flex;
@@ -1982,15 +1893,15 @@ body.light-mode {
     align-items: center;
     background-color: #2c2c2c;
     border: 1px solid #444;
-    border-radius: 12px; /* Bordas mais arredondadas */
+    border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra de profundidade */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
     transition: transform 0.2s, border-color 0.2s;
 }
 
 .cart-item:hover {
-    transform: translateY(-2px); /* Leve flutuação ao passar o rato */
+    transform: translateY(-2px); 
     border-color: #555;
 }
 
@@ -2017,7 +1928,7 @@ body.light-mode {
 .item-price {
     display: inline-block;
     background-color: #151515;
-    color: #e53935; /* Preço em Vermelho */
+    color: #e53935; 
     padding: 6px 12px;
     border-radius: 20px;
     font-weight: bold;
@@ -2040,7 +1951,7 @@ body.light-mode {
 .remove-btn:hover {
     border-color: #e53935;
     color: #e53935;
-    background-color: rgba(229, 57, 53, 0.1); /* Fundo vermelho bem suave */
+    background-color: rgba(229, 57, 53, 0.1); 
 }
 
 /* 3. Resumo do Pedido (Painel Lateral) */
@@ -2052,7 +1963,7 @@ body.light-mode {
     border: 1px solid #444;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
     position: sticky;
-    top: 20px; /* O painel acompanha o scroll da página */
+    top: 20px; 
 }
 
 .cart-summary h2 {
@@ -2068,7 +1979,7 @@ body.light-mode {
 }
 
 .cart-summary h2 span {
-    color: #e53935; /* Valor total em destaque vermelho */
+    color: #e53935; 
 }
 
 /* 4. Botão Principal (Checkout) */
@@ -2122,7 +2033,7 @@ body.light-mode {
     background-color: #151515;
     color: #fff;
     outline: none;
-    width: 100%; /* Garante que o input ocupe espaço */
+    width: 100%;
 }
 
 .coupon-input button {
@@ -2150,11 +2061,11 @@ body.light-mode {
     font-size: 2rem;
     cursor: pointer;
     transition: color 0.2s, transform 0.1s;
-    color: #444; /* Cor padrão (vazia) */
+    color: #444; 
 }
 
 .star-input.filled {
-    color: gold; /* Cor preenchida */
+    color: gold; 
 }
 
 .star-input:hover {
@@ -2164,24 +2075,24 @@ body.light-mode {
 
 .toast-notification {
     position: fixed;
-    bottom: 30px; /* Fica no canto inferior */
-    right: 30px;  /* Fica no canto direito */
+    bottom: 30px;
+    right: 30px;
     background-color: #2c2c2c;
     color: #fff;
     padding: 16px 24px;
     border-radius: 8px;
-    border-left: 6px solid #39FF14; /* Borda Verde Neon */
+    border-left: 6px solid #39FF14;
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     display: flex;
     align-items: center;
     gap: 15px;
-    z-index: 2000; /* Garante que fique acima de tudo */
+    z-index: 2000;
     animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     min-width: 300px;
 }
 
 .toast-notification.error {
-    border-left-color: #e53935; /* Borda Vermelha se for erro */
+    border-left-color: #e53935; 
 }
 
 .toast-icon {
@@ -2292,7 +2203,7 @@ body.light-mode {
     cursor: pointer;
     position: relative;
     transition: border-color 0.3s;
-    overflow: hidden; /* Importante para o efeito */
+    overflow: hidden; 
 }
 
 .activation-key-box:hover {
@@ -2305,8 +2216,6 @@ body.light-mode {
     color: #39FF14;
     font-weight: bold;
     letter-spacing: 2px;
-    
-    /* O Truque do Blur */
     filter: blur(5px); 
     opacity: 0.7;
     transition: all 0.4s ease;
@@ -2332,7 +2241,7 @@ body.light-mode {
 }
 
 .activation-key-box:hover::after {
-    opacity: 0; /* Esconde a instrução ao revelar */
+    opacity: 0;
 }
 
 /* --- HISTÓRICO (TABELA MODERNA) --- */
@@ -2371,7 +2280,7 @@ body.light-mode {
 
 /* --- FORMULÁRIO (Cards) --- */
 .form-content {
-    background-color: var(--cor-fundo-admin-box); /* Fundo do card */
+    background-color: var(--cor-fundo-admin-box);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -2400,8 +2309,8 @@ body.light-mode {
 .input-group textarea,
 .search-input-group input,
 .select-filter {
-    background-color: var(--cor-input-admin); /* Muda fundo do input */
-    color: var(--cor-acao-manutencao);        /* Muda texto do input */
+    background-color: var(--cor-input-admin); 
+    color: var(--cor-acao-manutencao);        
     border: 1px solid var(--cor-borda-admin);
     padding: 10px;
     border-radius: 5px;
@@ -2429,7 +2338,7 @@ body.light-mode {
 }
 
 .tabela-jogos th {
-    background-color: rgba(0,0,0,0.2); /* Escurece levemente o header independente do tema */
+    background-color: rgba(0,0,0,0.2);
     color: var(--cor-acao-manutencao);
     padding: 12px;
     text-align: left;
@@ -2448,10 +2357,10 @@ body.light-mode {
 
 /* Ícones de Ação (Editar/Excluir) */
 .icon-edit {
-    color: var(--cor-acao-manutencao); /* Branco no escuro, preto no claro */
+    color: var(--cor-acao-manutencao); 
 }
 .icon-edit:hover {
-    color: #3498db; /* Azul no hover */
+    color: #3498db; 
 }
 
 .icon-delete {
@@ -2460,7 +2369,7 @@ body.light-mode {
 
 /* --- MODAL --- */
 .modal-content {
-    background-color: var(--cor-fundo-admin-box); /* Modal obedece o tema */
+    background-color: var(--cor-fundo-admin-box); 
     color: var(--cor-acao-manutencao);
     border: 1px solid var(--cor-borda-admin);
 }
@@ -2469,7 +2378,7 @@ body.light-mode {
 /* Botão "Novo Jogo" */
 .btn-novo-jogo {
     background-color: var(--cor-acao-sucesso);
-    color: #000; /* Texto sempre preto no verde neon fica melhor de ler */
+    color: #000; 
     font-weight: bold;
     border: none;
     padding: 10px 20px;
@@ -2498,12 +2407,12 @@ body.light-mode {
 /* --- MODAL DE TEXTOS LEGAIS (Política e Termos) --- */
 
 .legal-modal {
-    max-width: 600px;       /* Largura um pouco maior para leitura */
-    max-height: 80vh;       /* Altura máxima de 80% da tela */
-    overflow-y: auto;       /* Adiciona rolagem se o texto for longo */
-    text-align: left;       /* Texto alinhado à esquerda para leitura */
-    line-height: 1.6;       /* Espaçamento entre linhas confortável */
-    padding-right: 10px;    /* Espaço para a barra de rolagem */
+    max-width: 600px;     
+    max-height: 80vh;      
+    overflow-y: auto;     
+    text-align: left;    
+    line-height: 1.6;    
+    padding-right: 10px;  
 }
 
 /* Estilizando a barra de rolagem do modal */
@@ -2523,7 +2432,7 @@ body.light-mode {
 }
 
 .legal-modal h2 {
-    color: #e53935; /* Título em vermelho */
+    color: #e53935;
     margin-top: 0;
     border-bottom: 1px solid #444;
     padding-bottom: 10px;
@@ -2552,7 +2461,7 @@ body.light-mode {
 /* 1. OVERLAY (Fundo que escurece a tela) */
 
 body.light-mode .modal-overlay {
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo preto transparente (70%) */
+    background-color: rgba(0, 0, 0, 0.7);
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     display: flex;
@@ -2564,8 +2473,8 @@ body.light-mode .modal-overlay {
 /* 2. CONTEÚDO DO MODAL (O Popup em si) */
 
 body.light-mode .modal-content {
-    background-color: #ffffff; /* Fundo BRANCO */
-    color: #1a1a1a; /* Texto PRETO QUASE TOTAL */
+    background-color: #ffffff;
+    color: #1a1a1a; 
     padding: 30px;
     border-radius: 8px;
     max-width: 600px;
@@ -2578,7 +2487,7 @@ body.light-mode .modal-content {
 
 body.light-mode .modal-content h2,
 body.light-mode .modal-content h3 {
-    color: #333333; /* Títulos em cinza escuro */
+    color: #333333; 
     margin-top: 15px;
     margin-bottom: 8px;
 }
@@ -2586,7 +2495,7 @@ body.light-mode .modal-content h3 {
 
 body.light-mode .modal-content p,
 body.light-mode .modal-content ul {
-    color: #333333; /* Parágrafos e texto da lista em cinza escuro */
+    color: #333333; 
     line-height: 1.6;
     margin-bottom: 15px;
 }
@@ -2594,7 +2503,7 @@ body.light-mode .modal-content ul {
 /* 4. BOTÃO DE CONFIRMAÇÃO */
 body.light-mode .btn-confirm {
     padding: 10px 20px;
-    background-color: #e53935; /* Cor de destaque (Vermelho) */
+    background-color: #e53935;
     color: #ffffff;
     border: none;
     border-radius: 4px;
@@ -2617,7 +2526,7 @@ body.light-mode .legal-modal li{
 .actions-container {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Espaço entre os botões */
+    gap: 12px; 
     width: 100%;
     margin-bottom: 15px;
 }
@@ -2626,7 +2535,7 @@ body.light-mode .legal-modal li{
 .btn-buy-now {
     width: 100%;
     padding: 16px;
-    background-color: #39FF14; /* Verde Neon */
+    background-color: #39FF14;
     color: #000;
     border: none;
     border-radius: 8px;
@@ -2671,7 +2580,7 @@ body.light-mode .legal-modal li{
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Botão Desabilitado (Já adquirido) */
+/* Botão Desabilitado */
 .btn-disabled {
     width: 100%;
     padding: 15px;
@@ -2722,13 +2631,13 @@ body.light-mode .game-hero {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 body.light-mode .game-hero h1 {
-    color: #d32f2f; /* Título em Vermelho Escuro */
+    color: #d32f2f; 
     text-shadow: none;
 }
 
 /* 2. Conteúdo Principal */
 body.light-mode .game-main-content p {
-    color: #555; /* Texto cinza escuro para leitura */
+    color: #555;
 }
 
 body.light-mode .game-main-content h2 {
@@ -2747,7 +2656,7 @@ body.light-mode .rating-box {
 }
 
 body.light-mode .price-tag {
-    color: #d32f2f; /* Preço em vermelho */
+    color: #d32f2f; 
 }
 
 body.light-mode .rating-box strong {
@@ -2774,7 +2683,7 @@ body.light-mode .user-review-card {
 }
 
 body.light-mode .review-header strong.review-author {
-    color: #d32f2f; /* Nome do usuário em vermelho escuro */
+    color: #d32f2f;
 }
 
 body.light-mode .user-review-card p {
@@ -2791,20 +2700,19 @@ body.light-mode .btn-add-cart:hover {
 }
 /* Ajuste específico para o Coração no Modo Claro */
 body.light-mode .favorite-icon {
-    color: #ccc; /* Cinza claro quando não está favoritado */
+    color: #ccc; 
 }
 
 body.light-mode .favorite-icon:hover {
-    color: #ff8a80; /* Um vermelho bem suave ao passar o mouse */
+    color: #ff8a80; 
     transform: scale(1.2);
 }
 
 body.light-mode .favorite-icon.active {
-    color: #d32f2f; /* Vermelho forte quando está favoritado */
+    color: #d32f2f; 
 }
 /* Ajuste do Botão de Compra no Modo Claro */
 body.light-mode .btn-buy-now {
-    /* Sombra um pouco mais escura para destacar no fundo branco */
     box-shadow: 0 4px 15px rgba(0, 128, 0, 0.25); 
 }
 
@@ -2823,10 +2731,10 @@ body.light-mode .user-review-card {
     display: flex;
     align-items: center;
     background-color: transparent;
-    color: #39FF14; /* Texto Verde Neon */
+    color: #39FF14; 
     border: 1px solid #39FF14;
     padding: 8px 16px;
-    border-radius: 20px; /* Bordas arredondadas */
+    border-radius: 20px;
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
@@ -2836,14 +2744,14 @@ body.light-mode .user-review-card {
 
 .btn-header-login:hover {
     background-color: #39FF14;
-    color: #000; /* Texto preto no hover para contraste */
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.4); /* Brilho neon */
+    color: #000; 
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.4); 
     transform: translateY(-2px);
 }
 
 /* Ajuste para modo claro */
 body.light-mode .btn-header-login {
-    color: #e53935; /* Vermelho no modo claro */
+    color: #e53935;
     border-color: #e53935;
 }
 

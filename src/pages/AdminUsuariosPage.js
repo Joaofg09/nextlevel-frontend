@@ -1,6 +1,3 @@
-// No arquivo: src/pages/AdminUsuariosPage.js
-// VERSÃO FINAL - Com Toasts
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -35,7 +32,7 @@ function AdminUsuariosPage() {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
           if (res.status === 401) { 
-              alert('Sessão expirada.'); // Mantém alert aqui pois é crítico
+              alert('Sessão expirada.'); 
               logout(); navigate('/login'); 
               throw new Error('Sessão expirada'); 
           }
@@ -71,7 +68,7 @@ function AdminUsuariosPage() {
     }, {});
   }, [perfis]);
 
-  // Criar Perfil com Toast
+  // Criação do Perfil com Toast
   const handleCriarPerfil = async (event) => {
     event.preventDefault();
     if (!novoPerfilNome) {

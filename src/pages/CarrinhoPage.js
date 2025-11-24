@@ -1,6 +1,3 @@
-// No arquivo: src/pages/CarrinhoPage.js
-// VERSÃO FINAL - Botão "Carrinho Vazio" corrigido
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -120,7 +117,6 @@ function CarrinhoPage() {
             <div className="cart-summary">
               <h2>Subtotal: <span id="subtotal">$0.00</span></h2>
               
-              {/* === MUDANÇA AQUI: Botão real desabilitado === */}
               <button 
                 className="checkout-button" 
                 style={{backgroundColor: '#555', cursor: 'not-allowed', border: 'none'}}

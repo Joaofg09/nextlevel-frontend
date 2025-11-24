@@ -1,15 +1,13 @@
-/* src/components/Footer.module.css */
-
 .footer {
   background: #0d0d0d;
   padding: 20px;
   color: #ccc;
   text-align: center;
   margin-top: 40px;
-  border-top: 1px solid #222; /* Uma linha sutil no topo */
+  border-top: 1px solid #222; 
 }
 
-/* Estilo para links reais (como o mailto) */
+/* Estilo para links */
 .footer a {
   color: #fff;
   text-decoration: none;
@@ -17,7 +15,7 @@
 }
 
 .footer a:hover {
-  color: #e53935; /* Vermelho da marca */
+  color: #e53935; 
 }
 
 .links {
@@ -28,7 +26,6 @@
   align-items: center;
 }
 
-/* === NOVO: Estilo para os Botões que parecem links === */
 .fakeLink {
   background: none;
   border: none;
@@ -42,7 +39,7 @@
 }
 
 .fakeLink:hover {
-  color: #e53935; /* Vermelho ao passar o mouse */
+  color: #e53935;
   text-decoration: underline;
 }
 
@@ -58,9 +55,7 @@
   margin-top: 10px;
 }
 
-/* ================================
-   MODO CLARO
-================================= */
+/* MODO CLARO */
 
 :global(.light-mode) .footer {
   background: #f2f2f2;
@@ -73,7 +68,7 @@
 }
 
 :global(.light-mode) .footer a:hover {
-  color: #b22222; /* Vermelho mais escuro no claro */
+  color: #b22222; 
 }
 
 :global(.light-mode) .fakeLink {
@@ -86,7 +81,7 @@
 }
 
 :global(.light-mode) .links span {
-  color: #888; /* Separador mais suave */
+  color: #888; 
 }
 
 :global(.light-mode) .copyNote {

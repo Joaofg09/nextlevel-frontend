@@ -1,6 +1,3 @@
-// No ficheiro: src/pages/MeusDados.js
-// VERSÃO 4 - Visual Moderno (Toasts) e sem Alerts
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -9,25 +6,25 @@ function MeusDados() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // --- Estados para Dados Pessoais ---
+  // Estados para Dados Pessoais
   const [nome, setNome] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [fkPerfil, setFkPerfil] = useState(null);
 
-  // --- Estados para Senha ---
+  // Estados para Senha
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  // --- Estados para Avaliações ---
+  // Estados para Avaliações 
   const [minhasAvaliacoes, setMinhasAvaliacoes] = useState([]);
   const [jogosMap, setJogosMap] = useState(new Map());
   const [editingReview, setEditingReview] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. NOVO ESTADO: Notificação (Toast)
+  // Notificação (Toast)
   const [notification, setNotification] = useState(null);
 
-  // Função para mostrar o Toast
+  // Função para mostrar a notificação
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
     setTimeout(() => {
@@ -35,7 +32,7 @@ function MeusDados() {
     }, 3000);
   };
 
-  // --- Função de Busca de Dados ---
+  // Função de Busca de Dados
   const fetchData = useCallback(() => {
     if (!user) return;
     setLoading(true);
@@ -83,7 +80,7 @@ function MeusDados() {
 
   const getJogoNome = (id) => jogosMap.get(id) || 'Jogo não encontrado';
 
-  // --- Máscara de Data ---
+  // Máscara de Data 
   const handleDataChange = (e) => {
     let valor = e.target.value.replace(/\D/g, ''); 
     if (valor.length > 8) valor = valor.slice(0, 8);
@@ -92,7 +89,7 @@ function MeusDados() {
     setDataNascimento(valor); 
   };
   
-  // --- Atualizar Dados Pessoais ---
+  // Atualizar Dados Pessoais 
   const handleUpdateDados = async (event) => {
     event.preventDefault();
     if (dataNascimento.length < 10) {
@@ -109,7 +106,7 @@ function MeusDados() {
       });
       const data = await response.json();
       
-      // 2. Substituído alert por showToast
+      // Substituído alert por showToast
       if (response.ok) {
         showToast(data.message, 'success');
       } else {
@@ -121,7 +118,7 @@ function MeusDados() {
     }
   };
 
-  // --- Mudar Senha ---
+  // Mudar Senha 
   const handleChangePassword = async (event) => {
     event.preventDefault();
     if (newPassword.length < 8) {
@@ -140,7 +137,7 @@ function MeusDados() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message); // Mantemos alert aqui pois vamos deslogar
+        alert(data.message); 
         logout();
         navigate('/login');
       } else {
@@ -154,7 +151,7 @@ function MeusDados() {
     }
   };
 
-  // --- Editar Avaliação ---
+  // Editar Avaliação 
   const handleEditReviewClick = (review) => {
     setEditingReview(review);
     window.scrollTo(0, 0);
@@ -310,7 +307,7 @@ function MeusDados() {
 
       </div>
 
-      {/* 3. Componente Toast */}
+      {/* 3. Componentes Toast */}
       {notification && (
         <div className={`toast-notification ${notification.type}`}>
           <div className="toast-icon">

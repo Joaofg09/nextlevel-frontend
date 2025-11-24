@@ -1,11 +1,7 @@
-/* src/components/Carrossel.module.css */
-
 .carousel {
     position: relative;
     background-color: #0d0d0d;
     padding: 20px 50px;
-
-    /* Volta o flex, mas de forma correta */
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -14,7 +10,6 @@
 
 .carousel-viewport {
     overflow: hidden;
-    /* 3 cards de 350px + 2 gaps de 20px = 1050px + espaço de segurança */
     width: 1090px; 
     max-width: 100%;
 }
@@ -40,8 +35,8 @@
     background: linear-gradient(180deg, #b22222, #600000);
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centraliza o título verticalmente */
-    align-items: center;     /* Centraliza o título horizontalmente */
+    justify-content: center; 
+    align-items: center;    
     color: #fff;
     font-weight: bold;
     text-align: center;
@@ -51,28 +46,24 @@
     padding: 20px;
     box-sizing: border-box;
     z-index: 1;
-    
-    /* IMPORTANTE: Permite posicionar o preço de forma absoluta dentro do card */
     position: relative; 
 }
 
 .card h3 {
     font-size: 1.5rem;
     margin: 0;
-    /* Adiciona um pouco de padding bottom para o texto não bater no preço se for longo */
     padding-bottom: 40px; 
     z-index: 1;
 }
 
-/* === PREÇO NO CANTO INFERIOR ESQUERDO === */
+/* Estilo do preço e no canto inferior*/
 .price {
     position: absolute;
     bottom: 15px;
     left: 15px;
-    
     font-size: 1.1rem;
-    color: #39FF14; /* Verde Neon */
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo mais escuro para leitura */
+    color: #39FF14; 
+    background-color: rgba(0, 0, 0, 0.6);
     padding: 5px 15px;
     border-radius: 20px;
     border: 1px solid #39FF14;
@@ -150,7 +141,7 @@
 
 @media (max-width: 700px) {
     .carousel-viewport {
-        width: 350px; /* mostra 1 card */
+        width: 350px; 
     }
 }
 
@@ -172,7 +163,7 @@
 }
 :global(.light-mode) .price {
     background-color: rgba(0, 0, 0, 0.6);
-    color: #39FF14; /* Verde Neon */
+    color: #39FF14;
     border: 1px solid #39FF14;
 }
 :global(.light-mode) .arrow {
@@ -181,7 +172,7 @@
 
 /* Cor padrão dos pontos no light mode */
 :global(.light-mode) .dot {
-    background-color: #aaa; /* cinza claro */
+    background-color: #aaa; 
 }
 
 /* Hover no light mode */
@@ -191,5 +182,5 @@
 
 /* Ponto ativo no light mode */
 :global(.light-mode) .activeDot {
-    background-color: #333 !important; /* preto suave */
+    background-color: #333 !important;
 }

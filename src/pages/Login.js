@@ -1,6 +1,3 @@
-// No arquivo: src/pages/Login.js
-// VERSÃO FINAL - Com Toasts de Erro
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [notification, setNotification] = useState(null); // Estado do Toast
+  const [notification, setNotification] = useState(null); 
 
   const navigate = useNavigate();
   const auth = useAuth();
@@ -34,7 +31,7 @@ function Login() {
         auth.login(data.token); 
         navigate('/'); 
       } else {
-        // Erro de login (ex: senha errada)
+        // Erro de login 
         showToast(data.message, 'error');
       }
     } catch (error) {
@@ -77,7 +74,6 @@ function Login() {
                 />
               </div>
               <button type="submit" className="login-button">Iniciar</button>
-              {/* <a href="/" className="forgot-password">Esqueci minha Senha.</a> */}
             </form>
           </div>
 

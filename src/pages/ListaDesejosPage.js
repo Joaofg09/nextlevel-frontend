@@ -1,11 +1,8 @@
-// No arquivo: src/pages/ListaDesejosPage.js
-// VERSÃO FINAL - Com Imagem Genérica
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// 1. IMAGEM GENÉRICA
+//  IMAGEM GENÉRICA
 const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function ListaDesejosPage() {
@@ -126,7 +123,7 @@ function ListaDesejosPage() {
           ) : (
             listaDesejos.map(jogo => (
               <div className="wishlist-item" key={jogo.id}>
-                {/* 2. IMAGEM ATUALIZADA */}
+               
                 <img src={GENERIC_IMAGE} alt={jogo.nome} style={{width: '180px', height: '100px', objectFit: 'cover', borderRadius: '3px'}}/>
                 
                 <div className="item-card-right">
@@ -153,7 +150,7 @@ function ListaDesejosPage() {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* MODAL Prevenção de erros */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">

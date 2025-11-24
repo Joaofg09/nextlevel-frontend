@@ -1,6 +1,3 @@
-// No arquivo: src/pages/Cadastro.js
-// VERSÃO 5 - Validação de Senha Forte
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -40,7 +37,7 @@ function Cadastro() {
       return;
     }
 
-    // === NOVA VALIDAÇÃO DE SENHA ===
+    // Validação de senha.
     const temOitoCaracteres = senha.length >= 8;
     const temLetra = /[a-zA-Z]/.test(senha);
     const temNumero = /\d/.test(senha);

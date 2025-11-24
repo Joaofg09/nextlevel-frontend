@@ -1,6 +1,6 @@
 
 .header.light .logo {
-    color: #1a1a1a; /* Preto */
+    color: #1a1a1a; 
 }
 
 .header.light .logo span {
@@ -14,7 +14,6 @@
     transition: background-color 0.3s;
 }
 
-/* Top Bar */
 .top-bar {
     display: flex;
     justify-content: space-between;
@@ -76,7 +75,6 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-/* A classe 'show' é ativada pelo React */
 .show {
     display: block;
 }

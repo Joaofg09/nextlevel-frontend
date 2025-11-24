@@ -1,4 +1,3 @@
-// No ficheiro: src/pages/RelatoriosPage.js
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -12,7 +11,7 @@ function RelatoriosPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterEmpresa, setFilterEmpresa] = useState('');
 
-  // 1. Busca os dados do relatório
+  // Busca os dados do relatório
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -21,7 +20,7 @@ function RelatoriosPage() {
 
     const token = localStorage.getItem('token');
 
-    // Função de utilidade para o fetch seguro, assumindo que está disponível globalmente ou aqui
+    // Função de utilidade para o fetch 
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
         .then(res => {
@@ -31,11 +30,10 @@ function RelatoriosPage() {
         });
     };
 
-    // top=10 para top=100 para filtrar localmente.
+    //filtragem de jogos mais vendidos
     const relatorioUrl = 'http://localhost:3000/api/v1/relatorios/jogos-mais-vendidos?top=100';
     const empresasUrl = 'http://localhost:3000/api/v1/empresas';
 
-    // CONSOLIDAR as duas chamadas de API em uma única Promise.all
     Promise.all([
       secureFetch(relatorioUrl),
       secureFetch(empresasUrl)
@@ -51,9 +49,7 @@ function RelatoriosPage() {
       });
   }, [user, navigate, logout]); // Dependências do useEffect
 
-  // NOVO: LÓGICA DE FILTRAGEM (empresaMap e useMemo)
-
-  // Cria um mapa para traduzir o ID da empresa para o NOME 
+  // Tradução do ID da empresa para o nome
   const empresaMap = useMemo(() => {
     return empresas.reduce((acc, emp) => {
       acc[emp.id] = emp.nome;
@@ -65,7 +61,7 @@ function RelatoriosPage() {
   const relatorioFiltrado = useMemo(() => {
     let lista = [...jogosMaisVendidos];
 
-    // FILTRO 1: Por Nome do Jogo
+    // Filtro por nome do Jogo
     if (searchTerm) {
       const termo = searchTerm.toLowerCase();
       lista = lista.filter(jogo =>
@@ -73,7 +69,7 @@ function RelatoriosPage() {
       );
     }
 
-    // FILTRO 2: Por Empresa
+    // Filtro Por Empresa
     if (filterEmpresa) {
       const empresaId = parseInt(filterEmpresa);
       // Obtém o nome da empresa a partir do ID selecionado (o valor do dropdown)
@@ -87,7 +83,6 @@ function RelatoriosPage() {
       }
     }
 
-    // Retorna a lista processada
     return lista;
 
   }, [jogosMaisVendidos, searchTerm, filterEmpresa, empresaMap]);
@@ -102,15 +97,15 @@ function RelatoriosPage() {
     );
   }
 
-  // 3. Renderiza a tabela e os filtros
+  // Renderizaçãp da tabela e os filtros
   return (
     <div className="main-content-area">
       <div className="admin-container">
         <h1 className="admin-section-title">Relatório de Jogos Mais Vendidos</h1>
 
-        {/*  BARRA DE FILTRO  */}
+        {/*  Barra de filtro  */}
         <div className="filter-bar" style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-          {/* FILTRO POR NOME DO JOGO (Input de Texto) */}
+          {/* Filtro por nome de jogo*/}
           <div className="search-input-group">
             
             <input
@@ -123,7 +118,7 @@ function RelatoriosPage() {
             />
           </div>
 
-          {/* FILTRO POR EMPRESA (Dropdown) */}
+          {/* Filtro por empresa */}
           <select
             id="select-empresa-filter"
             value={filterEmpresa}

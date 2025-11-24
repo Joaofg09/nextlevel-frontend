@@ -1,6 +1,3 @@
-// No arquivo: src/pages/AdminEmpresas.js
-// VERSÃO FINAL - Modal Moderno de Exclusão
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -13,9 +10,9 @@ function AdminEmpresas() {
   const [sortCriteria, setSortCriteria] = useState('id-asc');
   
   // Estados dos Modais
-  const [showModal, setShowModal] = useState(false); // Modal de Cadastro/Edição
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal de Exclusão
-  const [empresaToDelete, setEmpresaToDelete] = useState(null); // Empresa a excluir
+  const [showModal, setShowModal] = useState(false); 
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [empresaToDelete, setEmpresaToDelete] = useState(null); 
 
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -80,15 +77,15 @@ function AdminEmpresas() {
     }
   };
 
-  // === 1. AÇÃO DE CLIQUE NO BOTÃO EXCLUIR ===
+  // Ação doclick no botão excluir
   const handleDeleteClick = (empresa) => {
     setEmpresaToDelete(empresa);
-    setShowDeleteModal(true); // Abre o modal personalizado
+    setShowDeleteModal(true); 
   };
 
-  // === 2. CONFIRMAÇÃO DE EXCLUSÃO ===
+  // Confirmar exclusão
   const confirmDelete = async () => {
-    setShowDeleteModal(false); // Fecha o modal
+    setShowDeleteModal(false); 
     if (!empresaToDelete) return;
 
     const token = localStorage.getItem('token');
@@ -174,7 +171,7 @@ function AdminEmpresas() {
           </div>
         )}
 
-        {/* === 3. MODAL DE CONFIRMAÇÃO DE EXCLUSÃO === */}
+        {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO  */}
         {showDeleteModal && (
           <div className="modal-overlay">
             <div className="modal-content">

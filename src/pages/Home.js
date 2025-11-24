@@ -1,13 +1,13 @@
 // No arquivo: src/pages/Home.js
-// VERSÃO FINAL - Usa GameCard + Home.module.css
+// VERSÃO FINAL - Com Banner de Login Público
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Carrossel from '../components/Carrossel';
 import ExploreCategories from '../components/ExploreCategories';
-import GameCard from '../components/GameCard'; // Importa o componente que criámos
-import styles from '../components/Home.module.css'; // Importa os estilos para layout
+import GameCard from '../components/GameCard'; 
+import styles from '../components/Home.module.css'; 
 
 function Home() {
   const [jogos, setJogos] = useState([]);
@@ -19,6 +19,7 @@ function Home() {
   
   const isLogado = !!user;
 
+  // === BUSCAR DADOS ===
   useEffect(() => {
     const token = localStorage.getItem('token');
     const urlJogos = isLogado 
@@ -44,6 +45,7 @@ function Home() {
     }
   }, [isLogado, logout, navigate]);
 
+  // === FILTROS ===
   const categoriaMap = useMemo(() => {
     return categorias.reduce((acc, cat) => {
       acc[cat.id] = cat.nome.trim(); 
@@ -75,6 +77,42 @@ function Home() {
 
   return (
     <>
+      {/* === BANNER DE LOGIN (VISÍVEL APENAS SE NÃO ESTIVER LOGADO) === */}
+      {!isLogado && (
+        <div style={{
+            textAlign: 'center', 
+            padding: '40px 20px', 
+            background: 'linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%)', 
+            borderBottom: '2px solid #333',
+            marginBottom: '20px'
+        }}>
+            <h1 style={{fontSize: '2.5rem', fontWeight: '800', color: '#fff', marginBottom: '10px'}}>
+                Bem-vindo à Next<span style={{color: '#e53935'}}>Level</span>
+            </h1>
+            <p style={{color: '#ccc', marginBottom: '25px', fontSize: '1.1rem'}}>
+                Faça login para comprar jogos, criar sua lista de desejos e muito mais.
+            </p>
+            
+            <Link to="/login" style={{
+                display: 'inline-block',
+                padding: '12px 40px',
+                backgroundColor: '#39FF14', /* Verde Neon */
+                color: '#000',
+                fontWeight: 'bold',
+                borderRadius: '50px',
+                textDecoration: 'none',
+                fontSize: '1.1rem',
+                boxShadow: '0 0 15px rgba(57, 255, 20, 0.4)',
+                transition: 'transform 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+                Iniciar Sessão
+            </Link>
+        </div>
+      )}
+
       {/* Barra de Pesquisa */}
       <div className={styles.searchContainer}>
         <input 
@@ -138,7 +176,7 @@ function Home() {
       {listaCategoriasExibicao.length > 0 && (
         <ExploreCategories
           categories={listaCategoriasExibicao.map(cat => ({
-            name: cat.nome || cat.name, // Compatibilidade
+            name: cat.nome || cat.name, 
             slug: (cat.slug || cat.nome || "").toLowerCase().replace(/\s+/g, "-")
           }))}
         />

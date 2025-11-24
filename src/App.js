@@ -1,6 +1,3 @@
-// No arquivo: src/App.js
-// VERSÃO FINAL - Inicia na Loja
-
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -29,13 +26,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
-        {/* === MUDANÇA AQUI: Redireciona para /loja === */}
+  
         <Route path="/" element={<Navigate to="/loja" replace />} />
 
         <Route path="/loja" element={<Layout />}>
           
-          {/* Home é pública agora (removemos o ProtectedRoute) */}
           <Route index element={<Home />} />
           
           <Route path="admin/jogos" element={<ProtectedRoute adminOnly><AdminJogos /></ProtectedRoute>} />

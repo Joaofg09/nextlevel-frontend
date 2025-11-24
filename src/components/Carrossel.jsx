@@ -1,6 +1,3 @@
-// No arquivo: src/components/Carrossel.js
-// VERSÃO LIMPA - Sem avisos (no-unused-vars)
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Carrossel.module.css';
@@ -10,17 +7,10 @@ function Carrossel({ jogos }) {
 
   // Configurações
   const VISIBLE_CARDS = 3;
-  // const CARD_WIDTH = 350; // (Removido pois não estamos usando variáveis para calcular)
-  // const GAP = 20;         // (Removido pois não estamos usando variáveis para calcular)
 
   const listaJogos = jogos || [];
   const carouselJogos = listaJogos.slice(8, 16);
-
-  // REMOVIDA a variável 'step' que causava o aviso
-  
-  // Cálculo do deslocamento (350px largura + 20px gap = 370px por item)
   const offset = -currentIndex * 370; 
-
   const maxIndex = Math.max(0, carouselJogos.length - VISIBLE_CARDS);
 
   const handleNext = () => {

@@ -1,6 +1,3 @@
-// No arquivo: src/pages/JogoDetalhesPage.js
-// VERSÃO 11 - Comprar Agora (Mantém o carrinho e redireciona)
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; 
@@ -70,7 +67,7 @@ function JogoDetalhesPage() {
     fetchData(); 
   }, [fetchData]); 
 
-  // === 1. ADICIONAR AO CARRINHO (Apenas avisa) ===
+  // ADICIONAR AO CARRINHO 
   const handleAddToCart = async () => {
     if (!user) return navigate('/login');
     if (hasGame) { showToast("Você já possui este jogo!", 'error'); return; }
@@ -94,7 +91,7 @@ function JogoDetalhesPage() {
     }
   };
 
-  // === 2. COMPRAR AGORA (Adiciona e Vai para Revisão) ===
+  // COMPRAR AGORA 
   const handleBuyNow = async () => {
     if (!user) return navigate('/login');
     if (hasGame) return;
@@ -111,14 +108,12 @@ function JogoDetalhesPage() {
         
         const data = await addRes.json();
 
-        // Se adicionou com sucesso (200) OU se já estava lá (400 + mensagem específica)
-        // Redireciona para o checkout em ambos os casos, pois a intenção é comprar.
+        // Verificação de status de pedido
         if (addRes.ok) {
             navigate('/loja/revisar-pedido');
         } else if (addRes.status === 400 && data.message === 'Jogo já está no carrinho.') {
             navigate('/loja/revisar-pedido');
         } else {
-            // Outro erro qualquer
             showToast(data.message, 'error');
         }
 

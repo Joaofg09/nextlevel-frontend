@@ -14,10 +14,10 @@ const categoriesData = [
 function ExploreCategories({ categories = categoriesData }) {
     const gridRef = useRef(null);
 
-    // DUPLICA A LISTA PARA O LOOP
+    // Duplicção de lista para o loop de categorias 
     const loopedCategories = [...categories, ...categories];
 
-    // AUTO AJUSTE DO LOOP INFINITO
+    // Auto juste do loop
     useEffect(() => {
         const grid = gridRef.current;
         if (!grid) return;
@@ -25,12 +25,12 @@ function ExploreCategories({ categories = categoriesData }) {
         const handleScroll = () => {
             const maxScroll = grid.scrollWidth / 2;
 
-            // Se passou da metade → volta para o início
+            // Se passou da metade volta para o início
             if (grid.scrollLeft >= maxScroll) {
                 grid.scrollLeft = 1;
             }
 
-            // Se rolar demais pra esquerda → volta para a segunda metade
+            // Se rolar demais pra esquerda volta para a segunda metade
             if (grid.scrollLeft <= 0) {
                 grid.scrollLeft = maxScroll - 1;
             }
@@ -70,7 +70,7 @@ function ExploreCategories({ categories = categoriesData }) {
                     {loopedCategories.map((category, index) => (
                         <Link
                             key={index}
-                            to={`/categoria/${category.slug}`}
+                            to={`/loja/categoria/${category.slug}`}
                             className={homeStyles['card-link']}
                         >
                             <div className={homeStyles.card}>
