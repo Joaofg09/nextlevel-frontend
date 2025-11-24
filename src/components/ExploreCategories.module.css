@@ -3,7 +3,7 @@
 .exploreSection {
     padding: 40px 20px;
     font-weight: bold;
-    background-color: #0c0c0c; /* Mantenha o fundo da seção escuro */
+    background-color: #0c0c0c;
     color: #ffffff;
 }
 
@@ -17,29 +17,38 @@
     padding-left: 30px;
 }
 
+/* ------------------ CARROSSEL INFINITO ------------------ */
+
+.carouselContainer {
+    position: relative; /* necessário para posicionar as setas */
+    width: 100%;
+    overflow: hidden; /* evita barra externa */
+    display: flex;
+    align-items: center;
+}
+
+/* Área rolável */
 .categoryGrid {
     display: flex;
-    gap: 15px; /* Espaço entre os cards */
-    overflow-x: auto; /* Permite rolagem lateral */
-    padding-bottom: 10px;
-    flex-wrap: nowrap; 
-    padding-bottom: 10px;
-    padding-right: 200px; 
-    padding-bottom: 10px;
+    gap: 15px;
+    overflow-x: auto;
     scroll-behavior: smooth;
+    flex-wrap: nowrap;
+    padding: 20px 0;
+    scrollbar-width: none; /* Firefox */
 }
+
 .categoryGrid::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome */
 }
 
+/* Cada item */
 .categoryGrid a {
-    min-width: 350px; 
-    flex: 0 0 auto; 
-    height: 200px; 
-    
+    min-width: 350px;
+    flex: 0 0 auto;
+    height: 200px;
 }
 
-/* Garante que o conteúdo (texto) dentro do card esteja centralizado */
 .categoryGrid .card {
     display: flex;
     align-items: center;
@@ -47,31 +56,28 @@
     text-align: center;
 }
 
-.carouselContainer {
-    position: relative; /* ISTO É CRÍTICO PARA POSICIONAR AS SETAS */
-    padding: 0 40px; /* Adiciona espaço nas laterais para as setas */
-    /* Você pode ajustar o padding se quiser as setas mais próximas/distantes */
-}
 
-/* --- Estilo das Setas --- */
+/* ------------------ SETAS ------------------ */
 .arrow {
     position: absolute;
-    top: 50%; /* Centraliza verticalmente */
+    top: 50%;
     transform: translateY(-50%);
-    z-index: 15; /* Garante que fique acima dos cards */
-    
-    /* Adapte o estilo para combinar com o seu tema */
-    background: rgba(0, 0, 0, 0.5); /* Fundo escuro sutil */
-    color: #ffffff; /* Seta branca */
+    z-index: 15;
+
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
     border: none;
     cursor: pointer;
+
     font-size: 2rem;
     padding: 10px;
     border-radius: 50%;
+
     height: 50px;
     width: 50px;
     line-height: 25px;
     text-align: center;
+
     transition: background-color 0.3s;
 }
 
@@ -80,16 +86,15 @@
 }
 
 .arrow.left {
-    left: 0; /* Posiciona no canto esquerdo */
+    left: 0;
 }
 
 .arrow.right {
-    right: 0; /* Posiciona no canto direito */
+    right: 0;
 }
 
+/* ------------------ LIGHT MODE ------------------ */
 :global(.light-mode) .exploreSection {
-    padding: 40px 20px;
-    font-weight: bold;
-    background-color: #f0f0f0; /* Mantenha o fundo da seção escuro */
+    background-color: #f0f0f0;
     color: #1a1a1a;
 }

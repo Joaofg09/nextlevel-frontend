@@ -57,3 +57,39 @@
   opacity: 0.5;
   margin-top: 10px;
 }
+
+/* ================================
+   MODO CLARO
+================================= */
+
+:global(.light-mode) .footer {
+  background: #f2f2f2;
+  color: #222;
+  border-top: 1px solid #ccc;
+}
+
+:global(.light-mode) .footer a {
+  color: #222;
+}
+
+:global(.light-mode) .footer a:hover {
+  color: #b22222; /* Vermelho mais escuro no claro */
+}
+
+:global(.light-mode) .fakeLink {
+  color: #444;
+}
+
+:global(.light-mode) .fakeLink:hover {
+  color: #b22222;
+  text-decoration: underline;
+}
+
+:global(.light-mode) .links span {
+  color: #888; /* Separador mais suave */
+}
+
+:global(.light-mode) .copyNote {
+  color: #555;
+  opacity: 0.8;
+}

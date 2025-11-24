@@ -1,7 +1,7 @@
 // No arquivo: src/pages/RevisarPedidoPage.js
-// VERSÃO FINAL - Modal Moderno e Toast
+// VERSÃO FINAL - Com Botão Remover
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,8 +12,9 @@ function RevisarPedidoPage() {
   const [jogosMap, setJogosMap] = useState(new Map());
   const [loading, setLoading] = useState(true);
   
-  // 1. NOVOS ESTADOS (Modal e Toast)
-  const [showModal, setShowModal] = useState(false);
+  // Estados para Modal e Toast
+  const [showModal, setShowModal] = useState(null); // 'checkout' ou 'remove'
+  const [itemToDelete, setItemToDelete] = useState(null);
   const [notification, setNotification] = useState(null);
 
   const { logout } = useAuth();
@@ -21,13 +22,14 @@ function RevisarPedidoPage() {
 
   const showToast = (message, type = 'success') => {
     setNotification({ message, type });
-    setTimeout(() => {
-      setNotification(null);
-    }, 3000);
+    setTimeout(() => { setNotification(null); }, 3000);
   };
 
-  useEffect(() => {
+  // === Fetch Data (useCallback para poder recarregar após deletar) ===
+  const fetchData = useCallback(() => {
+    setLoading(true);
     const token = localStorage.getItem('token');
+    
     const secureFetch = (url) => {
       return fetch(url, { headers: { 'Authorization': `Bearer ${token}` }})
         .then(res => {
@@ -60,15 +62,45 @@ function RevisarPedidoPage() {
     });
   }, [logout, navigate]);
 
-  // 2. Função que ABRE o Modal
-  const handleCheckoutClick = () => {
-    setShowModal(true);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // === Lógica de REMOVER Item ===
+  const handleRemoveClick = (gameId) => {
+    setItemToDelete(gameId);
+    setShowModal('remove'); // Define o tipo do modal
   };
 
-  // 3. Função que EFETIVA a compra
+  const confirmRemove = async () => {
+    setShowModal(null);
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`http://localhost:3000/api/v1/carrinho/${itemToDelete}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        showToast("Item removido do pedido.", 'success');
+        fetchData(); // Recarrega a lista atualizada
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (error) {
+      console.error("Erro ao remover:", error);
+      showToast("Erro de conexão.", 'error');
+    }
+  };
+
+  // === Lógica de FINALIZAR Pedido ===
+  const handleCheckoutClick = () => {
+    setShowModal('checkout'); // Define o tipo do modal
+  };
+
   const confirmCheckout = async () => {
-    setShowModal(false); // Fecha o modal
-    
+    setShowModal(null);
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:3000/api/v1/vendas/checkout', {
@@ -78,11 +110,8 @@ function RevisarPedidoPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Mostra o sucesso e espera 1.5s antes de redirecionar (para dar tempo de ler)
         showToast("Compra realizada com sucesso!", 'success');
-        setTimeout(() => {
-            navigate('/biblioteca');
-        }, 1500);
+        setTimeout(() => { navigate('/biblioteca'); }, 1500);
       } else {
         showToast(`Erro: ${data.message}`, 'error');
       }
@@ -92,13 +121,10 @@ function RevisarPedidoPage() {
     }
   };
 
+  // === Renderização ===
+  
   if (loading) {
-    return (
-      <div className="main-container">
-        <h1>Finalizar Pedido</h1>
-        <p>Carregando resumo...</p>
-      </div>
-    );
+    return <div className="main-container"><h1>Finalizar Pedido</h1><p>Carregando resumo...</p></div>;
   }
 
   if (!carrinho || !carrinho.itens || carrinho.itens.length === 0) {
@@ -106,7 +132,7 @@ function RevisarPedidoPage() {
       <div className="main-container">
         <h1>Finalizar Pedido</h1>
         <p>O seu carrinho está vazio.</p>
-        <Link to="/">Voltar à loja</Link>
+        <Link to="/" style={{color: '#39FF14'}}>Voltar à loja</Link>
       </div>
     );
   }
@@ -132,6 +158,18 @@ function RevisarPedidoPage() {
                     <h3>{jogoInfo ? jogoInfo.nome : `Jogo ID: ${item.fkJogo}`}</h3>
                     <span className="item-price">$ {jogoInfo ? jogoInfo.preco.toFixed(2) : '0.00'}</span>
                   </div>
+                  
+                  {/* BOTÃO REMOVER NOVO */}
+                  <div className="item-actions">
+                    <button 
+                      className="remove-btn" 
+                      onClick={() => handleRemoveClick(item.fkJogo)}
+                      title="Remover item"
+                    >
+                      <i className="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+
                 </div>
               );
             })}
@@ -145,7 +183,6 @@ function RevisarPedidoPage() {
             <div className="total-line"><strong>Total do Pedido:</strong> <strong id="review-total">$ {subtotal.toFixed(2)}</strong></div>
           </div>
           
-          {/* Botão chama handleCheckoutClick */}
           <button 
             id="finalize-order-btn" 
             className="checkout-button"
@@ -156,25 +193,39 @@ function RevisarPedidoPage() {
         </div>
       </div>
 
-      {/* 4. MODAL DE CONFIRMAÇÃO */}
+      {/* MODAL DINÂMICO (Checkout ou Remover) */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Confirmar Compra</h3>
+            <h3>{showModal === 'checkout' ? 'Confirmar Compra' : 'Remover Item'}</h3>
+            
             <p>
-              Valor Total: <strong style={{color: '#e53935'}}>${subtotal.toFixed(2)}</strong>
-              <br/>
-              Deseja finalizar o pedido agora?
+              {showModal === 'checkout' ? (
+                <>
+                  Valor Total: <strong style={{color: '#e53935'}}>${subtotal.toFixed(2)}</strong>
+                  <br/>
+                  Deseja finalizar o pedido agora?
+                </>
+              ) : (
+                <>Tem certeza que deseja remover este jogo do pedido?</>
+              )}
             </p>
+            
             <div className="modal-actions">
-              <button className="btn-cancel" onClick={() => setShowModal(false)}>Cancelar</button>
-              <button className="btn-confirm" onClick={confirmCheckout}>Sim, Comprar</button>
+              <button className="btn-cancel" onClick={() => setShowModal(null)}>Cancelar</button>
+              <button 
+                className="btn-confirm" 
+                onClick={showModal === 'checkout' ? confirmCheckout : confirmRemove}
+                style={showModal === 'remove' ? {backgroundColor: '#e53935', color: 'white'} : {}}
+              >
+                {showModal === 'checkout' ? 'Sim, Comprar' : 'Sim, Remover'}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 5. TOAST */}
+      {/* TOAST */}
       {notification && (
         <div className={`toast-notification ${notification.type}`}>
           <div className="toast-icon">

@@ -2,11 +2,14 @@
 
 .carousel {
     position: relative;
+    background-color: #0d0d0d;
+    padding: 20px 50px;
+
+    /* Volta o flex, mas de forma correta */
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 20px 50px;
-    background-color: #0d0d0d;
 }
 
 .carousel-viewport {
@@ -25,8 +28,10 @@
 }
 
 .card-link {
+    display: block;
     text-decoration: none; 
     color: inherit; 
+    pointer-events: auto;
 }
 
 .card {
@@ -45,6 +50,7 @@
     transition: transform 0.3s;
     padding: 20px;
     box-sizing: border-box;
+    z-index: 1;
     
     /* IMPORTANTE: Permite posicionar o preço de forma absoluta dentro do card */
     position: relative; 
@@ -70,12 +76,12 @@
     padding: 5px 15px;
     border-radius: 20px;
     border: 1px solid #39FF14;
-    z-index: 2;
+    z-index: 1;
 }
 
 .card:hover {
     transform: scale(1.05);
-    z-index: 2;
+    z-index: 1;
 }
 
 .arrow {
@@ -108,6 +114,40 @@
     cursor: default;
 }
 
+/* Container externo para ficar centralizado */
+.dotsWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+/* Container interno dos pontinhos */
+.dotsContainer {
+  display: flex;
+  gap: 10px;
+}
+
+/* Pontos */
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: #555;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.dot:hover {
+  background-color: #777;
+}
+
+.activeDot {
+  background-color: #fff !important;
+}
+
+
 @media (max-width: 700px) {
     .carousel-viewport {
         width: 350px; /* mostra 1 card */
@@ -119,15 +159,37 @@
     background-color: #f0f0f0;
 }
 :global(.light-mode) .card {
-    background: #fff;
+    background: linear-gradient(180deg, #b22222, #600000);
     color: #333;
     border: 1px solid #ccc;
 }
+:global(.light-mode) .card h3 {
+    font-size: 1.5rem;
+    color: #f0f0f0;
+    margin: 0;
+    padding-bottom: 40px; 
+    z-index: 1;
+}
 :global(.light-mode) .price {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #e53935;
-    border-color: #e53935;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #39FF14; /* Verde Neon */
+    border: 1px solid #39FF14;
 }
 :global(.light-mode) .arrow {
     color: #333;
+}
+
+/* Cor padrão dos pontos no light mode */
+:global(.light-mode) .dot {
+    background-color: #aaa; /* cinza claro */
+}
+
+/* Hover no light mode */
+:global(.light-mode) .dot:hover {
+    background-color: #888;
+}
+
+/* Ponto ativo no light mode */
+:global(.light-mode) .activeDot {
+    background-color: #333 !important; /* preto suave */
 }
