@@ -1,18 +1,19 @@
 // No arquivo: src/pages/CarrinhoPage.js
-// VERSÃO 6 - Modal Moderno e Toasts
+// VERSÃO FINAL - Imagens + Modal Moderno + Toasts
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+// 1. A Imagem Genérica é mantida
 const GENERIC_IMAGE = "/jogo-padrao.jpg";
 
 function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState(null);
   const [loading, setLoading] = useState(true);
   const [jogosMap, setJogosMap] = useState(new Map());
-  
-  // 1. Novos Estados para o Modal e Notificação
+
+  // 2. Novos Estados para o Modal e Notificação
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -72,13 +73,13 @@ function CarrinhoPage() {
     fetchData();
   }, [fetchData]); 
 
-  // 2. Função chamada ao clicar em "Remover" (Abre o Modal)
+  // 3. Função chamada ao clicar em "Remover" (Abre o Modal)
   const handleRemoveClick = (gameId) => {
     setItemToDelete(gameId);
     setShowModal(true);
   };
 
-  // 3. Função chamada ao confirmar no Modal (Faz a exclusão)
+  // 4. Função chamada ao confirmar no Modal (Faz a exclusão)
   const confirmRemove = async () => {
     setShowModal(false); // Fecha o modal
     const token = localStorage.getItem('token');
@@ -146,6 +147,7 @@ function CarrinhoPage() {
             
             return (
               <div className="cart-item" key={item.id} data-id={item.fkJogo}>
+                {/* 5. A IMAGEM ESTÁ AQUI */}
                 <img src={GENERIC_IMAGE} alt="Capa do Jogo" />
                 
                 <div className="item-details">
@@ -184,7 +186,7 @@ function CarrinhoPage() {
         </div>
       </div>
 
-      {/* 4. MODAL DE CONFIRMAÇÃO */}
+      {/* 6. MODAL DE CONFIRMAÇÃO */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -202,7 +204,7 @@ function CarrinhoPage() {
         </div>
       )}
 
-      {/* 5. NOTIFICAÇÃO TOAST */}
+      {/* 7. NOTIFICAÇÃO TOAST */}
       {notification && (
         <div className={`toast-notification ${notification.type}`}>
           <div className="toast-icon">

@@ -260,7 +260,7 @@ function JogoDetalhesPage() {
             ) : (
                 <div className="actions-container">
                     <button className="btn-buy-now" onClick={handleBuyNow}>
-                        Comprar Agora <i className="fas fa-bolt"></i>
+                        Comprar Agora
                     </button>
                     <button className="btn-add-cart" onClick={handleAddToCart}>
                         + Carrinho
