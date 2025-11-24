@@ -87,7 +87,7 @@ function BibliotecaPage() {
                             Finalize sua compra para obter a chave de ativação.
                         </p>
                         <button 
-                            onClick={() => navigate('/carrinho')}
+                            onClick={() => navigate('/loja/carrinho')}
                             style={{
                                 background: 'transparent',
                                 border: '1px solid #e53935',

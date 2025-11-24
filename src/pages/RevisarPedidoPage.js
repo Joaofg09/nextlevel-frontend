@@ -111,7 +111,7 @@ function RevisarPedidoPage() {
 
       if (response.ok) {
         showToast("Compra realizada com sucesso!", 'success');
-        setTimeout(() => { navigate('/biblioteca'); }, 1500);
+        setTimeout(() => { navigate('/loja/biblioteca'); }, 1500);
       } else {
         showToast(`Erro: ${data.message}`, 'error');
       }

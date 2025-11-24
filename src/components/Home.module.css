@@ -1,3 +1,5 @@
+/* src/components/Home.module.css */
+
 /* ---------- SEÇÕES ---------- */
 .section-h1 {
     margin-left: 70px;
@@ -66,35 +68,26 @@
 .searchInput {
     width: 100%;
     padding: 12px 18px;
-    /* Aumentei um pouco o padding para melhor toque */
     border-radius: 8px;
-    /* Levemente mais arredondado */
     font-size: 16px;
 
     /* --- DARK MODE --- */
     background-color: #ffffff;
-    /* Fundo bem escuro, combinando com o fundo preto */
     color: #1a1a1a;
-    /* Texto branco */
     border: 1px solid #333333;
-    /* Borda sutil */
     transition: border-color 0.3s, background-color 0.3s;
 }
 
 /* Efeito ao focar (clicar) */
 .searchInput:focus {
     outline: none;
-    /* Remove o outline padrão do navegador */
     border-color: #e50914;
-    /* Cor de destaque (vermelho/laranja, como o tema NextLevel) */
     box-shadow: 0 0 5px rgba(229, 9, 20, 0.5);
-    /* Sombra sutil de destaque */
 }
 
 /* Estilo para o placeholder (texto de dica) */
 .searchInput::placeholder {
     color: #888888;
-    /* Cinza suave */
 }
 
 .suggestionsList {
@@ -103,15 +96,12 @@
     position: absolute;
     border-radius: 8px;
     top: 100%;
-    /* Começa logo abaixo do input */
     left: 0;
     right: 0;
     margin: 0;
     padding: 0;
     list-style: none;
-    /* Remove bolinhas/marcadores de lista */
     max-height: 250px;
-    /* Limita a altura para que a lista possa ter scroll */
     overflow-y: auto;
 }
 
@@ -129,11 +119,9 @@
 .categoryGrid .card {
     min-width: 250px;
     height: 150px;
-    /* Garante que o texto fique centralizado */
     align-items: center;
     justify-content: center;
     display: flex;
-    /* Outras customizações visuais, se necessário */
 }
 
 .categoryGrid .card:hover {
@@ -141,10 +129,8 @@
 }
 
 .categoryGrid .card-link {
-    /* Mínimo que o card pode ter é 250px. O flex: 0 0 auto garante que ele não encolha. */
     flex: 0 0 auto;
     min-width: 200px;
-    /* Ajuste este valor até que apenas 4 caibam na sua tela */
     height: 120px;
     display: flex;
     align-items: center;
@@ -154,36 +140,28 @@
 
 .priceTag {
     font-weight: bold;
+    margin-top: 10px; /* Adicionado para separar do título */
 }
-
-
-
 
 :global(.light-mode) .section-h1 {
     color: #1a1a1a;
-    /* Muda de Branco para Preto */
 }
 
 /* --- LIGHT MODE OVERRIDES --- */
 
 :global(.light-mode).searchInput {
     background-color: #ffffff;
-    /* Fundo branco */
     color: #1a1a1a;
-    /* Texto preto */
     border: 1px solid #252525;
-    /* Borda cinza clara */
 }
 
 :global(.light-mode) .searchInput:focus {
     border-color: #e50914;
-    /* Cor de destaque azul (padrão de light mode) */
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 :global(.light-mode) .searchInput::placeholder {
     color: #666666;
-    /* Cinza escuro */
 }
 
 :global(.light-mode) .suggestionsList {

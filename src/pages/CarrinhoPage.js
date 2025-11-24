@@ -174,7 +174,7 @@ function CarrinhoPage() {
         </div>
         <div className="cart-summary">
           <h2>Subtotal: <span id="subtotal">$ {subtotal.toFixed(2)}</span></h2>
-          <Link to="/revisar-pedido" className="checkout-button">Continuar Para Pagamento</Link>
+          <Link to="/loja/revisar-pedido" className="checkout-button">Continuar Para Pagamento</Link>
           <div className="coupon-section">
               <label htmlFor="coupon">Coloque Seu Cupom Aqui!</label>
               <div className="coupon-input">

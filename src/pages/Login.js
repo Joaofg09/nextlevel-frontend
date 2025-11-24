@@ -77,7 +77,7 @@ function Login() {
                 />
               </div>
               <button type="submit" className="login-button">Iniciar</button>
-              <a href="/" className="forgot-password">Esqueci minha Senha.</a>
+              {/* <a href="/" className="forgot-password">Esqueci minha Senha.</a> */}
             </form>
           </div>
 
